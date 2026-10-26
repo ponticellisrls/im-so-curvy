@@ -719,3 +719,91 @@ if (!customElements.get('isc-colors')) {
     }
   );
 }
+
+/*
+ * Filtro "Taglia": le taglie sono scritte in modi diversi nei prodotti ("Taglia unica", "TAGLIA UNICA",
+ * "TG 48", "49(48/50)", "3XL (52/54)"…) e Shopify crea un pulsante per ogni scrittura.
+ * Qui le raggruppiamo per taglia italiana: un solo pulsante per gruppo (somma dei prodotti), che
+ * spunta tutte le scritture del gruppo. Ordine: Taglia unica, numeriche, XL/XXL/3XL…, I/II.
+ */
+(function () {
+  const LETTERS = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', '2XL/3XL', '3XL', '3XL/4XL', '4XL', '5XL'];
+  const normalize = (raw) => {
+    let v = String(raw || '').trim().toUpperCase().replace(/\s+/g, ' ');
+    if (/UNIC|UNOC/.test(v)) return { key: 'UNICA', label: 'Taglia unica' };
+    v = v.replace(/^TG\.?\s*/, '');
+    const inner = v.match(/\(([^)]+)\)/);
+    if (inner) v = inner[1].trim();
+    v = v.replace(/\s*\/\s*/g, '/');
+    return { key: v, label: v };
+  };
+  const rank = (key) => {
+    if (key === 'UNICA') return [0, 0, 0];
+    const n = key.match(/^(\d+)(?:\/(\d+))?$/);
+    if (n) return [1, +n[1], n[2] ? 1 : 0];
+    const l = LETTERS.indexOf(key);
+    if (l > -1) return [2, l, 0];
+    return [3, 0, key.length];
+  };
+  const cmp = (a, b) => {
+    const ra = rank(a), rb = rank(b);
+    for (let i = 0; i < 3; i++) if (ra[i] !== rb[i]) return ra[i] - rb[i];
+    return a.localeCompare(b);
+  };
+
+  const groupList = (list) => {
+    if (list.dataset.iscGrouped) return;
+    list.dataset.iscGrouped = 'true';
+    const groups = new Map();
+    [...list.children].forEach((li) => {
+      const input = li.querySelector('input[type="checkbox"]');
+      if (!input) return;
+      const { key, label } = normalize(input.value);
+      if (!groups.has(key)) groups.set(key, { label, items: [] });
+      groups.get(key).items.push({ li, input });
+    });
+    if (!groups.size) return;
+    [...groups.keys()].sort(cmp).forEach((key) => {
+      const g = groups.get(key);
+      const [first, ...rest] = g.items;
+      const countOf = (it) => {
+        const all = [...(it.li.querySelector('.facet-checkbox__text') || it.li).textContent.matchAll(/\((\d+)\)/g)];
+        return all.length ? +all[all.length - 1][1] : 0;
+      };
+      const total = g.items.reduce((s, it) => s + countOf(it), 0);
+      const anyActive = g.items.some((it) => it.input.checked);
+      const anyEnabled = g.items.some((it) => !it.input.disabled);
+      const text = first.li.querySelector('.facet-checkbox__text');
+      if (text) text.innerHTML = `<span class="facet-checkbox__text-label${/^[A-Z0-9/]+$/.test(key) && /[A-Z]/.test(key) ? ' isc-fsize-up' : ''}">${g.label}</span> (${total})`;
+      const hidden = first.li.querySelector('.visually-hidden');
+      if (hidden) hidden.textContent = `${g.label} (${total})`;
+      first.input.checked = anyActive;
+      first.input.disabled = !anyEnabled;
+      const lab = first.li.querySelector('.facets__label');
+      if (lab) {
+        lab.classList.toggle('active', anyActive);
+        lab.classList.toggle('disabled', !anyEnabled);
+      }
+      rest.forEach((it) => {
+        it.li.hidden = true;
+        it.li.classList.add('isc-fgroup-hidden');
+        it.input.disabled = false;
+      });
+      if (rest.length) {
+        first.input.addEventListener('change', () => rest.forEach((it) => (it.input.checked = first.input.checked)), true);
+      }
+      list.appendChild(first.li);
+      rest.forEach((it) => list.appendChild(it.li));
+    });
+  };
+
+  const run = (root) => {
+    (root || document).querySelectorAll('[data-isc-facet="taglia"], [data-isc-facet="taglie"], [data-isc-facet="size"]').forEach(groupList);
+  };
+  document.addEventListener('DOMContentLoaded', () => run());
+  let t;
+  new MutationObserver(() => {
+    clearTimeout(t);
+    t = setTimeout(() => run(), 30);
+  }).observe(document.documentElement, { childList: true, subtree: true });
+})();
