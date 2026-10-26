@@ -44,6 +44,9 @@
       {%- endif -%}
     {%- endif -%}
 
+  {%- when 'isc_colors' -%}
+    {% render 'isc-colors-block', block: block, product: product %}
+
   {%- when 'isc_rating' -%}
     {%- liquid
       comment

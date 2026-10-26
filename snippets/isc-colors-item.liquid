@@ -1,0 +1,22 @@
+{%- comment -%}
+  I'M So Curvy: miniatura di un altro colore nel blocco «Altri colori».
+  Accepts:
+  - p: {Object} il prodotto dell'altro colore
+  - name: {String} nome del colore
+{%- endcomment -%}
+{%- assign cname = name | default: p.title -%}
+<li class="isc-acol__cell">
+  <a
+    href="{{ p.url }}"
+    class="isc-acol__item{% unless p.available %} is-soldout{% endunless %}"
+    data-name="{{ cname | escape }}"
+    aria-label="{{ cname | escape }}{% unless p.available %} (esaurito){% endunless %}"
+  >
+    <span class="isc-acol__media">
+      {%- if p.featured_image -%}
+        {{ p.featured_image | image_url: width: 160 | image_tag: loading: 'lazy', widths: '80, 160', sizes: '64px', alt: '' }}
+      {%- endif -%}
+    </span>
+    <span class="isc-acol__name">{{ cname | escape }}</span>
+  </a>
+</li>

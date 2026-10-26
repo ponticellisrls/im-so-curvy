@@ -1,0 +1,34 @@
+{%- comment -%}
+  I'M So Curvy: separa il titolo di un prodotto in modello e colore.
+  Su I'M So Curvy ogni colore è un prodotto a sé e il colore è in fondo al titolo
+  ("Tailleur Easy Testa di Moro" -> modello "tailleur easy", colore "Testa di Moro").
+  Stampa "modello¦Colore" (modello in minuscolo, colore com'è scritto nel titolo).
+  Se non riconosce il colore stampa "titolo¦".
+  Accepts:
+  - title: {String}
+{%- endcomment -%}
+{%- liquid
+  assign clean = title | strip | remove: ' - PREORDINE' | remove: ' PREORDINE' | remove: ' - Preordine' | remove: ' Preordine' | strip
+  assign low = clean | downcase
+  assign size = low | size
+  assign colors = 'testa di moro,verde bottiglia,verde militare,verde salvia,blu navy,blu notte,blu elettrico,blu cobalto,jeans chiaro,jeans scuro,denim chiaro,grigio chiaro,grigio scuro,rosa cipria,rosa antico,bordeaux,vinaccia,marrone,tortora,ruggine,celeste,avorio,cobalto,camouflage,animalier,leopardato,cammello,arancione,petrolio,cioccolato,champagne,ghiaccio,mattone,ottanio,tabacco,glicine,corallo,azzurro,azzurra,arancio,argento,militare,prugna,visone,senape,cipria,bianco,bianca,bianchi,giallo,gialla,grigio,grigia,salvia,fuksia,fucsia,sabbia,crema,denim,jeans,khaki,lilla,viola,rosso,rossa,verde,beige,panna,pesca,fango,kaki,nero,nera,neri,nere,nude,lime,rosa,blu,oro,moro'
+  assign colors = colors | split: ','
+  assign model = low
+  assign name = ''
+  for c in colors
+    assign tail = ' ' | append: c
+    assign n = tail | size
+    if size > n
+      assign start = size | minus: n
+      assign end = low | slice: start, n
+      if end == tail
+        assign model = low | slice: 0, start | strip
+        assign cn = n | minus: 1
+        assign cstart = start | plus: 1
+        assign name = clean | slice: cstart, cn
+        break
+      endif
+    endif
+  endfor
+  echo model | append: '¦' | append: name
+-%}

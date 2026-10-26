@@ -232,7 +232,7 @@
                     <span class="visually-hidden">{{ 'products.product.sku' | t }}:</span>
                     {{- product.selected_or_first_available_variant.sku -}}
                   </p>
-                {%- when 'isc_eyebrow', 'isc_rating', 'isc_intro', 'isc_payments', 'isc_delivery', 'isc_trust', 'isc_upsell' -%}
+                {%- when 'isc_eyebrow', 'isc_rating', 'isc_colors', 'isc_intro', 'isc_payments', 'isc_delivery', 'isc_trust', 'isc_upsell' -%}
                   {% render 'isc-product-blocks', block: block, product: product, section: section %}
                 {%- when 'custom_liquid' -%}
                   {{ block.settings.custom_liquid }}
@@ -2278,6 +2278,20 @@
           "label": "t:sections.main-product.blocks.icon_with_text.settings.heading_3.label",
           "info": "t:sections.main-product.blocks.icon_with_text.settings.heading.info"
         }
+      ]
+    },
+    {
+      "type": "isc_colors",
+      "name": "Altri colori",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Mostra gli altri colori dello stesso modello. Si collegano da soli (stesso titolo senza il colore, nella stessa categoria) oppure dal metacampo custom.altri_colori, che ha la precedenza."
+        },
+        { "type": "text", "id": "label", "label": "Etichetta", "default": "Colore" },
+        { "type": "checkbox", "id": "names_desktop", "label": "Nome del colore sotto ogni miniatura anche su computer", "default": false },
+        { "type": "checkbox", "id": "show_soldout", "label": "Mostra anche i colori esauriti (barrati)", "default": false }
       ]
     },
     {

@@ -6319,13 +6319,84 @@ h1 strong, h2 strong, h3 strong,
   .isc-hero--h-image .isc-hero__media { aspect-ratio: var(--hero-ratio, 2.33); }
 }
 
-/* Header: il menu di I'M So Curvy ha molte voci, su desktop restano su una riga */
+/* Header: logo centrato sopra e menu (molte voci) su una sola riga */
 @media screen and (min-width: 990px) {
   .header__inline-menu .header__menu-item {
-    font-size: 11.5px;
+    font-size: clamp(10.5px, 0.82vw, 12.5px);
     font-weight: 600;
     letter-spacing: 0.05em;
-    margin: 0 clamp(4px, 0.55vw, 10px);
+    margin: 0 clamp(5px, 0.62vw, 12px);
+    white-space: nowrap;
   }
-  .header__inline-menu .list-menu--inline { flex-wrap: wrap; justify-content: center; }
+  .header__inline-menu .list-menu--inline { flex-wrap: nowrap; justify-content: center; }
+  .header--top-center .header__inline-menu { justify-self: stretch; }
 }
+
+/* ===================================================================== */
+/* Blocco «Altri colori» (pagina prodotto)                               */
+/* Miniature verticali 3:4 come le foto del sito. Telefono: una riga     */
+/* che scorre con il nome sotto. Computer: a capo, nome al passaggio.    */
+/* ===================================================================== */
+.isc-acol { margin: 4px 0 18px; }
+.isc-acol__label { margin: 0 0 10px; font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.isc-acol__value { font-weight: 500; letter-spacing: 0.02em; text-transform: none; color: var(--isc-muted); }
+.isc-acol__list { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 0; }
+.isc-acol__cell { flex: 0 0 auto; }
+.isc-acol__item { position: relative; display: flex; flex-direction: column; gap: 6px; width: 60px; color: var(--isc-ink); text-decoration: none; }
+.isc-acol__media { display: block; aspect-ratio: 3 / 4; overflow: hidden; background: var(--isc-soft); outline: 1px solid transparent; outline-offset: 2px; transition: outline-color 0.2s ease; }
+.isc-acol__media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.isc-acol__item:hover .isc-acol__media, .isc-acol__item:focus-visible .isc-acol__media { outline-color: var(--isc-line-2); }
+.isc-acol__item.is-current .isc-acol__media { outline: 1.5px solid var(--isc-primary); }
+.isc-acol__name { display: none; font-size: 11px; line-height: 1.25; text-align: center; color: var(--isc-muted); overflow-wrap: anywhere; }
+.isc-acol__item.is-current .isc-acol__name { color: var(--isc-ink); font-weight: 600; }
+.isc-acol--names .isc-acol__name { display: block; }
+.isc-acol--names .isc-acol__item::after { display: none; }
+
+/* esauriti (solo se attivati nelle impostazioni): barrati */
+.isc-acol__item.is-soldout img { opacity: 0.45; }
+.isc-acol__item.is-soldout .isc-acol__media { position: relative; }
+.isc-acol__item.is-soldout .isc-acol__media::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to top right, transparent calc(50% - 0.75px), var(--isc-muted) calc(50% - 0.75px), var(--isc-muted) calc(50% + 0.75px), transparent calc(50% + 0.75px));
+}
+.isc-acol__item.is-soldout .isc-acol__name { text-decoration: line-through; }
+
+/* etichetta col nome al passaggio del mouse (solo dispositivi con il mouse) */
+@media (hover: hover) and (min-width: 750px) {
+  .isc-acol__item::after {
+    content: attr(data-name);
+    position: absolute; left: 50%; top: calc(100% + 6px); z-index: 3;
+    padding: 5px 9px; border-radius: 2px;
+    background: #111; color: #fff;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.02em; white-space: nowrap;
+    opacity: 0; pointer-events: none;
+    transform: translate(-50%, -4px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  .isc-acol__item:hover::after, .isc-acol__item:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+  .isc-acol__item[data-name=""]::after { display: none; }
+}
+
+/* telefono: una sola riga che scorre col dito, nome sempre visibile */
+@media screen and (max-width: 749px) {
+  .isc-acol__list {
+    flex-wrap: nowrap; gap: 10px;
+    overflow-x: auto; overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory; scroll-padding-left: 2px;
+    margin: 0 calc(-1 * var(--isc-gutter, 16px)); padding: 3px var(--isc-gutter, 16px) 4px;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .isc-acol__list::-webkit-scrollbar { display: none; }
+  .isc-acol__cell { scroll-snap-align: start; }
+  .isc-acol__item { width: 64px; }
+  .isc-acol__name { display: block; }
+}
+
+/* Shop the look: foto verticali 3:4 intere (niente ritaglio in alto) */
+.isc-look__frame {
+  aspect-ratio: 3 / 4;
+  max-height: none;
+  width: min(100%, calc(88vh * 0.75));
+  margin-inline: auto;
+}
+.isc-look__img img { object-position: center top; }

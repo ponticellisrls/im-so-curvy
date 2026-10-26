@@ -1,0 +1,155 @@
+{%- comment -%}
+  I'M So Curvy: blocco «Altri colori» della pagina prodotto.
+  Ogni colore è un prodotto a sé. Gli altri colori dello stesso modello si trovano così, in ordine:
+  1. metacampo "Altri colori" (custom.altri_colori, elenco di prodotti): se è compilato vince lui;
+  2. stesso modello nella categoria del prodotto: titolo uguale tolto il colore finale
+     ("Tailleur Easy Bordeaux" e "Tailleur Easy Testa di Moro"), vedi snippets/isc-color-split.liquid.
+  Il colore della pagina è sempre il primo della riga.
+  Su telefono: una sola riga che scorre col dito, con il nome sotto ogni miniatura.
+  Su computer: miniature che vanno a capo, etichetta col nome al passaggio del mouse.
+  Accepts:
+  - block: {Object} blocco isc_colors (label, names_desktop, show_soldout)
+  - product: {Object}
+{%- endcomment -%}
+{%- liquid
+  assign bs = block.settings
+  capture split
+    render 'isc-color-split', title: product.title
+  endcapture
+  assign my_model = split | split: '¦' | first
+  assign my_name = split | split: '¦' | last
+  if split contains '¦' and my_name == my_model
+    assign my_name = ''
+  endif
+  if my_name == blank
+    for o in product.options_with_values
+      assign on = o.name | downcase
+      if on == 'colore' or on == 'color' or on == 'colori'
+        assign my_name = o.selected_value
+      endif
+    endfor
+  endif
+
+  assign seen = '|' | append: product.id | append: '|'
+  assign items = ''
+  assign found = 0
+
+  comment
+    1. metacampo "Altri colori"
+  endcomment
+  assign linked = product.metafields.custom.altri_colori.value
+  if linked != blank
+    for p in linked
+      if p == blank or p.id == nil
+        continue
+      endif
+      assign key = '|' | append: p.id | append: '|'
+      if seen contains key
+        continue
+      endif
+      assign seen = seen | append: key
+      unless p.available or bs.show_soldout
+        continue
+      endunless
+      capture pn
+        render 'isc-color-split', title: p.title
+      endcapture
+      assign pname = pn | split: '¦' | last
+      assign pmodel = pn | split: '¦' | first
+      if pname == pmodel or pname == blank
+        assign pname = p.title
+      endif
+      capture item
+        render 'isc-colors-item', p: p, name: pname
+      endcapture
+      assign items = items | append: item
+      assign found = found | plus: 1
+    endfor
+  endif
+
+  comment
+    2. stesso modello nella categoria del prodotto (la collezione "vera" più piccola)
+  endcomment
+  if found == 0 and my_model != blank
+    assign pool = null
+    assign pool_count = 100000
+    for c in product.collections
+      if c.handle == 'all' or c.handle == 'frontpage' or c.handle == 'tutti-i-prodotti' or c.handle == 'nuovi-arrivi' or c.handle == 'prezzo-intero' or c.handle contains 'saldi' or c.handle contains 'outlet' or c.handle == 'best-seller'
+        continue
+      endif
+      if c.products_count < pool_count
+        assign pool = c
+        assign pool_count = c.products_count
+      endif
+    endfor
+    if pool == blank
+      assign pool = collections['tutti-i-prodotti']
+    endif
+    if pool != blank
+      assign model_size = my_model | size
+      paginate pool.products by 250
+        for p in pool.products
+          assign key = '|' | append: p.id | append: '|'
+          if seen contains key
+            continue
+          endif
+          assign head = p.title | downcase | strip | slice: 0, model_size
+          if head != my_model
+            continue
+          endif
+          capture pn
+            render 'isc-color-split', title: p.title
+          endcapture
+          assign p_model = pn | split: '¦' | first
+          if p_model != my_model
+            continue
+          endif
+          assign seen = seen | append: key
+          unless p.available or bs.show_soldout
+            continue
+          endunless
+          assign pname = pn | split: '¦' | last
+          if pname == p_model
+            assign pname = ''
+          endif
+          capture item
+            render 'isc-colors-item', p: p, name: pname
+          endcapture
+          assign items = items | append: item
+          assign found = found | plus: 1
+          if found >= 16
+            break
+          endif
+        endfor
+      endpaginate
+    endif
+  endif
+  assign label = bs.label | default: 'Colore'
+-%}
+
+{%- if found > 0 or my_name != blank -%}
+  <isc-colors
+    class="isc-acol{% if bs.names_desktop %} isc-acol--names{% endif %}"
+    data-current="{{ my_name | escape }}"
+    {{ block.shopify_attributes }}
+  >
+    <p class="form__label isc-acol__label">
+      {{ label | escape }}: <span class="isc-acol__value" data-isc-color-value>{{ my_name | escape }}</span>
+    </p>
+    {%- if found > 0 -%}
+      <ul class="isc-acol__list list-unstyled" role="list">
+        <li class="isc-acol__cell">
+          <span class="isc-acol__item is-current" data-name="{{ my_name | escape }}" aria-current="true">
+            <span class="isc-acol__media">
+              {%- if product.featured_image -%}
+                {{ product.featured_image | image_url: width: 160 | image_tag: loading: 'lazy', widths: '80, 160', sizes: '64px', alt: my_name }}
+              {%- endif -%}
+            </span>
+            <span class="isc-acol__name">{{ my_name | escape }}</span>
+          </span>
+        </li>
+        {{- items -}}
+      </ul>
+    {%- endif -%}
+  </isc-colors>
+{%- endif -%}

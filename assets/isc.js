@@ -699,3 +699,23 @@ document.querySelectorAll('.isc-info__content .rte b, .isc-info__content .rte st
 document.querySelectorAll('.isc-info__content .rte span').forEach((el) => {
   if (!el.textContent.replace(/ /g, ' ').trim() && !el.children.length) el.remove();
 });
+
+/* Blocco «Altri colori»: la scritta "Colore: …" mostra il colore sotto il mouse, poi torna a quello della pagina */
+if (!customElements.get('isc-colors')) {
+  customElements.define(
+    'isc-colors',
+    class extends HTMLElement {
+      connectedCallback() {
+        this.value = this.querySelector('[data-isc-color-value]');
+        if (!this.value) return;
+        const reset = () => (this.value.textContent = this.dataset.current || '');
+        this.querySelectorAll('.isc-acol__item[data-name]').forEach((item) => {
+          item.addEventListener('mouseenter', () => (this.value.textContent = item.dataset.name));
+          item.addEventListener('focus', () => (this.value.textContent = item.dataset.name));
+          item.addEventListener('mouseleave', reset);
+          item.addEventListener('blur', reset);
+        });
+      }
+    }
+  );
+}

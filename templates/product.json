@@ -58,7 +58,7 @@
             "isc_size_guide": "",
             "isc_size_table": "46 = 100 cm | 84 cm | 108 cm\n48 = 104 cm | 88 cm | 112 cm\n50 = 108 cm | 92 cm | 116 cm\n52 = 112 cm | 96 cm | 120 cm\n54 = 116 cm | 100 cm | 124 cm\n56 = 120 cm | 104 cm | 128 cm\n58 = 124 cm | 108 cm | 132 cm\n60 = 128 cm | 112 cm | 136 cm",
             "isc_size_tip": "Misure del corpo, prese con il metro morbido sopra l'intimo. Ogni scheda indica la vestibilità del capo: se sei tra due taglie scegli la più grande. Hai dubbi? Scrivici e ti consigliamo noi.",
-            "isc_colors_first": true,
+            "isc_colors_first": false,
             "isc_show_fit": true,
             "isc_size_head": "Taglia IT | Seno | Vita | Fianchi"
           }
@@ -148,6 +148,14 @@
             "title_4": "Pagamenti",
             "text_4": "Anche alla consegna"
           }
+        },
+        "isc_colors": {
+          "type": "isc_colors",
+          "settings": {
+            "label": "Colore",
+            "names_desktop": false,
+            "show_soldout": false
+          }
         }
       },
       "block_order": [
@@ -155,6 +163,7 @@
         "rating",
         "title",
         "price",
+        "isc_colors",
         "variant_picker",
         "buy_buttons",
         "payments",
