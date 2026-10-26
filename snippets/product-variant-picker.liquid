@@ -114,7 +114,15 @@
               for l in isc_fit_lines
                 assign ld = l | downcase
                 if ld contains 'vestibilit'
-                  assign isc_fit = ld | split: 'vestibilit' | last | remove_first: 'à' | remove_first: 'a' | remove_first: ':' | strip
+                  assign isc_fit = ld | split: 'vestibilit' | last | strip
+                  assign isc_fit_first = isc_fit | slice: 0
+                  if isc_fit_first == 'à' or isc_fit_first == 'á' or isc_fit_first == 'a'
+                    assign isc_fit = isc_fit | slice: 1, 500 | strip
+                  endif
+                  assign isc_fit_first = isc_fit | slice: 0
+                  if isc_fit_first == ':'
+                    assign isc_fit = isc_fit | slice: 1, 500 | strip
+                  endif
                   break
                 endif
               endfor

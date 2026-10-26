@@ -129,7 +129,13 @@
               role="group"
               aria-labelledby="predictive-search-products"
             >
+              {%- capture isc_keep -%}{%- render 'isc-search-strict', terms: predictive_search.terms, results: predictive_search.resources.products -%}{%- endcapture -%}
+              {%- assign isc_keep = isc_keep | strip -%}
               {%- for product in predictive_search.resources.products -%}
+                {%- if isc_keep != blank -%}
+                  {%- assign isc_key = '|' | append: product.id | append: '|' -%}
+                  {%- unless isc_keep contains isc_key -%}{%- continue -%}{%- endunless -%}
+                {%- endif -%}
                 <li
                   id="predictive-search-option-product-{{ forloop.index }}"
                   class="predictive-search__list-item"

@@ -1,0 +1,47 @@
+{%- comment -%}
+  I'M So Curvy: ricerca "precisa".
+  La ricerca di Shopify ordina per pertinenza e restituisce anche i prodotti che contengono solo una delle
+  parole cercate (es. "abito loren" -> tutti gli abiti). Se tra i risultati ci sono prodotti che hanno nel
+  titolo TUTTE le parole cercate (anche una sola, es. "abito"), il tema mostra solo quelli.
+  Stampa gli id dei prodotti da tenere, nella forma "|id|id|". Vuoto = mostra tutti i risultati.
+  Accepts:
+  - terms: {String} il testo cercato
+  - results: {Array} i risultati (prodotti, pagine, articoli)
+{%- endcomment -%}
+{%- liquid
+  assign q = terms | downcase | replace: ',', ' ' | replace: '-', ' ' | strip
+  assign raw_words = q | split: ' '
+  assign words = ''
+  assign n = 0
+  for w in raw_words
+    assign ws = w | strip
+    if ws.size >= 2
+      assign words = words | append: ws | append: '¦'
+      assign n = n | plus: 1
+    endif
+  endfor
+  assign words = words | split: '¦'
+  assign keep = ''
+  if n >= 1
+    for item in results
+      if item.object_type != 'product'
+        continue
+      endif
+      assign t = item.title | downcase
+      assign ok = true
+      for w in words
+        unless t contains w
+          assign ok = false
+          break
+        endunless
+      endfor
+      if ok
+        assign keep = keep | append: '|' | append: item.id
+      endif
+    endfor
+    if keep != blank
+      assign keep = keep | append: '|'
+    endif
+  endif
+  echo keep
+-%}
