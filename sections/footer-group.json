@@ -20,7 +20,7 @@
         "placeholder": "La tua email",
         "button_label": "Iscriviti",
         "note": "Niente spam, solo novità che ti stanno a pennello. Ti disiscrivi quando vuoi.",
-        "success_text": "Sei dentro! Controlla la tua email per il codice sconto.",
+        "success_text": "Sei dentro! Il tuo codice è CUR10: usalo al checkout per il -10% sul primo ordine.",
         "style": "light",
         "padding_top": 0,
         "padding_bottom": 0
@@ -33,21 +33,17 @@
           "type": "menu",
           "settings": {
             "heading": "Shop",
-            "menu": "main-menu"
-          }
-        },
-        "menu-2": {
-          "type": "menu",
-          "settings": {
-            "heading": "Legal",
-            "menu": "footer-menu-1"
+            "menu": "main-menu",
+            "columns": "2"
           }
         },
         "menu-3": {
           "type": "menu",
           "settings": {
-            "heading": "Info",
-            "menu": "footer"
+            "heading": "Assistenza",
+            "menu": "footer",
+            "menu_2": "footer-menu-1",
+            "columns": "1"
           }
         },
         "contact-1": {
@@ -58,7 +54,7 @@
             "whatsapp": "",
             "email": "imsocurvy2025@gmail.com",
             "hours": "Servizio clienti dalle 9 alle 20",
-            "link_label": "Modulo di contatto",
+            "link_label": "",
             "link": ""
           }
         }
@@ -66,7 +62,6 @@
       "block_order": [
         "menu-1",
         "menu-3",
-        "menu-2",
         "contact-1"
       ],
       "settings": {
@@ -106,7 +101,7 @@
         "privacy_text": "<p>Iscrivendoti accetti di ricevere email promozionali. Puoi disiscriverti in qualsiasi momento.</p>",
         "success_heading": "Benvenuta in I'M So Curvy!",
         "success_text": "Ecco il tuo codice sconto: usalo al checkout.",
-        "discount_code": "WELCOME10",
+        "discount_code": "CUR10",
         "success_button": "Inizia lo shopping",
         "success_link": "shopify://collections/nuovi-arrivi",
         "color_scheme": "scheme-1"

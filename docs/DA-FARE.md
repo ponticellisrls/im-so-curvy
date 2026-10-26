@@ -9,5 +9,5 @@ Modifiche lasciate in sospeso, da decidere con il cliente:
    (blocco «Selettore varianti» della pagina prodotto).
 4. **Scalapay e stelle recensioni** — disattivati perché non risultano attivi sul negozio.
    Si riaccendono dall'editor se si installano.
-5. **Pubblicazione** del tema «I'M So Curvy – Dawn (base Ormeshop)» (id 209662476633), oggi non pubblicato.
+5. **Pubblicazione** del tema «I'M So Curvy – VPDC Solutions» (id 209662476633), oggi non pubblicato.
 6. **Ormeshop** — stesso bug del prezzo doppio per i prodotti non scontati (`assets/orme.css`), da correggere sul tema live di Ormeshop.

@@ -38,13 +38,23 @@
         {%- case block.type -%}
           {%- when 'menu' -%}
             {%- if block.settings.menu != blank -%}
-              <details class="isc-ft__col" data-isc-ft-col {{ block.shopify_attributes }}>
+              <details class="isc-ft__col{% if block.settings.columns == '2' %} isc-ft__col--2{% endif %}" data-isc-ft-col {{ block.shopify_attributes }}>
                 <summary class="isc-ft__title">
                   {{ block.settings.heading | default: block.settings.menu.title | escape }}
                   <span class="isc-ft__plus" aria-hidden="true"></span>
                 </summary>
                 <ul class="isc-ft__links list-unstyled" role="list">
-                  {%- for link in block.settings.menu.links -%}
+                  {%- liquid
+                    comment
+                      Voci del menu e, in coda, quelle del secondo menu (facoltativo): così due menu corti
+                      diventano una sola colonna (es. Info + Legal = Assistenza)
+                    endcomment
+                    assign ft_links = block.settings.menu.links
+                    if block.settings.menu_2 != blank
+                      assign ft_links = ft_links | concat: block.settings.menu_2.links
+                    endif
+                  -%}
+                  {%- for link in ft_links -%}
                     {%- assign url_key = '|' | append: link.url | append: link.title | handleize | append: '|' -%}
                     {%- if customer and link.url contains '/login' -%}{%- continue -%}{%- endif -%}
                     {%- unless seen_urls contains url_key -%}
@@ -193,7 +203,19 @@
       "name": "Menu",
       "settings": [
         { "type": "text", "id": "heading", "label": "Titolo" },
-        { "type": "link_list", "id": "menu", "label": "Menu" }
+        { "type": "link_list", "id": "menu", "label": "Menu" },
+        { "type": "link_list", "id": "menu_2", "label": "Secondo menu (facoltativo)", "info": "Le sue voci si aggiungono in fondo alla stessa colonna." },
+        {
+          "type": "select",
+          "id": "columns",
+          "label": "Colonne su computer",
+          "info": "Su due colonne per i menu con molte voci. Su telefono resta una colonna.",
+          "options": [
+            { "value": "1", "label": "Una" },
+            { "value": "2", "label": "Due" }
+          ],
+          "default": "1"
+        }
       ]
     },
     {
