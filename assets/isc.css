@@ -5388,7 +5388,8 @@ input.mobile-facets__checkbox:checked { background: var(--isc-primary); border-c
 /* taglie: caselle come nella pagina prodotto */
 [data-isc-facet='taglia'],
 [data-isc-facet='numero'],
-[data-isc-facet='size'] {
+[data-isc-facet='size'],
+[data-isc-facet='tipo-di-prodotto'] {
   display: grid !important;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 6px;
@@ -5396,10 +5397,12 @@ input.mobile-facets__checkbox:checked { background: var(--isc-primary); border-c
 }
 [data-isc-facet='taglia'] > li,
 [data-isc-facet='numero'] > li,
-[data-isc-facet='size'] > li { margin: 0; padding: 0; }
+[data-isc-facet='size'] > li,
+[data-isc-facet='tipo-di-prodotto'] > li { margin: 0; padding: 0; }
 [data-isc-facet='taglia'] .facets__label,
 [data-isc-facet='numero'] .facets__label,
-[data-isc-facet='size'] .facets__label {
+[data-isc-facet='size'] .facets__label,
+[data-isc-facet='tipo-di-prodotto'] .facets__label {
   position: relative;
   display: flex !important;
   align-items: center;
@@ -5415,34 +5418,44 @@ input.mobile-facets__checkbox:checked { background: var(--isc-primary); border-c
 }
 [data-isc-facet='taglia'] .facets__label:hover,
 [data-isc-facet='numero'] .facets__label:hover,
-[data-isc-facet='size'] .facets__label:hover { border-color: var(--isc-primary); }
+[data-isc-facet='size'] .facets__label:hover,
+[data-isc-facet='tipo-di-prodotto'] .facets__label:hover { border-color: var(--isc-primary); }
 [data-isc-facet='taglia'] input,
 [data-isc-facet='numero'] input,
 [data-isc-facet='size'] input,
+[data-isc-facet='tipo-di-prodotto'] input,
 [data-isc-facet='taglia'] .icon-checkmark,
 [data-isc-facet='numero'] .icon-checkmark,
 [data-isc-facet='size'] .icon-checkmark,
+[data-isc-facet='tipo-di-prodotto'] .icon-checkmark,
 [data-isc-facet='taglia'] .svg-wrapper,
 [data-isc-facet='numero'] .svg-wrapper,
 [data-isc-facet='size'] .svg-wrapper,
+[data-isc-facet='tipo-di-prodotto'] .svg-wrapper,
 [data-isc-facet='taglia'] .mobile-facets__highlight,
 [data-isc-facet='numero'] .mobile-facets__highlight,
-[data-isc-facet='size'] .mobile-facets__highlight { position: absolute !important; opacity: 0 !important; width: 1px !important; height: 1px !important; }
+[data-isc-facet='size'] .mobile-facets__highlight,
+[data-isc-facet='tipo-di-prodotto'] .mobile-facets__highlight { position: absolute !important; opacity: 0 !important; width: 1px !important; height: 1px !important; }
 [data-isc-facet='taglia'] .facet-checkbox__text,
 [data-isc-facet='numero'] .facet-checkbox__text,
-[data-isc-facet='size'] .facet-checkbox__text { font-size: 0; }
+[data-isc-facet='size'] .facet-checkbox__text,
+[data-isc-facet='tipo-di-prodotto'] .facet-checkbox__text { font-size: 0; }
 [data-isc-facet='taglia'] .facet-checkbox__text-label,
 [data-isc-facet='numero'] .facet-checkbox__text-label,
-[data-isc-facet='size'] .facet-checkbox__text-label { font-size: 14px; font-weight: 600; }
+[data-isc-facet='size'] .facet-checkbox__text-label,
+[data-isc-facet='tipo-di-prodotto'] .facet-checkbox__text-label { font-size: 14px; font-weight: 600; }
 [data-isc-facet='taglia'] .facets__label.active,
 [data-isc-facet='numero'] .facets__label.active,
 [data-isc-facet='size'] .facets__label.active,
+[data-isc-facet='tipo-di-prodotto'] .facets__label.active,
 [data-isc-facet='taglia'] .facets__label:has(input:checked),
 [data-isc-facet='numero'] .facets__label:has(input:checked),
-[data-isc-facet='size'] .facets__label:has(input:checked) { background: var(--isc-primary); border-color: var(--isc-primary); }
+[data-isc-facet='size'] .facets__label:has(input:checked),
+[data-isc-facet='tipo-di-prodotto'] .facets__label:has(input:checked) { background: var(--isc-primary); border-color: var(--isc-primary); }
 [data-isc-facet='taglia'] .facets__label:has(input:checked) .facet-checkbox__text-label,
 [data-isc-facet='numero'] .facets__label:has(input:checked) .facet-checkbox__text-label,
 [data-isc-facet='size'] .facets__label:has(input:checked) .facet-checkbox__text-label,
+[data-isc-facet='tipo-di-prodotto'] .facets__label:has(input:checked) .facet-checkbox__text-label,
 [data-isc-facet='taglia'] .facets__label.active .facet-checkbox__text-label { color: #fff; }
 [data-isc-facet='taglia'] .facets__label.disabled { opacity: 0.35; }
 
@@ -5604,11 +5617,13 @@ input.mobile-facets__checkbox:checked { background: var(--isc-primary); border-c
 isc-price-slider { display: block; }
 [data-isc-facet='taglia'] .facet-checkbox__text,
 [data-isc-facet='numero'] .facet-checkbox__text,
-[data-isc-facet='size'] .facet-checkbox__text { width: 100%; margin: 0 !important; justify-content: center; }
+[data-isc-facet='size'] .facet-checkbox__text,
+[data-isc-facet='tipo-di-prodotto'] .facet-checkbox__text { width: 100%; margin: 0 !important; justify-content: center; }
 .mobile-facets__label { transition: none; }
 [data-isc-facet='taglia'] .facet-checkbox__text,
 [data-isc-facet='numero'] .facet-checkbox__text,
-[data-isc-facet='size'] .facet-checkbox__text { gap: 0; }
+[data-isc-facet='size'] .facet-checkbox__text,
+[data-isc-facet='tipo-di-prodotto'] .facet-checkbox__text { gap: 0; }
 /* casella di spunta visibile anche su mobile (accanto al pallino colore) */
 .mobile-facets__label input.mobile-facets__checkbox { opacity: 1 !important; width: 18px !important; height: 18px !important; }
 .mobile-facets__label .icon-checkmark { width: 12px; height: 12px; left: 3px !important; }
@@ -5618,7 +5633,8 @@ isc-price-slider { display: block; }
 [data-isc-facet] .mobile-facets__label input.mobile-facets__checkbox { display: block; }
 [data-isc-facet='taglia'] .mobile-facets__label input.mobile-facets__checkbox,
 [data-isc-facet='numero'] .mobile-facets__label input.mobile-facets__checkbox,
-[data-isc-facet='size'] .mobile-facets__label input.mobile-facets__checkbox { opacity: 0 !important; width: 1px !important; height: 1px !important; }
+[data-isc-facet='size'] .mobile-facets__label input.mobile-facets__checkbox,
+[data-isc-facet='tipo-di-prodotto'] .mobile-facets__label input.mobile-facets__checkbox { opacity: 0 !important; width: 1px !important; height: 1px !important; }
 .mobile-facets__label input.mobile-facets__checkbox,
 .facets__label.facet-checkbox input[type='checkbox'] { border: 1px solid var(--isc-line-2) !important; background: #fff; }
 .mobile-facets__label input.mobile-facets__checkbox:checked,
@@ -5633,10 +5649,12 @@ isc-price-slider { display: block; }
 .facets__label.facet-checkbox > .svg-wrapper { position: absolute; left: 4px !important; top: 50% !important; transform: translateY(-50%); margin: 0 !important; z-index: 2; width: 10px; height: 8px; background: none !important; color: #fff; }
 [data-isc-facet='taglia'] .facets__label.facet-checkbox,
 [data-isc-facet='numero'] .facets__label.facet-checkbox,
-[data-isc-facet='size'] .facets__label.facet-checkbox { padding: 0 !important; }
+[data-isc-facet='size'] .facets__label.facet-checkbox,
+[data-isc-facet='tipo-di-prodotto'] .facets__label.facet-checkbox { padding: 0 !important; }
 [data-isc-facet='taglia'] .facets__label.facet-checkbox input,
 [data-isc-facet='numero'] .facets__label.facet-checkbox input,
-[data-isc-facet='size'] .facets__label.facet-checkbox input { opacity: 0 !important; width: 1px !important; height: 1px !important; }
+[data-isc-facet='size'] .facets__label.facet-checkbox input,
+[data-isc-facet='tipo-di-prodotto'] .facets__label.facet-checkbox input { opacity: 0 !important; width: 1px !important; height: 1px !important; }
 @media screen and (min-width: 750px) {
   .facets__display [data-isc-facet='taglia'],
   .facets__display [data-isc-facet='numero'],
@@ -6490,3 +6508,31 @@ h1 strong, h2 strong, h3 strong,
 .mobile-facets__item.isc-fgroup-hidden,
 li.isc-fgroup-hidden { display: none !important; }
 .facet-checkbox__text-label.isc-fsize-up { text-transform: uppercase !important; }
+
+/* Filtri a pulsanti (Taglia e Tipo di prodotto): larghezza in base al testo, testo su una riga,
+   margini interni comodi */
+[data-isc-facet='taglia'],
+[data-isc-facet='tipo-di-prodotto'] {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+[data-isc-facet='taglia'] > li,
+[data-isc-facet='tipo-di-prodotto'] > li { flex: 0 0 auto; }
+[data-isc-facet='taglia'] .facets__label,
+[data-isc-facet='tipo-di-prodotto'] .facets__label {
+  min-width: 58px;
+  min-height: 44px;
+  padding: 0 16px !important;
+  white-space: nowrap;
+}
+[data-isc-facet='taglia'] .facet-checkbox__text-label,
+[data-isc-facet='tipo-di-prodotto'] .facet-checkbox__text-label {
+  white-space: nowrap;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+[data-isc-facet='tipo-di-prodotto'] .facet-checkbox__text-label { font-weight: 500; }
+[data-isc-facet='tipo-di-prodotto'] .facets__label.active .facet-checkbox__text-label,
+[data-isc-facet='tipo-di-prodotto'] .facets__label:has(input:checked) .facet-checkbox__text-label { color: #fff; }
+[data-isc-facet='tipo-di-prodotto'] .facets__label.disabled { opacity: 0.35; }
