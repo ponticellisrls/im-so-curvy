@@ -1,0 +1,52 @@
+{%- comment -%}
+  I'M So Curvy: titolo di una voce di menu, con evidenza opzionale
+  (colore, emoji, badge) impostata in Header > Voci del menu in evidenza.
+  Accepts:
+  - title: {String} titolo della voce
+{%- endcomment -%}
+{%- liquid
+  assign hs = section.settings
+  assign match = 0
+  assign t = title | strip | downcase
+  for i in (1..2)
+    assign key = 'isc_hl_' | append: i | append: '_title'
+    assign wanted = hs[key] | strip | downcase
+    if wanted != blank and wanted == t
+      assign match = i
+      break
+    endif
+  endfor
+-%}
+{%- if match == 0 -%}
+  {{- title | escape -}}
+{%- else -%}
+  {%- liquid
+    assign p = 'isc_hl_' | append: match | append: '_'
+    assign k_color = p | append: 'color'
+    assign k_emoji = p | append: 'emoji'
+    assign k_badge = p | append: 'badge'
+    assign k_style = p | append: 'badge_style'
+    assign k_badge_color = p | append: 'badge_color'
+    assign color = hs[k_color]
+    assign emoji = hs[k_emoji]
+    assign badge = hs[k_badge]
+    assign badge_style = hs[k_style]
+    assign badge_color = hs[k_badge_color]
+    assign style = ''
+    if color != blank and color.alpha != 0.0
+      assign style = '--isc-hl-color: ' | append: color | append: ';'
+    endif
+    if badge_color != blank and badge_color.alpha != 0.0
+      assign style = style | append: '--isc-hl-badge: ' | append: badge_color | append: ';'
+    endif
+  -%}
+  <span class="isc-hl{% if style != '' and color != blank and color.alpha != 0.0 %} isc-hl--colored{% endif %}" style="{{ style }}">
+    {%- if emoji != blank -%}<span class="isc-hl__emoji" aria-hidden="true">{{ emoji | escape }}</span>{%- endif -%}
+    <span class="isc-hl__text">{{ title | escape }}</span>
+    {%- if badge_style == 'dot' -%}
+      <span class="isc-hl__dot" aria-hidden="true"></span>
+    {%- elsif badge != blank -%}
+      <span class="isc-hl__badge isc-hl__badge--{{ badge_style }}">{{ badge | escape }}</span>
+    {%- endif -%}
+  </span>
+{%- endif -%}

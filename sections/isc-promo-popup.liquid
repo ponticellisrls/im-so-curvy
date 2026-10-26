@@ -1,0 +1,143 @@
+{%- liquid
+  assign s = section.settings
+  comment
+    La chiave cambia con l'immagine: una nuova promo si mostra anche a chi aveva chiuso la precedente.
+  endcomment
+  assign key = 'isc-promo-' | append: section.id
+  if s.image != blank
+    assign key = key | append: '-' | append: s.image.id
+  endif
+  assign link = s.link
+-%}
+
+<isc-promo-popup
+  class="isc-pp isc-pp--{{ s.size }}"
+  {% render 'isc-popup-data', key: key %}
+>
+  <dialog class="isc-pp__dialog" aria-label="{{ s.label | default: 'Promozione' | escape }}">
+    <button type="button" class="isc-pp__close" data-isc-popup-close aria-label="Chiudi">
+      <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5.5 5.5 9 9m0-9-9 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+
+    <div class="isc-pp__media">
+      {%- if link != blank -%}<a href="{{ link }}" data-isc-popup-link class="isc-pp__media-link">{%- endif -%}
+      {%- if s.image != blank -%}
+        <picture>
+          {%- if s.image_mobile != blank -%}
+            <source media="(max-width: 749px)" srcset="{{ s.image_mobile | image_url: width: 750 }} 750w, {{ s.image_mobile | image_url: width: 1100 }} 1100w" sizes="92vw">
+          {%- endif -%}
+          {%- assign pp_alt = s.image.alt | default: s.label -%}
+          {{ s.image | image_url: width: 1200 | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 560px, 92vw', widths: '500, 750, 1000, 1200', alt: pp_alt }}
+        </picture>
+      {%- else -%}
+        <span class="isc-pp__placeholder">
+          <strong>Carica un'immagine 1:1</strong>
+          <span>Consigliata 1080 × 1080 px</span>
+        </span>
+      {%- endif -%}
+      {%- if link != blank -%}</a>{%- endif -%}
+    </div>
+
+    {%- if s.button_label != blank or s.caption != blank -%}
+      <div class="isc-pp__footer isc-pp__footer--{{ s.button_position }}">
+        {%- if s.caption != blank -%}
+          <p class="isc-pp__caption">{{ s.caption | escape }}</p>
+        {%- endif -%}
+        {%- if s.button_label != blank -%}
+          <a href="{{ link | default: routes.collections_url }}" class="isc-pp__btn isc-pp__btn--{{ s.button_style }}" data-isc-popup-link>
+            <span>{{ s.button_label | escape }}</span>
+            <svg viewBox="0 0 20 10" fill="none" aria-hidden="true"><path d="M.5 5h17M13.2 1.3c.7 1.9 2.3 3.2 4.3 3.7-2 .5-3.6 1.8-4.3 3.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </dialog>
+</isc-promo-popup>
+
+{% schema %}
+{
+  "name": "ISC: popup promo",
+  "tag": "div",
+  "class": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Popup con immagine quadrata per le promozioni. Si attiva/disattiva con l'occhio accanto alla sezione. Si apre anche dai link a #promo-popup."
+    },
+    { "type": "header", "content": "Contenuto" },
+    { "type": "image_picker", "id": "image", "label": "Immagine 1:1", "info": "Consigliata 1080 × 1080 px." },
+    { "type": "image_picker", "id": "image_mobile", "label": "Immagine mobile (facoltativa)", "info": "Anche verticale 4:5 (1080 × 1350)." },
+    { "type": "url", "id": "link", "label": "Link", "info": "Rende cliccabile l'immagine." },
+    { "type": "text", "id": "label", "label": "Nome della promo (per l'accessibilità)", "default": "Promozione" },
+    { "type": "text", "id": "caption", "label": "Testo sotto l'immagine", "info": "Facoltativo." },
+    { "type": "text", "id": "button_label", "label": "Testo pulsante", "info": "Facoltativo." },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Stile pulsante",
+      "options": [
+        { "value": "dark", "label": "Nero" },
+        { "value": "gold", "label": "Rosa metallizzato" },
+        { "value": "light", "label": "Bianco" }
+      ],
+      "default": "dark"
+    },
+    {
+      "type": "select",
+      "id": "button_position",
+      "label": "Posizione testo e pulsante",
+      "options": [
+        { "value": "below", "label": "Sotto l'immagine" },
+        { "value": "over", "label": "Sopra l'immagine, in basso" }
+      ],
+      "default": "below"
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Dimensione",
+      "options": [
+        { "value": "small", "label": "Piccolo" },
+        { "value": "medium", "label": "Medio" },
+        { "value": "large", "label": "Grande" }
+      ],
+      "default": "medium"
+    },
+    { "type": "header", "content": "Apertura automatica" },
+    { "type": "checkbox", "id": "auto_open", "label": "Apri da solo", "default": true },
+    {
+      "type": "select",
+      "id": "trigger",
+      "label": "Quando aprirlo",
+      "options": [
+        { "value": "delay", "label": "Dopo qualche secondo" },
+        { "value": "scroll", "label": "Dopo aver scorso la pagina" },
+        { "value": "exit", "label": "Quando sta per uscire (desktop)" }
+      ],
+      "default": "delay"
+    },
+    { "type": "range", "id": "delay", "label": "Dopo quanti secondi", "min": 0, "max": 90, "step": 1, "unit": "s", "default": 5 },
+    { "type": "range", "id": "scroll_percent", "label": "Dopo quanta pagina scorsa", "min": 10, "max": 90, "step": 5, "unit": "%", "default": 30 },
+    { "type": "range", "id": "days_hidden", "label": "Se lo chiude, riproporlo dopo", "min": 1, "max": 90, "step": 1, "unit": "gg", "default": 3 },
+    {
+      "type": "select",
+      "id": "show_on",
+      "label": "Pagine",
+      "options": [
+        { "value": "all", "label": "Tutte" },
+        { "value": "home", "label": "Solo home" },
+        { "value": "products", "label": "Solo prodotti e collezioni" },
+        { "value": "no_cart", "label": "Tutte tranne il carrello" }
+      ],
+      "default": "home"
+    },
+    { "type": "checkbox", "id": "show_desktop", "label": "Mostra su desktop", "default": true },
+    { "type": "checkbox", "id": "show_mobile", "label": "Mostra su mobile", "default": true },
+    { "type": "checkbox", "id": "hide_subscribed", "label": "Non mostrarlo a chi è già iscritto alla newsletter", "default": false },
+    { "type": "header", "content": "Durata della promo" },
+    { "type": "text", "id": "start_date", "label": "Mostra da", "info": "Facoltativo. Formato AAAA-MM-GG HH:MM" },
+    { "type": "text", "id": "end_date", "label": "Mostra fino a", "info": "Facoltativo. Formato AAAA-MM-GG HH:MM. Dopo questa data il popup non compare più." }
+  ],
+  "presets": [{ "name": "ISC: popup promo" }]
+}
+{% endschema %}

@@ -1,0 +1,284 @@
+{% render 'isc-section-spacing' %}
+{%- liquid
+  assign s = section.settings
+  assign p = s.product
+-%}
+
+<isc-shop-look
+  class="isc-look isc-look--{{ s.style }} isc-look--img-{{ s.image_position }}{% if s.parallax %} isc-look--parallax{% endif %}"
+  style="--look-speed: {{ s.marquee_speed }}s;"
+>
+  {%- if s.marquee_text != blank -%}
+    <div class="isc-look__marquee" aria-hidden="true">
+      {%- for t in (1..2) -%}
+        <div class="isc-look__marquee-track">
+          {%- for i in (1..6) -%}<span>{{ s.marquee_text | escape }}</span><span class="isc-look__marquee-star">✦</span>{%- endfor -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+
+  <div class="isc-container isc-look__grid">
+    <div class="isc-look__visual">
+      <div class="isc-look__frame">
+        <div class="isc-look__img" data-isc-parallax>
+          {%- if s.image != blank -%}
+            <picture>
+              {%- if s.image_mobile != blank -%}
+                <source media="(max-width: 749px)" srcset="{{ s.image_mobile | image_url: width: 750 }} 750w, {{ s.image_mobile | image_url: width: 1100 }} 1100w" sizes="100vw">
+              {%- endif -%}
+              {%- assign look_alt = s.image.alt | default: s.heading | strip_html -%}
+              {{ s.image | image_url: width: 1600 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 50vw, 100vw', widths: '600, 900, 1200, 1600', alt: look_alt }}
+            </picture>
+          {%- else -%}
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          {%- endif -%}
+        </div>
+
+        {%- for block in section.blocks -%}
+          {%- assign hp = block.settings.product | default: p -%}
+          <div
+            class="isc-hotspot"
+            style="--x: {{ block.settings.x }}%; --y: {{ block.settings.y }}%;"
+            {{ block.shopify_attributes }}
+          >
+            <button type="button" class="isc-hotspot__dot" aria-expanded="false" aria-label="Vedi il prodotto">
+              <span></span>
+            </button>
+            <div class="isc-hotspot__card{% if block.settings.x > 55 %} isc-hotspot__card--left{% endif %}" hidden>
+              {%- if hp != blank -%}
+                <a href="{{ hp.url }}" class="isc-hotspot__media">
+                  {%- if hp.featured_media -%}
+                    {{ hp.featured_media | image_url: width: 200 | image_tag: loading: 'lazy', widths: '100, 200', sizes: '80px', alt: hp.title }}
+                  {%- endif -%}
+                </a>
+                <div class="isc-hotspot__info">
+                  <a href="{{ hp.url }}" class="isc-hotspot__title">{% render 'isc-title-case', text: hp.title %}</a>
+                  <span class="isc-hotspot__price">
+                    {{ hp.price | money }}
+                    {%- if hp.compare_at_price > hp.price %} <s>{{ hp.compare_at_price | money }}</s>{% endif -%}
+                  </span>
+                  <a href="{{ hp.url }}" class="isc-hotspot__link">Vedi →</a>
+                </div>
+              {%- else -%}
+                <div class="isc-hotspot__info">
+                  <span class="isc-hotspot__title">{{ block.settings.label | default: 'Collega un prodotto' | escape }}</span>
+                  <span class="isc-hotspot__price">Scegli il prodotto nella sezione</span>
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div class="isc-look__content">
+      {%- if s.eyebrow != blank -%}
+        <p class="isc-look__eyebrow">{{ s.eyebrow | escape }}</p>
+      {%- endif -%}
+      <h2 class="isc-look__heading">{{ s.heading }}</h2>
+      {%- if s.text != blank -%}
+        <p class="isc-look__text">{{ s.text | escape }}</p>
+      {%- endif -%}
+
+      <div class="isc-look__product">
+        {%- if p != blank -%}
+          <a href="{{ p.url }}" class="isc-look__product-media">
+            {%- if p.featured_media -%}
+              {{ p.featured_media | image_url: width: 400 | image_tag: loading: 'lazy', widths: '200, 400', sizes: '120px', alt: p.title }}
+            {%- endif -%}
+          </a>
+          <div class="isc-look__product-info">
+            <span class="isc-look__product-label">{{ s.product_label | escape }}</span>
+            <a href="{{ p.url }}" class="isc-look__product-title">{% render 'isc-title-case', text: p.title %}</a>
+            <span class="isc-look__product-price">
+              <span{% if p.compare_at_price > p.price %} class="is-sale"{% endif %}>{{ p.price | money }}</span>
+              {%- if p.compare_at_price > p.price -%}<s>{{ p.compare_at_price | money }}</s>{%- endif -%}
+            </span>
+          </div>
+        {%- else -%}
+          <div class="isc-look__product-media isc-look__product-media--empty"></div>
+          <div class="isc-look__product-info">
+            <span class="isc-look__product-label">{{ s.product_label | escape }}</span>
+            <span class="isc-look__product-title">Collega il capo nelle impostazioni della sezione</span>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="isc-look__actions">
+        {%- if s.button_label != blank -%}
+          <a href="{{ p.url | default: s.secondary_link | default: routes.all_products_collection_url }}" class="isc-look__btn">
+            <span>{{ s.button_label | escape }}</span>
+            <svg viewBox="0 0 20 10" fill="none" aria-hidden="true"><path d="M.5 5h17M13.2 1.3c.7 1.9 2.3 3.2 4.3 3.7-2 .5-3.6 1.8-4.3 3.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        {%- endif -%}
+        {%- if s.secondary_label != blank -%}
+          <a href="{{ s.secondary_link | default: routes.collections_url }}" class="isc-look__link">{{ s.secondary_label | escape }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</isc-shop-look>
+
+<script>
+  if (!customElements.get('isc-shop-look')) {
+    customElements.define(
+      'isc-shop-look',
+      class extends HTMLElement {
+        connectedCallback() {
+          /* comparsa del testo */
+          const show = () => this.classList.add('is-in');
+          setTimeout(show, 2000);
+          if ('IntersectionObserver' in window) {
+            const seen = new IntersectionObserver((en) => { if (en.some((e) => e.isIntersecting)) { show(); seen.disconnect(); } }, { threshold: 0.2 });
+            seen.observe(this);
+          } else show();
+
+          /* punti prodotto */
+          this.spots = [...this.querySelectorAll('.isc-hotspot')];
+          this.spots.forEach((spot) => {
+            spot.querySelector('.isc-hotspot__dot').addEventListener('click', (e) => {
+              e.stopPropagation();
+              const open = !spot.classList.contains('is-open');
+              this.closeAll();
+              if (open) this.toggle(spot, true);
+            });
+          });
+          this.onDoc = (e) => { if (!e.target.closest('.isc-hotspot')) this.closeAll(); };
+          document.addEventListener('click', this.onDoc);
+          document.addEventListener('keydown', (e) => { if (e.key === 'Escape') this.closeAll(); });
+          this.onScrollClose = () => { if (this.spots.some((s) => s.classList.contains('is-open'))) this.closeAll(); };
+          window.addEventListener('scroll', this.onScrollClose, { passive: true });
+          /* nell'editor: selezionando un punto si apre la sua scheda */
+          document.addEventListener('shopify:block:select', (e) => {
+            const spot = this.spots.find((el) => el.contains(e.target) || el === e.target);
+            if (spot) { this.closeAll(); this.toggle(spot, true); }
+          });
+
+          /* parallasse leggera sulla foto */
+          const img = this.querySelector('[data-isc-parallax]');
+          const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (img && this.classList.contains('isc-look--parallax') && !reduce) {
+            const frame = this.querySelector('.isc-look__frame');
+            let raf;
+            const update = () => {
+              const r = frame.getBoundingClientRect();
+              const vh = window.innerHeight;
+              const p = (r.top + r.height / 2 - vh / 2) / (vh / 2 + r.height / 2);
+              if (img.firstElementChild) img.firstElementChild.style.transform = `translate3d(0, ${Math.max(-1, Math.min(1, p)) * -6}%, 0) scale(1.14)`;
+            };
+            this.onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(update); };
+            this.io = new IntersectionObserver((entries) => {
+              entries.forEach((en) => {
+                if (en.isIntersecting) window.addEventListener('scroll', this.onScroll, { passive: true });
+                else window.removeEventListener('scroll', this.onScroll);
+              });
+            });
+            this.io.observe(this);
+            update();
+          }
+        }
+        disconnectedCallback() {
+          document.removeEventListener('click', this.onDoc);
+          window.removeEventListener('scroll', this.onScrollClose);
+          if (this.onScroll) window.removeEventListener('scroll', this.onScroll);
+          this.io && this.io.disconnect();
+        }
+        toggle(spot, open) {
+          const card = spot.querySelector('.isc-hotspot__card');
+          spot.classList.toggle('is-open', open);
+          card.hidden = !open;
+          spot.querySelector('.isc-hotspot__dot').setAttribute('aria-expanded', String(open));
+          if (open && window.matchMedia('(max-width: 749px)').matches) {
+            /* sopra il punto; se non c'è spazio, sotto. Sempre dentro lo schermo */
+            spot.classList.remove('isc-hotspot--below');
+            card.style.setProperty('--shift', '0px');
+            let r = card.getBoundingClientRect();
+            if (r.top < 70) { spot.classList.add('isc-hotspot--below'); r = card.getBoundingClientRect(); }
+            const pad = 10;
+            let shift = 0;
+            if (r.left < pad) shift = pad - r.left;
+            else if (r.right > window.innerWidth - pad) shift = window.innerWidth - pad - r.right;
+            card.style.setProperty('--shift', shift + 'px');
+          }
+        }
+        closeAll() { this.spots.forEach((s) => this.toggle(s, false)); }
+      }
+    );
+  }
+</script>
+
+{% schema %}
+{
+  "name": "ISC: shop the look",
+  "tag": "section",
+  "class": "section",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "header", "content": "Foto" },
+    { "type": "image_picker", "id": "image", "label": "Foto", "info": "Verticale 4:5 consigliata (es. 1200 × 1500)." },
+    { "type": "image_picker", "id": "image_mobile", "label": "Foto mobile (facoltativa)" },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Posizione foto (desktop)",
+      "options": [
+        { "value": "left", "label": "A sinistra" },
+        { "value": "right", "label": "A destra" }
+      ],
+      "default": "left"
+    },
+    { "type": "checkbox", "id": "parallax", "label": "Effetto profondità allo scorrimento", "default": true },
+    { "type": "header", "content": "Prodotto" },
+    { "type": "product", "id": "product", "label": "Prodotto del look", "info": "Usato nella card e nei punti senza un prodotto proprio." },
+    { "type": "text", "id": "product_label", "label": "Etichetta card prodotto", "default": "Indossa" },
+    { "type": "header", "content": "Testi" },
+    { "type": "text", "id": "eyebrow", "label": "Etichetta", "default": "Il look della stagione" },
+    { "type": "inline_richtext", "id": "heading", "label": "Titolo", "default": "Morbido sulle curve. <strong>Deciso</strong> nello stile." },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Testo",
+      "default": "Giacca con cintura in vita e pantalone palazzo: il tailleur che valorizza le curve dalla mattina alla sera."
+    },
+    { "type": "text", "id": "button_label", "label": "Pulsante (porta al prodotto)", "default": "Shop the look" },
+    { "type": "text", "id": "secondary_label", "label": "Link secondario", "default": "Scopri tutti i tailleur" },
+    { "type": "url", "id": "secondary_link", "label": "Link secondario: destinazione" },
+    { "type": "header", "content": "Stile" },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Sfondo",
+      "options": [
+        { "value": "dark", "label": "Bordeaux" },
+        { "value": "light", "label": "Cipria" },
+        { "value": "white", "label": "Bianco" }
+      ],
+      "default": "light"
+    },
+    { "type": "text", "id": "marquee_text", "label": "Scritta gigante che scorre", "info": "Vuota per nasconderla.", "default": "Love your curves" },
+    { "type": "range", "id": "marquee_speed", "label": "Velocità scritta", "min": 20, "max": 120, "step": 5, "unit": "s", "default": 60 },
+    { "type": "header", "content": "Spazi" },
+    { "type": "range", "id": "padding_top", "label": "Spazio sopra", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "padding_bottom", "label": "Spazio sotto", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 }
+  ],
+  "blocks": [
+    {
+      "type": "hotspot",
+      "name": "Punto prodotto",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Prodotto", "info": "Se vuoto usa il prodotto della sezione." },
+        { "type": "text", "id": "label", "label": "Etichetta (se manca il prodotto)" },
+        { "type": "range", "id": "x", "label": "Posizione orizzontale", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 38 },
+        { "type": "range", "id": "y", "label": "Posizione verticale", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 58 }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ISC: shop the look",
+      "blocks": [{ "type": "hotspot", "settings": { "x": 38, "y": 58 } }]
+    }
+  ]
+}
+{% endschema %}

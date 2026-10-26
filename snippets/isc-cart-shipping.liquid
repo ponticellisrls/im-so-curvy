@@ -1,0 +1,96 @@
+{%- comment -%} I'M So Curvy: spedizione gratuita + consegna stimata (carrello), versione compatta {%- endcomment -%}
+{%- liquid
+  assign threshold = settings.isc_free_shipping | times: 100
+  assign total = cart.total_price
+  assign remaining = threshold | minus: total
+  assign pct = 0
+  if threshold > 0
+    assign pct = total | times: 100 | divided_by: threshold | round
+    if pct > 100
+      assign pct = 100
+    endif
+  endif
+-%}
+{%- capture eta -%}
+  {%- if settings.isc_cart_eta -%}
+    {%- liquid
+      assign day = 86400
+      assign t = 'now' | date: '%s' | plus: 0
+      assign hour = 'now' | date: '%H' | plus: 0
+      assign dow = 'now' | date: '%u' | plus: 0
+      if hour >= settings.isc_cutoff or dow > 5
+        for i in (1..4)
+          assign t = t | plus: day
+          assign dow = t | date: '%u' | plus: 0
+          if dow <= 5
+            break
+          endif
+        endfor
+      endif
+      assign d1 = t
+      assign n = 0
+      for i in (1..20)
+        if n >= settings.isc_eta_min
+          break
+        endif
+        assign d1 = d1 | plus: day
+        assign w = d1 | date: '%u' | plus: 0
+        if w <= 5
+          assign n = n | plus: 1
+        endif
+      endfor
+      assign d2 = t
+      assign n = 0
+      for i in (1..20)
+        if n >= settings.isc_eta_max
+          break
+        endif
+        assign d2 = d2 | plus: day
+        assign w = d2 | date: '%u' | plus: 0
+        if w <= 5
+          assign n = n | plus: 1
+        endif
+      endfor
+      assign days = 'dom,lun,mar,mer,gio,ven,sab' | split: ','
+      assign months = 'gen,feb,mar,apr,mag,giu,lug,ago,set,ott,nov,dic' | split: ','
+      assign w1 = d1 | date: '%w' | plus: 0
+      assign w2 = d2 | date: '%w' | plus: 0
+      assign m1 = d1 | date: '%m' | plus: 0 | minus: 1
+      assign m2 = d2 | date: '%m' | plus: 0 | minus: 1
+    -%}
+    {{ settings.isc_eta_label | escape }}:
+    <strong>
+      {{- days[w1] }} {{ d1 | date: '%-d' }}{% if m1 != m2 or d2 == d1 %} {{ months[m1] }}{% endif -%}
+      {%- if d2 != d1 %} – {{ days[w2] }} {{ d2 | date: '%-d' }} {{ months[m2] }}{% endif -%}
+    </strong>
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- if threshold > 0 or eta != blank -%}
+  <div class="isc-cship{% if threshold > 0 and remaining <= 0 %} is-done{% endif %}" style="--pct: {{ pct }}%;">
+    <span class="isc-cship__jewel" aria-hidden="true">
+      {%- if threshold > 0 and remaining <= 0 -%}{% render 'isc-jewel-icon', name: 'gift' %}{%- else -%}{% render 'isc-jewel-icon', name: 'truck' %}{%- endif -%}
+    </span>
+    <div class="isc-cship__main">
+      {%- if threshold > 0 -%}
+        <div class="isc-cship__top">
+          <p class="isc-cship__msg">
+            {%- if remaining > 0 -%}
+              {%- assign amount = remaining | money -%}
+              {%- assign amount_html = '<strong>' | append: amount | append: '</strong>' -%}
+              {{ settings.isc_ship_msg | escape | replace: '[importo]', amount_html }}
+            {%- else -%}
+              <strong>{{ settings.isc_ship_done | escape }}</strong>
+            {%- endif -%}
+          </p>
+        </div>
+        <div class="isc-cship__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ pct }}">
+          <span class="isc-cship__fill"></span>
+        </div>
+      {%- endif -%}
+      {%- if eta != blank -%}
+        <p class="isc-cship__eta"><span class="isc-cship__dot" aria-hidden="true">✦</span>{{ eta }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}

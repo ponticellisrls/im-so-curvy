@@ -1,0 +1,121 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.header.name",
+  "type": "header",
+  "sections": {
+    "announcement": {
+      "type": "isc-announcement",
+      "blocks": {
+        "msg-1": {
+          "type": "item",
+          "settings": {
+            "text": "Spedizione in 48/72h",
+            "link": "",
+            "color": ""
+          }
+        },
+        "msg-2": {
+          "type": "item",
+          "settings": {
+            "text": "Pagamento alla consegna",
+            "link": "",
+            "color": ""
+          }
+        },
+        "msg-3": {
+          "type": "item",
+          "settings": {
+            "text": "Nuovi arrivi ogni settimana",
+            "link": "shopify://collections/nuovi-arrivi",
+            "color": ""
+          }
+        },
+        "msg-4": {
+          "type": "item",
+          "settings": {
+            "text": "Reso facile entro 14 giorni",
+            "link": "",
+            "color": ""
+          }
+        }
+      },
+      "block_order": [
+        "msg-1",
+        "msg-2",
+        "msg-3",
+        "msg-4"
+      ],
+      "settings": {
+        "mode_desktop": "marquee",
+        "mode_mobile": "marquee",
+        "speed": 40,
+        "direction": "left",
+        "slide_interval": 4,
+        "pause_on_hover": true,
+        "font_size": 13,
+        "font_size_mobile": 12,
+        "font_weight": "600",
+        "font": "body",
+        "italic": false,
+        "uppercase": true,
+        "letter_spacing": 10,
+        "color_scheme": "scheme-3",
+        "text_color": "#ffffff",
+        "background_color": "#660033",
+        "gradient": false,
+        "separator": "✦",
+        "separator_color": "",
+        "gap": 32,
+        "padding": 10,
+        "border_bottom": false,
+        "button_label": "",
+        "button_link": "",
+        "button_position": "right",
+        "button_style": "solid",
+        "button_color": ""
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "logo_position": "middle-left",
+        "mobile_logo_position": "center",
+        "menu": "main-menu",
+        "menu_type_desktop": "dropdown",
+        "sticky_header_type": "always",
+        "show_line_separator": true,
+        "color_scheme": "scheme-1",
+        "menu_color_scheme": "scheme-1",
+        "enable_country_selector": false,
+        "enable_language_selector": false,
+        "margin_bottom": 0,
+        "padding_top": 12,
+        "padding_bottom": 12,
+        "isc_hl_1_title": "Nuovi arrivi",
+        "isc_hl_1_color": "",
+        "isc_hl_1_emoji": "",
+        "isc_hl_1_badge": "New",
+        "isc_hl_1_badge_style": "sup",
+        "isc_hl_1_badge_color": "",
+        "isc_hl_2_title": "Saldi",
+        "isc_hl_2_color": "#b0123f",
+        "isc_hl_2_emoji": "",
+        "isc_hl_2_badge": "",
+        "isc_hl_2_badge_style": "solid",
+        "isc_hl_2_badge_color": ""
+      }
+    }
+  },
+  "order": [
+    "announcement",
+    "header"
+  ]
+}

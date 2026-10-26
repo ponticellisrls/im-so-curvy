@@ -1,0 +1,19 @@
+{%- comment -%}
+  I'M So Curvy: titoli prodotto con la prima lettera di ogni parola maiuscola
+  ("TAILLEUR EASY BORDEAUX" -> "Tailleur Easy Bordeaux").
+  Accepts:
+  - text: {String}
+{%- endcomment -%}
+{%- liquid
+  assign words = text | strip | downcase | split: ' '
+  assign out = ''
+  for w in words
+    assign cw = w | capitalize
+    if out == ''
+      assign out = cw
+    else
+      assign out = out | append: ' ' | append: cw
+    endif
+  endfor
+  echo out | escape
+-%}

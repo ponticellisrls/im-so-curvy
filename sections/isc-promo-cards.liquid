@@ -1,0 +1,549 @@
+{%- liquid
+  assign s = section.settings
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .isc-promos {
+    --promo-pad-top: {{ s.padding_top | times: 0.75 | round }}px;
+    --promo-pad-bottom: {{ s.padding_bottom | times: 0.75 | round }}px;
+    --promo-cols: {{ s.columns }};
+    --promo-ratio: {{ s.ratio }};
+    --promo-shade: {{ s.overlay | divided_by: 100.0 }};
+  }
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .isc-promos {
+      --promo-pad-top: {{ s.padding_top }}px;
+      --promo-pad-bottom: {{ s.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="isc-promos isc-promos--m-{{ s.mobile_layout }}{% unless s.mobile_text %} isc-promos--m-notext{% endunless %} color-{{ s.color_scheme }}">
+  <div class="isc-container">
+    {%- if s.heading != blank -%}
+      <div class="isc-section__head">
+        <h2 class="isc-h2 isc-pc__heading--accent">{{ s.heading | escape }}</h2>
+      </div>
+    {%- endif -%}
+
+    <ul class="isc-promos__grid list-unstyled" role="list">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign b = block.settings
+          assign link = b.link | default: routes.collections_url
+
+          comment
+            Foto: quella scelta, altrimenti un prodotto della collezione collegata, altrimenti la demo.
+          endcomment
+          assign photo = b.image
+          if photo == blank and b.collection != blank
+            assign idx = b.product_index | minus: 1
+            for p in b.collection.products offset: idx limit: 1
+              assign photo = p.featured_media.preview_image
+            endfor
+          endif
+
+          assign tone = 'dark'
+          case b.palette
+            when 'silver'
+              assign tone = 'light'
+            when 'gold'
+              assign tone = 'light'
+            when 'white'
+              assign tone = 'light'
+            when 'sand'
+              assign tone = 'light'
+          endcase
+          assign g1 = b.color_1
+          assign g2 = b.color_2
+          if b.palette == 'custom' and b.custom_text == 'dark'
+            assign tone = 'light'
+          endif
+        -%}
+        <li
+          class="isc-promo isc-promo--{{ b.style }} isc-promo--pal-{{ b.palette }} isc-promo--tone-{{ tone }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+          style="--g1: {{ g1 }}; --g2: {{ g2 }}; --promo-focal: {{ b.image_position }};"
+          {{ block.shopify_attributes }}
+          {% if settings.animations_reveal_on_scroll %}
+            data-cascade
+          {% endif %}
+        >
+          <a href="{{ link }}" class="isc-promo__overlay-link" aria-label="{{ b.heading | strip_html | escape }}"></a>
+
+          <div class="isc-promo__bg" aria-hidden="true">
+            {%- if b.style == 'graphic' -%}
+              <span class="isc-promo__sheen"></span>
+              {%- if b.graphic_text != blank -%}
+                <span class="isc-promo__watermark">{{ b.graphic_text | escape }}</span>
+              {%- endif -%}
+              <span class="isc-promo__spark isc-promo__spark--1">✦</span>
+              <span class="isc-promo__spark isc-promo__spark--2">✦</span>
+              <span class="isc-promo__spark isc-promo__spark--3">✦</span>
+              {%- if b.icon == 'gift' and b.image == blank -%}
+                <span class="isc-promo__shoe isc-promo__shoe--gift">{% render 'isc-gift' %}</span>
+              {%- elsif b.image != blank -%}
+                <span class="isc-promo__shoe{% if b.image_blend %} isc-promo__shoe--blend{% endif %}">
+                  {{ b.image | image_url: width: 800 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 16vw, 40vw', widths: '300, 500, 800', alt: '' }}
+                </span>
+              {%- elsif b.demo_image != blank -%}
+                <span class="isc-promo__shoe">
+                  <img src="{{ b.demo_image | asset_url }}" alt="" loading="lazy" width="900" height="600">
+                </span>
+              {%- endif -%}
+            {%- elsif photo != blank -%}
+              {{
+                photo
+                | image_url: width: 900
+                | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 25vw, 50vw', widths: '360, 540, 720, 900', alt: '', class: 'isc-promo__img'
+              }}
+            {%- elsif b.demo_image != blank -%}
+              <img src="{{ b.demo_image | asset_url }}" alt="" loading="lazy" width="1256" height="1256" class="isc-promo__img">
+            {%- else -%}
+              {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder-svg isc-promo__img' }}
+            {%- endif -%}
+          </div>
+
+          <div class="isc-promo__content">
+            {%- if b.eyebrow != blank -%}
+              <p class="isc-promo__eyebrow">{{ b.eyebrow | escape }}</p>
+            {%- endif -%}
+            {%- if b.heading != blank -%}
+              <h3 class="isc-promo__heading">{{ b.heading }}</h3>
+            {%- endif -%}
+            {%- if b.text != blank -%}
+              <p class="isc-promo__text">{{ b.text | escape }}</p>
+            {%- endif -%}
+
+            {%- if b.countdown_end != blank -%}
+              <p class="isc-promo__countdown" data-isc-countdown="{{ b.countdown_end | escape }}" hidden>
+                {%- if b.countdown_label != blank -%}<span>{{ b.countdown_label | escape }}</span>{%- endif -%}
+                <strong data-isc-countdown-value></strong>
+              </p>
+            {%- endif -%}
+
+            {%- if b.button_label != blank -%}
+              <a href="{{ link }}" class="isc-promo__btn isc-promo__btn--{{ b.button_style }}">
+                {{- b.button_label | escape -}}
+                <svg viewBox="0 0 20 10" fill="none" aria-hidden="true"><path d="M.5 5h17M13.2 1.3c.7 1.9 2.3 3.2 4.3 3.7-2 .5-3.6 1.8-4.3 3.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </a>
+            {%- endif -%}
+
+            {%- if b.note != blank -%}
+              <p class="isc-promo__note">{{ b.note | escape }}</p>
+            {%- endif -%}
+          </div>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+<script>
+  (function () {
+    function fmt(ms) {
+      var d = Math.floor(ms / 864e5), h = Math.floor((ms % 864e5) / 36e5), m = Math.floor((ms % 36e5) / 6e4), s = Math.floor((ms % 6e4) / 1e3);
+      var pad = function (n) { return String(n).padStart(2, '0'); };
+      return (d > 0 ? d + 'g ' : '') + pad(h) + 'h ' + pad(m) + 'm ' + pad(s) + 's';
+    }
+    document.querySelectorAll('[data-isc-countdown]:not([data-ready])').forEach(function (el) {
+      el.dataset.ready = '1';
+      var end = new Date(el.dataset.iscCountdown.replace(' ', 'T'));
+      var out = el.querySelector('[data-isc-countdown-value]');
+      if (isNaN(end)) return;
+      function tick() {
+        var ms = end - new Date();
+        if (ms <= 0) { el.hidden = true; clearInterval(timer); return; }
+        out.textContent = fmt(ms);
+        el.hidden = false;
+      }
+      var timer = setInterval(tick, 1000);
+      tick();
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "ISC: card promo",
+  "tag": "div",
+  "class": "section",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titolo sezione",
+      "info": "Facoltativo."
+    },
+    {
+      "type": "range",
+      "id": "columns",
+      "label": "Card affiancate su desktop",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "ratio",
+      "label": "Forma delle card",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Automatica (in base al testo)"
+        },
+        {
+          "value": "4 / 5",
+          "label": "Verticale 4:5"
+        },
+        {
+          "value": "3 / 4",
+          "label": "Verticale 3:4"
+        },
+        {
+          "value": "1 / 1",
+          "label": "Quadrata"
+        }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "range",
+      "id": "overlay",
+      "label": "Sfumatura scura sotto al testo",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 60
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Layout mobile",
+      "options": [
+        {
+          "value": "grid",
+          "label": "Griglia 2 × 2"
+        },
+        {
+          "value": "slider",
+          "label": "Scorrevole"
+        }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_text",
+      "label": "Mostra il testo descrittivo su mobile",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Spazio sopra",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Spazio sotto",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 72
+    }
+  ],
+  "blocks": [
+    {
+      "type": "promo",
+      "name": "Card",
+      "settings": [
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Tipo di card",
+          "options": [
+            {
+              "value": "photo",
+              "label": "Foto"
+            },
+            {
+              "value": "graphic",
+              "label": "Grafica animata"
+            }
+          ],
+          "default": "graphic"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Etichetta",
+          "default": "Tailleur"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "Titolo",
+          "info": "Il corsivo viene mostrato con il solo contorno.",
+          "default": "Eleganza in <em>ogni</em> curva"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Testo"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Testo link",
+          "default": "Scopri"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link (tutta la card)"
+        },
+        {
+          "type": "select",
+          "id": "button_style",
+          "label": "Stile pulsante",
+          "options": [
+            {
+              "value": "light",
+              "label": "Pieno chiaro"
+            },
+            {
+              "value": "dark",
+              "label": "Pieno scuro"
+            },
+            {
+              "value": "outline",
+              "label": "Bordo"
+            },
+            {
+              "value": "link",
+              "label": "Link sottolineato"
+            }
+          ],
+          "default": "light"
+        },
+        {
+          "type": "text",
+          "id": "note",
+          "label": "Nota piccola"
+        },
+        {
+          "type": "header",
+          "content": "Foto"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Foto",
+          "info": "Grafica: l'immagine a destra (meglio PNG scontornato). Foto: sfondo di tutta la card."
+        },
+        {
+          "type": "checkbox",
+          "id": "image_blend",
+          "label": "Rendi trasparente lo sfondo bianco dell'immagine",
+          "info": "Utile sulle card chiare se la foto ha lo sfondo bianco.",
+          "default": false
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Prendi la foto da questa collezione"
+        },
+        {
+          "type": "range",
+          "id": "product_index",
+          "label": "Quale prodotto della collezione",
+          "min": 1,
+          "max": 12,
+          "step": 1,
+          "default": 1
+        },
+        {
+          "type": "select",
+          "id": "image_position",
+          "label": "Punto focale",
+          "options": [
+            {
+              "value": "center",
+              "label": "Centro"
+            },
+            {
+              "value": "top",
+              "label": "Alto"
+            },
+            {
+              "value": "bottom",
+              "label": "Basso"
+            },
+            {
+              "value": "left",
+              "label": "Sinistra"
+            },
+            {
+              "value": "right",
+              "label": "Destra"
+            }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "text",
+          "id": "demo_image",
+          "label": "Immagine demo (file del tema)",
+          "info": "Usata solo se mancano foto e collezione."
+        },
+        {
+          "type": "header",
+          "content": "Grafica animata"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Illustrazione (se non c'è una foto)",
+          "options": [
+            {
+              "value": "none",
+              "label": "Nessuna"
+            },
+            {
+              "value": "gift",
+              "label": "Pacco regalo animato"
+            }
+          ],
+          "default": "none"
+        },
+        {
+          "type": "text",
+          "id": "graphic_text",
+          "label": "Scritta di sfondo (facoltativa)"
+        },
+        {
+          "type": "select",
+          "id": "palette",
+          "label": "Colori",
+          "options": [
+            {
+              "value": "silver",
+              "label": "Perla"
+            },
+            {
+              "value": "gold",
+              "label": "Rosa metallizzato"
+            },
+            {
+              "value": "graphite",
+              "label": "Bordeaux"
+            },
+            {
+              "value": "noir",
+              "label": "Vino scuro con riflesso rosa"
+            },
+            {
+              "value": "white",
+              "label": "Bianco"
+            },
+            {
+              "value": "sand",
+              "label": "Cipria"
+            },
+            {
+              "value": "taupe",
+              "label": "Prugna"
+            },
+            {
+              "value": "custom",
+              "label": "Personalizzati"
+            }
+          ],
+          "default": "silver"
+        },
+        {
+          "type": "color",
+          "id": "color_1",
+          "label": "Colore 1",
+          "default": "#8f7d84"
+        },
+        {
+          "type": "color",
+          "id": "color_2",
+          "label": "Colore 2",
+          "default": "#2b0717"
+        },
+        {
+          "type": "select",
+          "id": "custom_text",
+          "label": "Testo (colori personalizzati)",
+          "options": [
+            {
+              "value": "light",
+              "label": "Bianco"
+            },
+            {
+              "value": "dark",
+              "label": "Nero"
+            }
+          ],
+          "default": "light"
+        },
+        {
+          "type": "header",
+          "content": "Conto alla rovescia"
+        },
+        {
+          "type": "text",
+          "id": "countdown_end",
+          "label": "Fine offerta",
+          "info": "Formato AAAA-MM-GG HH:MM, es. 2026-10-31 23:59. Vuoto = nessun timer."
+        },
+        {
+          "type": "text",
+          "id": "countdown_label",
+          "label": "Testo prima del timer",
+          "default": "Termina tra"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ISC: card promo",
+      "blocks": [
+        {
+          "type": "promo"
+        },
+        {
+          "type": "promo"
+        },
+        {
+          "type": "promo"
+        },
+        {
+          "type": "promo",
+          "settings": {
+            "style": "graphic"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

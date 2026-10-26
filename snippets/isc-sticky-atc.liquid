@@ -1,0 +1,31 @@
+{%- comment -%}
+  I'M So Curvy: barra "Aggiungi al carrello" fissa in basso su mobile.
+  Compare quando il pulsante principale esce dallo schermo; il prezzo segue la variante scelta.
+  Accepts:
+  - product: {Object}
+  - section: {Object}
+  - product_form_id: {String}
+{%- endcomment -%}
+{%- assign v = product.selected_or_first_available_variant -%}
+<isc-sticky-atc class="isc-satc" data-section="{{ section.id }}" aria-hidden="true">
+  <div class="isc-satc__inner">
+    <div class="isc-satc__media">
+      {%- if product.featured_image -%}
+        {{ product.featured_image | image_url: width: 120 | image_tag: loading: 'lazy', widths: '60, 120', sizes: '44px', alt: '' }}
+      {%- endif -%}
+    </div>
+    <div class="isc-satc__info">
+      <p class="isc-satc__title">{% render 'isc-title-case', text: product.title %}</p>
+      <p class="isc-satc__meta">
+        <span class="isc-satc__price{% if v.compare_at_price > v.price %} is-sale{% endif %}" data-isc-satc-price>{{ v.price | money }}</span>
+        {%- assign first_opt = product.options.first | handleize -%}
+        <span class="isc-satc__variant" data-isc-satc-variant>
+          {%- if first_opt == 'taglia' or first_opt == 'numero' or first_opt == 'size' -%}Taglia {{ v.option1 }}{%- endif -%}
+        </span>
+      </p>
+    </div>
+    <button type="button" class="isc-satc__btn" data-isc-satc-add tabindex="-1"{% unless v.available %} disabled{% endunless %}>
+      {%- if v.available -%}Aggiungi{%- else -%}Esaurito{%- endif -%}
+    </button>
+  </div>
+</isc-sticky-atc>

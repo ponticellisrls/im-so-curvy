@@ -1,0 +1,143 @@
+{%- comment -%}
+  I'M So Curvy: "Colore" nella pagina prodotto.
+  Ogni colore è un prodotto a sé. Gli altri colori dello stesso modello si trovano così, in ordine:
+  1. metacampo "Altri colori" (custom.altri_colori, elenco di prodotti): se è compilato vince lui;
+  2. link vecchio con suffisso (es. tailleur-easy_ / tailleur-easy_-1);
+  3. link nuovo con il colore (es. tailleur-easy-nero / tailleur-easy-bordeaux): prodotti della stessa
+     categoria con lo stesso titolo.
+  Accepts:
+  - product: {Object}
+  - option: {Object} l'opzione colore del prodotto (facoltativa)
+{%- endcomment -%}
+{%- liquid
+  assign current_name = option.selected_value | default: ''
+  if current_name == blank
+    for o in product.options_with_values
+      assign on = o.name | downcase
+      if on == 'colore' or on == 'color' or on == 'colori'
+        assign current_name = o.selected_value
+      endif
+    endfor
+  endif
+  assign current_name = current_name | downcase | replace: '  ', ' ' | capitalize
+
+  assign seen = '|' | append: product.id | append: '|'
+  assign items = ''
+  assign found = 0
+  assign source = 'nessuno'
+
+  comment
+    1. metacampo "Altri colori"
+  endcomment
+  assign linked = product.metafields.custom.altri_colori.value
+  if linked != blank
+    for p in linked
+      if p == blank or p.id == nil
+        continue
+      endif
+      assign key = '|' | append: p.id | append: '|'
+      if seen contains key
+        continue
+      endif
+      assign seen = seen | append: key
+      capture item
+        render 'isc-pdp-color-item', p: p
+      endcapture
+      assign items = items | append: item
+      assign found = found | plus: 1
+    endfor
+    if found > 0
+      assign source = 'metacampo'
+    endif
+  endif
+
+  comment
+    2. link vecchio con "_" e suffisso numerico
+  endcomment
+  if found == 0 and product.handle contains '_'
+    assign base = product.handle | split: '_' | first
+    assign suffixes = '_,_-1,_-2,_-3,_-4,_-5' | split: ','
+    for suf in suffixes
+      assign h = base | append: suf
+      assign p = all_products[h]
+      if p == blank or p.id == nil
+        continue
+      endif
+      assign key = '|' | append: p.id | append: '|'
+      if seen contains key
+        continue
+      endif
+      assign seen = seen | append: key
+      capture item
+        render 'isc-pdp-color-item', p: p
+      endcapture
+      assign items = items | append: item
+      assign found = found | plus: 1
+    endfor
+    if found > 0
+      assign source = 'link-vecchio'
+    endif
+  endif
+
+  comment
+    3. link nuovo con il colore: stessi titolo e categoria
+  endcomment
+  if found == 0
+    assign cat = null
+    assign type = product.type | downcase | strip
+    for c in product.collections
+      assign ct = c.title | downcase | strip
+      if type != blank and ct == type
+        assign cat = c
+        break
+      endif
+    endfor
+    if cat != blank
+      assign my_title = product.title | downcase | strip
+      paginate cat.products by 250
+        for p in cat.products
+          assign pt = p.title | downcase | strip
+          if pt != my_title
+            continue
+          endif
+          assign key = '|' | append: p.id | append: '|'
+          if seen contains key
+            continue
+          endif
+          assign seen = seen | append: key
+          capture item
+            render 'isc-pdp-color-item', p: p
+          endcapture
+          assign items = items | append: item
+          assign found = found | plus: 1
+          if found >= 12
+            break
+          endif
+        endfor
+      endpaginate
+      if found > 0
+        assign source = 'titolo'
+      endif
+    endif
+  endif
+-%}
+
+{%- if current_name != blank or found > 0 -%}
+  <div class="isc-colors" data-isc-colors-source="{{ source }}">
+    <p class="form__label isc-colors__label">
+      <span>Colore: <span class="isc-colors__value">{{ current_name | escape }}</span></span>
+    </p>
+    {%- if found > 0 -%}
+      <ul class="isc-colors__list list-unstyled" role="list">
+        <li>
+          <span class="isc-colors__item is-current" title="{{ current_name | escape }}" aria-current="true">
+            {%- if product.featured_image -%}
+              {{ product.featured_image | image_url: width: 120 | image_tag: loading: 'lazy', widths: '60, 120', sizes: '52px', alt: '' }}
+            {%- endif -%}
+          </span>
+        </li>
+        {{- items -}}
+      </ul>
+    {%- endif -%}
+  </div>
+{%- endif -%}

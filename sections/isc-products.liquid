@@ -1,0 +1,147 @@
+{% render 'isc-section-spacing' %}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign c = section.settings.collection
+  assign link = section.settings.link | default: c.url | default: routes.all_products_collection_url
+-%}
+
+<section class="isc-section color-{{ section.settings.color_scheme }}">
+  <div class="isc-container">
+    <div class="isc-section__head">
+      <div class="isc-section__titles">
+        <h2 class="isc-h2">{{ section.settings.heading | escape }}</h2>
+        {%- if section.settings.subheading != blank -%}
+          <span class="isc-section__sub">{{ section.settings.subheading | escape }}</span>
+        {%- endif -%}
+      </div>
+      {%- if section.settings.link_label != blank -%}
+        <a href="{{ link }}" class="isc-link">{{ section.settings.link_label | escape }}</a>
+      {%- endif -%}
+    </div>
+
+    <ul class="isc-products__grid list-unstyled" role="list">
+      {%- if c != blank and c.products_count > 0 -%}
+        {%- for product in c.products limit: section.settings.products_to_show -%}
+          <li
+            class="isc-products__item{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+            {% if settings.animations_reveal_on_scroll %}
+              data-cascade
+              style="--animation-order: {{ forloop.index }};"
+            {% endif %}
+          >
+            {% render 'card-product',
+              card_product: product,
+              media_aspect_ratio: 'portrait',
+              image_shape: 'default',
+              lazy_load: true,
+              show_secondary_image: true,
+              show_vendor: false,
+              show_rating: false,
+              skip_styles: true,
+              section_id: section.id,
+              quick_add: 'none',
+              product_view_context: 'collection'
+            %}
+          </li>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for i in (1..section.settings.products_to_show) -%}
+          <li class="isc-products__item">
+            {% render 'card-product', show_vendor: false %}
+          </li>
+        {%- endfor -%}
+      {%- endif -%}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "ISC: prodotti",
+  "tag": "div",
+  "class": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer"
+    ]
+  },
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collezione"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titolo",
+      "default": "Best seller"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Sottotitolo",
+      "default": "I modelli più scelti questo mese"
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Testo link",
+      "default": "Vedi tutti"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link",
+      "info": "Se vuoto porta alla collezione."
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Numero di prodotti",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Spazi"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Spazio sopra",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Spazio sotto",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "ISC: prodotti"
+    }
+  ]
+}
+{% endschema %}

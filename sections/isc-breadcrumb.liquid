@@ -1,0 +1,50 @@
+{%- liquid
+  comment
+    I'M So Curvy: prima la collezione da cui si arriva, poi quella della categoria (es. Tailleur),
+    poi la prima collezione "vera" (non best seller, nuovi arrivi o tutti i prodotti)
+  endcomment
+  assign crumb_collection = collection
+  if crumb_collection == blank and product != blank and product.collections.size > 0
+    assign type = product.type | downcase | strip
+    for c in product.collections
+      assign ct = c.title | downcase | strip
+      if type != blank and ct == type
+        assign crumb_collection = c
+        break
+      endif
+    endfor
+    if crumb_collection == blank
+      for c in product.collections
+        unless c.handle == 'tutti-i-prodotti' or c.handle == 'prezzo-intero' or c.handle == 'saldi' or c.handle == 'all' or c.handle == 'frontpage' or c.handle == 'best-seller' or c.handle == 'nuovi-arrivi' or c.handle contains 'saldi' or c.handle contains 'outlet'
+          assign crumb_collection = c
+          break
+        endunless
+      endfor
+    endif
+    if crumb_collection == blank
+      assign crumb_collection = product.collections.first
+    endif
+  endif
+-%}
+<nav class="isc-breadcrumb isc-container" aria-label="Breadcrumb">
+  <ol class="list-unstyled">
+    <li><a href="{{ routes.root_url }}">Home</a></li>
+    {%- if crumb_collection != blank -%}
+      <li><a href="{{ crumb_collection.url }}">{% render 'isc-title-case', text: crumb_collection.title %}</a></li>
+    {%- endif -%}
+    {%- if product != blank -%}
+      <li aria-current="page">{% render 'isc-title-case', text: product.title %}</li>
+    {%- endif -%}
+  </ol>
+</nav>
+
+{% schema %}
+{
+  "name": "ISC: breadcrumb",
+  "tag": "div",
+  "class": "section",
+  "enabled_on": { "templates": ["product"] },
+  "settings": [],
+  "presets": [{ "name": "ISC: breadcrumb" }]
+}
+{% endschema %}

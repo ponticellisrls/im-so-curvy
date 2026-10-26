@@ -1,0 +1,27 @@
+{%- comment -%}
+  I'M So Curvy: mostra un avviso quando il cliente arriva con un codice sconto
+  (?discount=CODICE oppure /discount/CODICE). Il codice resta in sessione.
+{%- endcomment -%}
+<div id="isc-discount-banner" class="isc-discount-banner" role="status" hidden></div>
+
+<script>
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var parts = window.location.pathname.split('/');
+    var idx = parts.indexOf('discount');
+    var fromPath = idx > -1 ? parts[idx + 1] : '';
+    var code = (params.get('discount') || fromPath || '').toUpperCase();
+
+    try {
+      if (code) sessionStorage.setItem('active_discount', code);
+      var active = sessionStorage.getItem('active_discount');
+      if (!active) return;
+
+      var banner = document.getElementById('isc-discount-banner');
+      var strong = document.createElement('strong');
+      strong.textContent = active;
+      banner.append('✅ Il tuo codice ', strong, ' è attivo! Vedrai lo sconto nel carrello.');
+      banner.hidden = false;
+    } catch (e) {}
+  })();
+</script>

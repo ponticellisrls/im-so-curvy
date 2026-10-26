@@ -1,0 +1,192 @@
+{%- comment -%}
+  I'M So Curvy: "Ti potrebbe piacere" come carosello (stesse schede del Best seller in home).
+  Fonte: prodotti della stessa categoria del prodotto (fino a 24), oppure i consigliati di Shopify (max 10).
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  assign limit = s.products_to_show
+
+  comment
+    Categoria: la collezione con lo stesso nome del tipo prodotto, altrimenti la prima collezione "vera"
+  endcomment
+  assign source_collection = null
+  if s.source == 'category' and product != blank
+    assign type = product.type | downcase | strip
+    for c in product.collections
+      assign ct = c.title | downcase | strip
+      if type != blank and ct == type
+        assign source_collection = c
+        break
+      endif
+    endfor
+    if source_collection == blank
+      for c in product.collections
+        unless c.handle == 'tutti-i-prodotti' or c.handle == 'prezzo-intero' or c.handle == 'saldi' or c.handle == 'all' or c.handle == 'frontpage' or c.handle == 'best-seller' or c.handle == 'nuovi-arrivi' or c.handle contains 'saldi' or c.handle contains 'outlet'
+          assign source_collection = c
+          break
+        endunless
+      endfor
+    endif
+  endif
+
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .isc-pc {
+    --pc-cols: {{ s.columns_mobile }};
+    --pc-media-bg: {{ s.media_bg }};
+    padding-top: {{ s.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ s.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .isc-pc {
+      --pc-cols: {{ s.columns_tablet }};
+      padding-top: {{ s.padding_top }}px;
+      padding-bottom: {{ s.padding_bottom }}px;
+    }
+  }
+  @media screen and (min-width: 1100px) {
+    #shopify-section-{{ section.id }} .isc-pc { --pc-cols: {{ s.columns_desktop }}; }
+  }
+{%- endstyle -%}
+
+{%- capture slides -%}
+  {%- if s.source == 'category' -%}
+    {%- if source_collection != blank -%}
+      {%- assign shown = 0 -%}
+      {%- assign seen = '|' | append: product.title | downcase | strip | append: '|' -%}
+      {%- for p in source_collection.products limit: 120 -%}
+        {%- if shown >= limit -%}{%- break -%}{%- endif -%}
+        {%- if p.id == product.id or p.available == false -%}{%- continue -%}{%- endif -%}
+        {%- comment -%} un solo colore per modello (i colori hanno lo stesso titolo) {%- endcomment -%}
+        {%- assign p_key = '|' | append: p.title | downcase | strip | append: '|' -%}
+        {%- if seen contains p_key -%}{%- continue -%}{%- endif -%}
+        {%- assign seen = seen | append: p_key -%}
+        <li class="isc-pc__slide">
+          {% render 'isc-product-card', product: p, settings_block: s, section_id: section.id %}
+        </li>
+        {%- assign shown = shown | plus: 1 -%}
+      {%- endfor -%}
+    {%- endif -%}
+  {%- elsif recommendations.performed -%}
+    {%- for p in recommendations.products -%}
+      <li class="isc-pc__slide">
+        {% render 'isc-product-card', product: p, settings_block: s, section_id: section.id %}
+      </li>
+    {%- endfor -%}
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- capture carousel -%}
+  {%- if slides != blank -%}
+    <div class="isc-section__head isc-pc__head">
+      <h2 class="related-products__heading isc-rp__heading h2">{{ s.heading }}</h2>
+    </div>
+    <isc-carousel class="isc-pc__frame">
+      <button type="button" class="isc-pc__arrow isc-pc__arrow--prev" aria-label="Prodotti precedenti" hidden>
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12.5 4.5 7.3 9.3a1 1 0 0 0 0 1.4l5.2 4.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </button>
+      <ul class="isc-pc__track list-unstyled" role="list">{{ slides }}</ul>
+      <button type="button" class="isc-pc__arrow isc-pc__arrow--next" aria-label="Prodotti successivi" hidden>
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m7.5 4.5 5.2 4.8a1 1 0 0 1 0 1.4l-5.2 4.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </button>
+    </isc-carousel>
+  {%- endif -%}
+{%- endcapture -%}
+
+<section class="isc-rp isc-pc color-{{ s.color_scheme }} isc-pc--card-plain isc-pc--fit-{{ s.image_fit }} isc-pc--ratio-{{ s.image_ratio }}">
+  <div class="isc-container">
+    {%- if s.source == 'category' -%}
+      {{ carousel }}
+    {%- else -%}
+      <product-recommendations
+        class="related-products"
+        data-url="{{ routes.product_recommendations_url }}?limit={{ limit | at_most: 10 }}"
+        data-section-id="{{ section.id }}"
+        data-product-id="{{ product.id }}"
+      >
+        {{ carousel }}
+      </product-recommendations>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.related-products.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "inline_richtext", "id": "heading", "label": "Titolo", "default": "Ti potrebbe piacere" },
+    {
+      "type": "select",
+      "id": "source",
+      "label": "Prodotti da mostrare",
+      "options": [
+        { "value": "category", "label": "Stessa categoria (es. altri tailleur)" },
+        { "value": "recommendations", "label": "Consigliati da Shopify (max 10)" }
+      ],
+      "default": "category"
+    },
+    { "type": "range", "id": "products_to_show", "label": "Numero di prodotti", "min": 4, "max": 24, "step": 1, "default": 12 },
+    { "type": "header", "content": "Colonne" },
+    { "type": "range", "id": "columns_desktop", "label": "Prodotti visibili desktop", "min": 3, "max": 6, "step": 1, "default": 5 },
+    { "type": "range", "id": "columns_tablet", "label": "Prodotti visibili tablet", "min": 2, "max": 4, "step": 1, "default": 3 },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Prodotti visibili mobile",
+      "options": [
+        { "value": "1.5", "label": "1 e mezzo" },
+        { "value": "2", "label": "2" },
+        { "value": "2.3", "label": "2 (e un pezzo del successivo)" },
+        { "value": "2.5", "label": "2 e mezzo" }
+      ],
+      "default": "2.5"
+    },
+    { "type": "header", "content": "Scheda prodotto" },
+    { "type": "color", "id": "media_bg", "label": "Sfondo foto", "default": "#ffffff" },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Forma foto",
+      "options": [
+        { "value": "square", "label": "Quadrata" },
+        { "value": "portrait", "label": "Verticale 4:5" },
+        { "value": "adapt", "label": "Come la foto del prodotto" }
+      ],
+      "default": "portrait"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Adattamento foto",
+      "options": [
+        { "value": "cover", "label": "Riempi il riquadro" },
+        { "value": "contain", "label": "Foto intera" }
+      ],
+      "default": "cover"
+    },
+    { "type": "checkbox", "id": "show_secondary", "label": "Seconda foto al passaggio del mouse", "default": true },
+    { "type": "checkbox", "id": "show_badges", "label": "Badge sconto / Nuovo / Best seller", "default": true },
+    { "type": "checkbox", "id": "show_rating", "label": "Stelle recensioni (se presenti)", "default": false },
+    { "type": "checkbox", "id": "show_swatches", "label": "Pallini colore", "default": false },
+    { "type": "checkbox", "id": "show_button", "label": "Pulsante aggiungi al carrello", "default": false },
+    { "type": "text", "id": "button_label", "label": "Testo pulsante", "default": "Aggiungi al carrello" },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Stile pulsante",
+      "options": [
+        { "value": "outline", "label": "Bordo" },
+        { "value": "solid", "label": "Pieno" }
+      ],
+      "default": "outline"
+    },
+    { "type": "color_scheme", "id": "color_scheme", "label": "t:sections.all.colors.label", "default": "scheme-1" },
+    { "type": "header", "content": "Spazi" },
+    { "type": "range", "id": "padding_top", "label": "Spazio sopra", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Spazio sotto", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 28 }
+  ]
+}
+{% endschema %}

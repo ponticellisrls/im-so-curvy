@@ -1,0 +1,173 @@
+{% comment %}
+  Renders product variant-picker
+
+  Accepts:
+  - product: {Object} product object.
+  - block: {Object} passing the block information.
+  - product_form_id: {String} Id of the product form to which the variant picker is associated.
+  Usage:
+  {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
+{% endcomment %}
+{%- unless product.has_only_default_variant -%}
+  <variant-selects
+    id="variant-selects-{{ section.id }}"
+    data-section="{{ section.id }}"
+    data-product-handle="{{ product.handle }}"
+    data-product-title="{{ product.title | escape }}"
+    data-product-id="{{ product.id }}"
+    data-currency-code="{{ cart.currency.iso_code }}"
+    {% # theme-check-disable %}
+    data-selected-price-amount="{{ product.selected_or_first_available_variant.price | default: 0 | money_amount | escape }}"
+    {% # theme-check-enable %}
+    {{ block.shopify_attributes }}
+  >
+    {%- liquid
+      comment
+        I'M So Curvy: colore prima della taglia (se il prodotto ha un solo colore e l'opzione è attiva nel blocco)
+      endcomment
+      assign isc_colors_done = false
+      if block.settings.isc_colors_first
+        for o in product.options_with_values
+          assign oh = o.name | handleize
+          if oh == 'colore' or oh == 'color' or oh == 'colori'
+            if o.values.size == 1
+              assign isc_colors_done = true
+              assign isc_color_option = o
+            endif
+          endif
+        endfor
+      endif
+    -%}
+    {%- if isc_colors_done -%}
+      {% render 'isc-pdp-colors', product: product, option: isc_color_option %}
+    {%- endif -%}
+    {%- for option in product.options_with_values -%}
+      {%- liquid
+        assign swatch_count = option.values | map: 'swatch' | compact | size
+        assign picker_type = block.settings.picker_type
+
+        if swatch_count > 0 and block.settings.swatch_shape != 'none'
+          if block.settings.picker_type == 'dropdown'
+            assign picker_type = 'swatch_dropdown'
+          else
+            assign picker_type = 'swatch'
+          endif
+        endif
+      -%}
+      {%- if picker_type == 'swatch' -%}
+        <fieldset class="js product-form__input product-form__input--swatch" data-option="{{ option.name | handleize }}">
+          <legend class="form__label">
+            {{ option.name }}:
+            <span data-selected-value>
+              {{- option.selected_value -}}
+            </span>
+          </legend>
+          {% render 'product-variant-options',
+            product: product,
+            option: option,
+            block: block,
+            picker_type: picker_type
+          %}
+        </fieldset>
+      {%- elsif picker_type == 'button' -%}
+        {%- liquid
+          assign isc_option = option.name | handleize
+          assign isc_is_size = false
+          if isc_option == 'taglia' or isc_option == 'numero' or isc_option == 'size' or isc_option == 'misura'
+            assign isc_is_size = true
+          endif
+          assign isc_is_color = false
+          if isc_option == 'colore' or isc_option == 'color' or isc_option == 'colori'
+            assign isc_is_color = true
+          endif
+          comment
+            I'M So Curvy: un solo colore per prodotto -> il selettore resta (serve al carrello) ma nascosto,
+            al suo posto le miniature degli altri colori
+          endcomment
+          assign isc_hide = false
+          if isc_is_color and option.values.size == 1
+            assign isc_hide = true
+          endif
+        -%}
+        <fieldset class="js product-form__input product-form__input--pill{% if isc_hide %} visually-hidden{% endif %}" data-option="{{ isc_option }}">
+          <legend class="form__label">
+            <span>{{ option.name }}: <span data-selected-value>{{- option.selected_value -}}</span></span>
+            {%- if isc_is_size -%}
+              {%- if block.settings.isc_size_guide != blank -%}
+                <a href="{{ block.settings.isc_size_guide }}" class="isc-size-guide" target="_blank">Guida alle taglie</a>
+              {%- elsif block.settings.isc_size_table != blank -%}
+                <button type="button" class="isc-size-guide" data-isc-size-open>Guida alle taglie</button>
+              {%- endif -%}
+            {%- endif -%}
+          </legend>
+          {% render 'product-variant-options',
+            product: product,
+            option: option,
+            block: block,
+            picker_type: picker_type
+          %}
+          {%- if isc_is_size and block.settings.isc_show_fit -%}
+            {%- liquid
+              assign isc_desc = product.description | replace: '</div>', '§' | replace: '<br>', '§' | replace: '</p>', '§' | replace: '</li>', '§' | strip_html
+              assign isc_fit = ''
+              assign isc_fit_lines = isc_desc | split: '§'
+              for l in isc_fit_lines
+                assign ld = l | downcase
+                if ld contains 'vestibilit'
+                  assign isc_fit = ld | split: 'vestibilit' | last | remove_first: 'à' | remove_first: 'a' | remove_first: ':' | strip
+                  break
+                endif
+              endfor
+            -%}
+            {%- if isc_fit != blank and isc_fit != '/' -%}
+              <p class="isc-fit">
+                <span class="isc-fit__dot" aria-hidden="true">✦</span>
+                Vestibilità <strong>{{ isc_fit | escape }}</strong>
+                {%- if isc_fit contains 'regolare' %} · prendi la tua solita taglia{% endif -%}
+              </p>
+            {%- endif -%}
+          {%- endif -%}
+        </fieldset>
+        {%- if isc_hide and isc_colors_done == false -%}
+          {% render 'isc-pdp-colors', product: product, option: option %}
+        {%- endif -%}
+      {%- else -%}
+        <div class="product-form__input product-form__input--dropdown">
+          <label class="form__label" for="Option-{{ section.id }}-{{ forloop.index0 }}">
+            {{ option.name }}
+          </label>
+          <div class="select">
+            {%- if picker_type == 'swatch_dropdown' -%}
+              <span
+                data-selected-value
+                class="dropdown-swatch"
+              >
+                {% render 'swatch', swatch: option.selected_value.swatch, shape: block.settings.swatch_shape %}
+              </span>
+            {%- endif -%}
+            <select
+              id="Option-{{ section.id }}-{{ forloop.index0 }}"
+              class="select__select"
+              name="options[{{ option.name | escape }}]"
+              form="{{ product_form_id }}"
+            >
+              {% render 'product-variant-options',
+                product: product,
+                option: option,
+                block: block,
+                picker_type: picker_type
+              %}
+            </select>
+            <span class="svg-wrapper">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+    <script type="application/json" data-selected-variant>
+      {{ product.selected_or_first_available_variant | json }}
+    </script>
+  </variant-selects>
+{%- endunless -%}

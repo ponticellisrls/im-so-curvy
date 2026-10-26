@@ -1,0 +1,226 @@
+{%- comment -%}
+  I'M So Curvy: blocchi aggiuntivi per la pagina prodotto (sections/main-product.liquid).
+  Accepts:
+  - block: {Object}
+  - product: {Object}
+  - section: {Object}
+{%- endcomment -%}
+{%- case block.type -%}
+  {%- when 'isc_eyebrow' -%}
+    {%- liquid
+      assign eyebrow = block.settings.text
+      if eyebrow == blank
+        assign eyebrow = product.type
+      endif
+      if eyebrow == blank and product.collections.size > 0
+        assign eyebrow = product.collections.first.title
+      endif
+    -%}
+    {%- liquid
+      comment
+        I'M So Curvy: l'etichetta porta alla collezione della categoria del prodotto (es. Tailleur)
+      endcomment
+      assign eyebrow_url = ''
+      assign type_lc = product.type | downcase | strip
+      for c in product.collections
+        assign ct = c.title | downcase | strip
+        if type_lc != blank and ct == type_lc
+          assign eyebrow_url = c.url
+          break
+        endif
+      endfor
+      if eyebrow_url == blank and product.type != blank
+        assign type_handle = product.type | handleize
+        if collections[type_handle] != blank and collections[type_handle].products_count > 0
+          assign eyebrow_url = collections[type_handle].url
+        endif
+      endif
+    -%}
+    {%- if eyebrow != blank -%}
+      {%- if eyebrow_url != blank -%}
+        <a href="{{ eyebrow_url }}" class="isc-eyebrow isc-pdp__eyebrow isc-pdp__eyebrow--link" {{ block.shopify_attributes }}><span>{{ eyebrow | escape }}</span></a>
+      {%- else -%}
+        <p class="isc-eyebrow isc-pdp__eyebrow" {{ block.shopify_attributes }}>{{ eyebrow | escape }}</p>
+      {%- endif -%}
+    {%- endif -%}
+
+  {%- when 'isc_rating' -%}
+    {%- liquid
+      comment
+        I'M So Curvy: stelle sopra il titolo. Legge la valutazione dai metafield standard (reviews.rating),
+        compilati dalle app recensioni (Judge.me, Loox, Shopify Product Reviews…). Mai valori inventati.
+      endcomment
+      assign target = block.settings.link | default: '#judgeme_product_reviews'
+      assign rating_value = blank
+      assign rating_count = 0
+      assign scale = 5
+      comment
+        Valutazione complessiva del negozio (tutte le recensioni Judge.me) oppure del singolo prodotto
+      endcomment
+      if block.settings.source != 'product'
+        assign shop_rating = shop.metafields.judgeme.all_reviews_rating
+        assign shop_count = shop.metafields.judgeme.all_reviews_count | plus: 0
+        if shop_count > 0 and shop_rating != blank
+          assign rating_value = shop_rating | plus: 0 | times: 10 | floor | divided_by: 10.0
+          assign rating_count = shop_count
+        endif
+      endif
+      if rating_value == blank
+        assign rating = product.metafields.reviews.rating.value
+        if rating != blank
+          assign rating_value = rating.rating | round: 1
+          assign scale = rating.scale_max
+          assign rating_count = product.metafields.reviews.rating_count.value | default: 0
+        endif
+      endif
+    -%}
+    {%- if rating_value != blank -%}
+      {%- assign rating_pct = rating_value | times: 100.0 | divided_by: scale -%}
+      <a href="{{ target }}" class="isc-pdp__rating" {{ block.shopify_attributes }} aria-label="Valutazione {{ rating_value }} su {{ scale }}">
+        <span class="isc-pdp__stars" style="--isc-rating: {{ rating_pct }}%;" aria-hidden="true"></span>
+        <span class="isc-pdp__rating-value">{{ rating_value | replace: '.', ',' }}</span>
+        {%- if rating_count > 0 -%}
+          <span class="isc-pdp__rating-count">({{ rating_count }} {% if rating_count == 1 %}recensione{% else %}recensioni{% endif %})</span>
+        {%- endif -%}
+      </a>
+    {%- elsif block.settings.show_empty -%}
+      <a href="{{ target }}" class="isc-pdp__rating isc-pdp__rating--empty" {{ block.shopify_attributes }}>
+        <span class="isc-pdp__stars" style="--isc-rating: 0%;" aria-hidden="true"></span>
+        <span class="isc-pdp__rating-count">{{ block.settings.empty_text | escape }}</span>
+      </a>
+    {%- endif -%}
+
+  {%- when 'isc_intro' -%}
+    {%- assign intro = product.metafields.custom.descrizione_breve.value -%}
+    {%- if intro != blank -%}
+      <p class="isc-pdp__intro" {{ block.shopify_attributes }}>{{ intro }}</p>
+    {%- elsif block.settings.mode == 'chips' -%}
+      <div class="isc-pdp__highlights" {{ block.shopify_attributes }}>{% render 'isc-product-specs', product: product, mode: 'chips', limit: 3 %}</div>
+    {%- elsif block.settings.mode == 'text' -%}
+      <p class="isc-pdp__intro" {{ block.shopify_attributes }}>{{ product.description | strip_html | truncatewords: block.settings.words }}</p>
+    {%- endif -%}
+
+  {%- when 'isc_payments' -%}
+    <div {{ block.shopify_attributes }}>{% render 'isc-payment-icons', class: 'isc-pdp__payments' %}</div>
+
+  {%- when 'isc_delivery' -%}
+    <div
+      class="isc-delivery"
+      data-isc-delivery
+      data-cutoff="{{ block.settings.cutoff_hour }}"
+      data-min="{{ block.settings.min_days }}"
+      data-max="{{ block.settings.max_days }}"
+      {{ block.shopify_attributes }}
+    >
+      {%- assign delivery_icon = block.settings.icon | default: 'box' -%}
+      <span class="isc-delivery__jewel" aria-hidden="true">{% render 'isc-jewel-icon', name: delivery_icon %}</span>
+      <div class="isc-delivery__body">
+        <p class="isc-delivery__main" hidden>
+          Ordina entro <strong class="isc-delivery__countdown"></strong>, la ricevi
+          <strong class="isc-delivery__range"></strong>
+        </p>
+        {%- if block.settings.note != blank -%}
+          <p class="isc-delivery__note"><span aria-hidden="true">✦</span> {{ block.settings.note | escape }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+    <script>
+      (function () {
+        var root = document.currentScript.previousElementSibling;
+        if (!root || root.dataset.ready) return;
+        root.dataset.ready = '1';
+        var cutoffHour = parseInt(root.dataset.cutoff, 10);
+        var minDays = parseInt(root.dataset.min, 10);
+        var maxDays = parseInt(root.dataset.max, 10);
+        var months = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+        var days = ['dom','lun','mar','mer','gio','ven','sab'];
+        var main = root.querySelector('.isc-delivery__main');
+        var countdown = root.querySelector('.isc-delivery__countdown');
+        var range = root.querySelector('.isc-delivery__range');
+        function isBusinessDay(d) { var g = d.getDay(); return g !== 0 && g !== 6; }
+        function addBusinessDays(d, n) {
+          var x = new Date(d);
+          while (n > 0) { x.setDate(x.getDate() + 1); if (isBusinessDay(x)) n--; }
+          return x;
+        }
+        function fmt(d) { return days[d.getDay()] + ' ' + d.getDate() + ' ' + months[d.getMonth()]; }
+        function tick() {
+          var now = new Date();
+          var cut = new Date(now);
+          cut.setHours(cutoffHour, 0, 0, 0);
+          // Spedizione: oggi se giorno lavorativo e prima del cutoff, altrimenti il prossimo giorno lavorativo
+          while (!isBusinessDay(cut) || now >= cut) {
+            cut.setDate(cut.getDate() + 1);
+            cut.setHours(cutoffHour, 0, 0, 0);
+          }
+          var ms = cut - now;
+          var h = Math.floor(ms / 36e5), m = Math.floor((ms % 36e5) / 6e4), s = Math.floor((ms % 6e4) / 1e3);
+          countdown.textContent = (h > 0 ? h + 'h ' : '') + String(m).padStart(2, '0') + 'm ' + String(s).padStart(2, '0') + 's';
+          var a = addBusinessDays(cut, minDays), b = addBusinessDays(cut, maxDays);
+          range.textContent = a.getTime() === b.getTime() ? fmt(a) : fmt(a) + ' – ' + fmt(b);
+          main.hidden = false;
+        }
+        tick();
+        setInterval(tick, 1000);
+      })();
+    </script>
+
+  {%- when 'isc_trust' -%}
+    <ul class="isc-trust list-unstyled" role="list" {{ block.shopify_attributes }}>
+      {%- for i in (1..4) -%}
+        {%- liquid
+          assign icon_key = 'icon_' | append: i
+          assign title_key = 'title_' | append: i
+          assign text_key = 'text_' | append: i
+          assign t = block.settings[title_key]
+          assign x = block.settings[text_key]
+          assign ic = block.settings[icon_key] | default: 'star'
+        -%}
+        {%- if t != blank -%}
+          <li class="isc-trust__cell">
+            <span class="isc-trust__icon" aria-hidden="true">{% render 'isc-jewel-icon', name: ic %}</span>
+            <span class="isc-trust__title">{{ t | escape }}</span>
+            {%- if x != blank -%}<span class="isc-trust__text">{{ x | escape }}</span>{%- endif -%}
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+
+  {%- when 'isc_upsell' -%}
+    {%- assign upsell = block.settings.collection -%}
+    {%- if upsell != blank and upsell.products_count > 0 -%}
+      <div class="isc-upsell" {{ block.shopify_attributes }}>
+        <p class="isc-upsell__heading">{{ block.settings.heading | escape }}</p>
+        <div class="isc-upsell__grid">
+          {%- for item in upsell.products limit: 3 -%}
+            {%- if item.id != product.id -%}
+              <div class="isc-upsell__card">
+                <a href="{{ item.url }}" class="isc-upsell__media">
+                  {%- if item.featured_image -%}
+                    {{
+                      item.featured_image
+                      | image_url: width: 300
+                      | image_tag: loading: 'lazy', sizes: '120px', widths: '150, 300', alt: item.title
+                    }}
+                  {%- endif -%}
+                </a>
+                <a href="{{ item.url }}" class="isc-upsell__name">{% render 'isc-title-case', text: item.title %}</a>
+                <span class="isc-upsell__price">{{ item.price | money }}</span>
+                {%- if item.available -%}
+                  <button
+                    type="button"
+                    class="isc-upsell__add"
+                    data-isc-upsell-add="{{ item.selected_or_first_available_variant.id }}"
+                  >
+                    Aggiungi
+                  </button>
+                {%- else -%}
+                  <span class="isc-upsell__add isc-upsell__add--disabled">Esaurito</span>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+{%- endcase -%}

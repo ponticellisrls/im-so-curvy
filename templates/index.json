@@ -1,0 +1,616 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "isc-hero",
+      "settings": {
+        "layout": "fullbleed",
+        "height": "image",
+        "height_mobile": "image",
+        "mobile_layout": "overlay",
+        "color_scheme": "scheme-3",
+        "image": "shopify://shop_images/slide_I_m_so_curvy.png",
+        "image_mobile": "shopify://shop_images/slide_mobile_jpg.jpg",
+        "image_position": "auto",
+        "image_animation": "none",
+        "overlay_style": "none",
+        "overlay_color": "#000000",
+        "overlay_opacity": 75,
+        "content_position": "middle-left",
+        "text_align": "left",
+        "content_position_mobile": "bottom",
+        "text_align_mobile": "left",
+        "content_width": 720,
+        "text_color_mode": "light",
+        "text_color": "#ffffff",
+        "text_shadow": false,
+        "content_box": "none",
+        "box_color": "#000000",
+        "box_opacity": 40,
+        "content_animation": false,
+        "eyebrow": "",
+        "eyebrow_style": "line",
+        "heading": "",
+        "heading_font": "expanded",
+        "heading_size": 128,
+        "heading_size_mobile": 56,
+        "text": "",
+        "text_size": 18,
+        "button_label_1": "",
+        "button_link_1": "",
+        "button_style_1": "link",
+        "button_label_2": "",
+        "button_link_2": "",
+        "button_style_2": "outline",
+        "banner_link": "shopify://collections/nuovi-arrivi"
+      }
+    },
+    "stories": {
+      "type": "isc-stories",
+      "blocks": {
+        "story_1": {
+          "type": "story",
+          "settings": {
+            "style": "graphic",
+            "collection": "nuovi-arrivi",
+            "image": "",
+            "zoom": 0,
+            "title": "Nuovi arrivi",
+            "link": "",
+            "ring": true,
+            "badge": "",
+            "graphic_line_1": "NEW",
+            "graphic_line_2": "IN",
+            "palette": "graphite",
+            "color_1": "#a3406b",
+            "color_2": "#3d0c24"
+          }
+        },
+        "story_2": {
+          "type": "story",
+          "settings": {
+            "style": "graphic",
+            "collection": "saldi",
+            "image": "",
+            "zoom": 0,
+            "title": "Saldi",
+            "link": "",
+            "ring": true,
+            "badge": "",
+            "graphic_line_1": "SALE",
+            "graphic_line_2": "%",
+            "palette": "gold",
+            "color_1": "#a3406b",
+            "color_2": "#3d0c24"
+          }
+        },
+        "story_3": {
+          "type": "story",
+          "settings": {
+            "style": "image",
+            "collection": "tailleur",
+            "image": "",
+            "zoom": 0,
+            "title": "Tailleur",
+            "link": "",
+            "ring": false,
+            "badge": "",
+            "graphic_line_1": "NEW",
+            "graphic_line_2": "",
+            "palette": "graphite",
+            "color_1": "#a3406b",
+            "color_2": "#3d0c24"
+          }
+        },
+        "story_4": {
+          "type": "story",
+          "settings": {
+            "style": "image",
+            "collection": "coordinati",
+            "image": "",
+            "zoom": 0,
+            "title": "Coordinati",
+            "link": "",
+            "ring": false,
+            "badge": "",
+            "graphic_line_1": "NEW",
+            "graphic_line_2": "",
+            "palette": "graphite",
+            "color_1": "#a3406b",
+            "color_2": "#3d0c24"
+          }
+        },
+        "story_5": {
+          "type": "story",
+          "settings": {
+            "style": "image",
+            "collection": "maglie",
+            "image": "",
+            "zoom": 0,
+            "title": "Maglie",
+            "link": "",
+            "ring": false,
+            "badge": "",
+            "graphic_line_1": "NEW",
+            "graphic_line_2": "",
+            "palette": "graphite",
+            "color_1": "#a3406b",
+            "color_2": "#3d0c24"
+          }
+        },
+        "story_6": {
+          "type": "story",
+          "settings": {
+            "style": "image",
+            "collection": "camicie-casacche",
+            "image": "",
+            "zoom": 0,
+            "title": "Camicie",
+            "link": "",
+            "ring": false,
+            "badge": "",
+            "graphic_line_1": "NEW",
+            "graphic_line_2": "",
+            "palette": "graphite",
+            "color_1": "#a3406b",
+            "color_2": "#3d0c24"
+          }
+        },
+        "story_7": {
+          "type": "story",
+          "settings": {
+            "style": "image",
+            "collection": "pantaloni",
+            "image": "",
+            "zoom": 0,
+            "title": "Pantaloni",
+            "link": "",
+            "ring": false,
+            "badge": "",
+            "graphic_line_1": "NEW",
+            "graphic_line_2": "",
+            "palette": "graphite",
+            "color_1": "#a3406b",
+            "color_2": "#3d0c24"
+          }
+        },
+        "story_8": {
+          "type": "story",
+          "settings": {
+            "style": "image",
+            "collection": "abiti",
+            "image": "",
+            "zoom": 0,
+            "title": "Abiti",
+            "link": "",
+            "ring": false,
+            "badge": "",
+            "graphic_line_1": "NEW",
+            "graphic_line_2": "",
+            "palette": "graphite",
+            "color_1": "#a3406b",
+            "color_2": "#3d0c24"
+          }
+        },
+        "story_9": {
+          "type": "story",
+          "settings": {
+            "style": "image",
+            "collection": "capispalla",
+            "image": "",
+            "zoom": 0,
+            "title": "Capispalla",
+            "link": "",
+            "ring": false,
+            "badge": "",
+            "graphic_line_1": "NEW",
+            "graphic_line_2": "",
+            "palette": "graphite",
+            "color_1": "#a3406b",
+            "color_2": "#3d0c24"
+          }
+        },
+        "story_10": {
+          "type": "story",
+          "settings": {
+            "style": "image",
+            "collection": "jeans",
+            "image": "",
+            "zoom": 0,
+            "title": "Jeans",
+            "link": "",
+            "ring": false,
+            "badge": "",
+            "graphic_line_1": "NEW",
+            "graphic_line_2": "",
+            "palette": "graphite",
+            "color_1": "#a3406b",
+            "color_2": "#3d0c24"
+          }
+        },
+        "story_11": {
+          "type": "story",
+          "settings": {
+            "style": "image",
+            "collection": "tute",
+            "image": "",
+            "zoom": 0,
+            "title": "Felpe e tute",
+            "link": "",
+            "ring": false,
+            "badge": "",
+            "graphic_line_1": "NEW",
+            "graphic_line_2": "",
+            "palette": "graphite",
+            "color_1": "#a3406b",
+            "color_2": "#3d0c24"
+          }
+        },
+        "story_12": {
+          "type": "story",
+          "settings": {
+            "style": "image",
+            "collection": "cerimonia",
+            "image": "",
+            "zoom": 0,
+            "title": "Cerimonia",
+            "link": "",
+            "ring": false,
+            "badge": "",
+            "graphic_line_1": "NEW",
+            "graphic_line_2": "",
+            "palette": "graphite",
+            "color_1": "#a3406b",
+            "color_2": "#3d0c24"
+          }
+        }
+      },
+      "block_order": [
+        "story_1",
+        "story_2",
+        "story_3",
+        "story_4",
+        "story_5",
+        "story_6",
+        "story_7",
+        "story_8",
+        "story_9",
+        "story_10",
+        "story_11",
+        "story_12"
+      ],
+      "settings": {
+        "heading": "",
+        "size": 128,
+        "size_mobile": 80,
+        "circle_bg": "#f8eff1",
+        "image_fit": "cover",
+        "image_zoom": 100,
+        "blend": false,
+        "ring_style": "instagram",
+        "ring_scope": "all",
+        "ring_color": "#660033",
+        "boxed": false,
+        "dividers": false,
+        "center": true,
+        "gap": 28,
+        "gap_mobile": 12,
+        "color_scheme": "scheme-1",
+        "padding_top": 24,
+        "padding_bottom": 24,
+        "show_all": true,
+        "all_style": "circle",
+        "all_label": "Tutti i prodotti",
+        "all_link": "shopify://collections/tutti-i-prodotti",
+        "all_bg": "#660033",
+        "all_color": "#ffffff"
+      }
+    },
+    "bestseller": {
+      "type": "isc-product-carousel",
+      "settings": {
+        "collection": "nuovi-arrivi",
+        "products_to_show": 12,
+        "heading": "Nuovi arrivi",
+        "heading_accent": true,
+        "subheading": "",
+        "link_label": "Vedi tutti i nuovi arrivi",
+        "link": "",
+        "columns_desktop": 5,
+        "columns_tablet": 3,
+        "columns_mobile": "2.5",
+        "card_style": "plain",
+        "media_bg": "#ffffff",
+        "image_ratio": "portrait",
+        "image_fit": "cover",
+        "show_secondary": true,
+        "show_badges": true,
+        "show_rating": false,
+        "show_swatches": false,
+        "show_button": false,
+        "button_label": "Aggiungi al carrello",
+        "button_style": "outline",
+        "color_scheme": "scheme-1",
+        "padding_top": 20,
+        "padding_bottom": 48
+      }
+    },
+    "promos": {
+      "type": "isc-promo-cards",
+      "blocks": {
+        "promo-1": {
+          "type": "promo",
+          "settings": {
+            "style": "photo",
+            "eyebrow": "Tailleur",
+            "heading": "Eleganza in <em>ogni</em> curva",
+            "text": "",
+            "button_label": "Scopri",
+            "link": "shopify://collections/tailleur",
+            "button_style": "light",
+            "note": "",
+            "image": "",
+            "image_blend": false,
+            "collection": "tailleur",
+            "product_index": 1,
+            "image_position": "top",
+            "demo_image": "",
+            "icon": "none",
+            "graphic_text": "",
+            "palette": "graphite",
+            "color_1": "#8a8a86",
+            "color_2": "#0a0a0a",
+            "custom_text": "light",
+            "countdown_end": "",
+            "countdown_label": "Termina tra"
+          }
+        },
+        "promo-2": {
+          "type": "promo",
+          "settings": {
+            "style": "photo",
+            "eyebrow": "Coordinati",
+            "heading": "Il set <em>perfetto</em>",
+            "text": "",
+            "button_label": "Scopri",
+            "link": "shopify://collections/coordinati",
+            "button_style": "light",
+            "note": "",
+            "image": "",
+            "image_blend": false,
+            "collection": "coordinati",
+            "product_index": 1,
+            "image_position": "top",
+            "demo_image": "",
+            "icon": "none",
+            "graphic_text": "",
+            "palette": "graphite",
+            "color_1": "#8a8a86",
+            "color_2": "#0a0a0a",
+            "custom_text": "light",
+            "countdown_end": "",
+            "countdown_label": "Termina tra"
+          }
+        },
+        "promo-3": {
+          "type": "promo",
+          "settings": {
+            "style": "photo",
+            "eyebrow": "Cerimonia",
+            "heading": "Pronta a <em>brillare</em>",
+            "text": "",
+            "button_label": "Scopri",
+            "link": "shopify://collections/cerimonia",
+            "button_style": "light",
+            "note": "",
+            "image": "",
+            "image_blend": false,
+            "collection": "cerimonia",
+            "product_index": 1,
+            "image_position": "top",
+            "demo_image": "",
+            "icon": "none",
+            "graphic_text": "",
+            "palette": "graphite",
+            "color_1": "#8a8a86",
+            "color_2": "#0a0a0a",
+            "custom_text": "light",
+            "countdown_end": "",
+            "countdown_label": "Termina tra"
+          }
+        },
+        "promo-4": {
+          "type": "promo",
+          "settings": {
+            "style": "graphic",
+            "eyebrow": "Solo per te",
+            "heading": "<strong>-10%</strong> sul tuo primo ordine",
+            "text": "",
+            "button_label": "Ottieni",
+            "link": "#newsletter-popup",
+            "button_style": "light",
+            "note": "",
+            "image_blend": false,
+            "collection": "",
+            "product_index": 1,
+            "image_position": "center",
+            "demo_image": "",
+            "icon": "gift",
+            "graphic_text": "",
+            "palette": "noir",
+            "color_1": "#8a8a86",
+            "color_2": "#0a0a0a",
+            "custom_text": "light",
+            "countdown_end": "",
+            "countdown_label": "Termina tra"
+          }
+        }
+      },
+      "block_order": [
+        "promo-1",
+        "promo-2",
+        "promo-3",
+        "promo-4"
+      ],
+      "settings": {
+        "heading": "",
+        "columns": 4,
+        "ratio": "auto",
+        "overlay": 60,
+        "mobile_layout": "grid",
+        "mobile_text": false,
+        "color_scheme": "scheme-1",
+        "padding_top": 24,
+        "padding_bottom": 24
+      }
+    },
+    "newarrivals": {
+      "type": "isc-product-carousel",
+      "settings": {
+        "collection": "saldi",
+        "products_to_show": 12,
+        "heading": "Saldi",
+        "heading_accent": true,
+        "subheading": "",
+        "link_label": "Vedi tutti i saldi",
+        "link": "",
+        "columns_desktop": 5,
+        "columns_tablet": 3,
+        "columns_mobile": "2.5",
+        "card_style": "plain",
+        "media_bg": "#ffffff",
+        "image_ratio": "portrait",
+        "image_fit": "cover",
+        "show_secondary": true,
+        "show_badges": true,
+        "show_rating": false,
+        "show_swatches": false,
+        "show_button": false,
+        "button_label": "Aggiungi al carrello",
+        "button_style": "outline",
+        "color_scheme": "scheme-1",
+        "padding_top": 48,
+        "padding_bottom": 72
+      }
+    },
+    "benefits": {
+      "type": "isc-benefits",
+      "blocks": {
+        "benefit-1": {
+          "type": "benefit",
+          "settings": {
+            "icon": "truck",
+            "title": "Spedizione in 48/72h",
+            "text": "In tutta Italia",
+            "link": ""
+          }
+        },
+        "benefit-2": {
+          "type": "benefit",
+          "settings": {
+            "icon": "return",
+            "title": "Reso facile",
+            "text": "Entro 14 giorni",
+            "link": ""
+          }
+        },
+        "benefit-3": {
+          "type": "benefit",
+          "settings": {
+            "icon": "cash",
+            "title": "Paghi alla consegna",
+            "text": "In contanti al corriere",
+            "link": ""
+          }
+        },
+        "benefit-4": {
+          "type": "benefit",
+          "settings": {
+            "icon": "lock",
+            "title": "Pagamenti sicuri",
+            "text": "Carta, PayPal, Apple Pay",
+            "link": ""
+          }
+        },
+        "benefit-5": {
+          "type": "benefit",
+          "settings": {
+            "icon": "chat",
+            "title": "Servizio clienti",
+            "text": "Dalle 9 alle 20",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "benefit-1",
+        "benefit-2",
+        "benefit-3",
+        "benefit-4",
+        "benefit-5"
+      ],
+      "settings": {
+        "heading": "",
+        "style": "dark",
+        "icon_style": "jewel",
+        "ring": "metal",
+        "mobile_layout": "marquee",
+        "speed": 30,
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "look": {
+      "type": "isc-shop-look",
+      "blocks": {
+        "hotspot-1": {
+          "type": "hotspot",
+          "settings": {
+            "product": "tailleur-comfy-bordeaux",
+            "label": "Tailleur Comfy",
+            "x": 52,
+            "y": 42
+          }
+        }
+      },
+      "block_order": [
+        "hotspot-1"
+      ],
+      "settings": {
+        "image": "shopify://shop_images/C0AA39C3-467C-438F-BF93-81B76386869B.jpg",
+        "image_position": "left",
+        "parallax": true,
+        "product": "tailleur-comfy-bordeaux",
+        "product_label": "Indossa",
+        "eyebrow": "Shop the look",
+        "heading": "Morbido sulle curve. <strong>Deciso</strong> nello stile.",
+        "text": "Il tailleur Comfy bordeaux: giacca con cintura in vita e pantalone palazzo. Dalla riunione all'aperitivo, senza cambiarti.",
+        "button_label": "Acquista il look",
+        "secondary_label": "Scopri tutti i tailleur",
+        "secondary_link": "shopify://collections/tailleur",
+        "style": "white",
+        "marquee_text": "Love your curves",
+        "marquee_speed": 60,
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "stories",
+    "bestseller",
+    "promos",
+    "newarrivals",
+    "benefits",
+    "look"
+  ]
+}

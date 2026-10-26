@@ -1,0 +1,101 @@
+{%- comment -%}
+  I'M So Curvy: trasforma la descrizione "Chiave: valore" (una per riga) in una scheda tecnica ordinata.
+  Le righe senza ":" prima della scheda diventano il testo introduttivo (sopra la tabella),
+  quelle dopo diventano note sotto la tabella. Valori vuoti o "/" vengono saltati.
+  Se non trova almeno 2 caratteristiche, stampa la descrizione così com'è.
+  Accepts:
+  - product: {Object}
+  - mode: {String} 'table' (default) | 'chips' (solo i punti chiave, per sotto al prezzo)
+  - limit: {Number} quante chip al massimo (default 3)
+{%- endcomment -%}
+{%- liquid
+  assign mode = mode | default: 'table'
+  assign limit = limit | default: 3
+  assign raw = product.description | replace: '<br>', '§' | replace: '<br/>', '§' | replace: '<br />', '§' | replace: '</div>', '§' | replace: '</p>', '§' | replace: '</li>', '§' | strip_html | replace: '&nbsp;', ' '
+  assign lines = raw | split: '§'
+  assign keys = ''
+  assign vals = ''
+  assign notes = ''
+  assign intro = ''
+  assign count = 0
+  for line in lines
+    assign l = line | strip | strip_newlines
+    if l == blank
+      continue
+    endif
+    if l contains ':'
+      assign k = l | split: ':' | first | strip
+      assign v = l | remove_first: k | remove_first: ':' | strip
+      if v == blank or v == '/' or v == '-'
+        continue
+      endif
+      assign keys = keys | append: k | append: '¦'
+      assign vals = vals | append: v | append: '¦'
+      assign count = count | plus: 1
+    elsif count == 0
+      assign intro = intro | append: l | append: '¦'
+    else
+      assign notes = notes | append: l | append: '¦'
+    endif
+  endfor
+  assign keys = keys | split: '¦'
+  assign vals = vals | split: '¦'
+  assign notes = notes | split: '¦'
+  assign intro = intro | split: '¦'
+-%}
+
+{%- if mode == 'chips' -%}
+  {%- if count >= 2 -%}
+    {%- liquid
+      comment
+        Punti chiave: tessuto, vestibilità e lunghezza, con etichette brevi
+      endcomment
+      assign shown = 0
+      assign chips = ''
+      for k in keys
+        assign kd = k | downcase
+        assign v = vals[forloop.index0] | remove: ' circa' | remove: 'circa ' | replace: '.', ','
+        assign label = ''
+        if kd == 'composizione' or kd == 'tessuto' or kd == 'materiale'
+          assign label = v
+        elsif kd == 'vestibilità' or kd == 'vestibilita'
+          assign label = 'Vestibilità ' | append: v | downcase
+        elsif kd == 'lunghezza'
+          assign label = 'Lunghezza ' | append: v
+        elsif kd == 'taglia'
+          assign label = 'Taglia ' | append: v
+        endif
+        if label != blank and shown < limit
+          assign chips = chips | append: '<li class="isc-chip">' | append: label | append: '</li>'
+          assign shown = shown | plus: 1
+        endif
+      endfor
+    -%}
+    {%- if shown > 0 -%}<ul class="isc-chips list-unstyled" role="list">{{ chips }}</ul>{%- endif -%}
+  {%- endif -%}
+{%- else -%}
+  {%- if count >= 2 -%}
+    {%- if intro.size > 0 -%}
+      <div class="isc-specs__intro">
+        {%- for n in intro -%}
+          {%- assign nn = n | strip -%}
+          {%- if nn != blank -%}<p>{{ nn | escape }}</p>{%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+    <dl class="isc-specs">
+      {%- for k in keys -%}
+        <div class="isc-specs__row">
+          <dt>{{ k | escape }}</dt>
+          <dd>{{ vals[forloop.index0] | escape }}</dd>
+        </div>
+      {%- endfor -%}
+    </dl>
+    {%- for n in notes -%}
+      {%- assign nn = n | strip -%}
+      {%- if nn != blank -%}<p class="isc-specs__note">{{ nn | escape }}</p>{%- endif -%}
+    {%- endfor -%}
+  {%- else -%}
+    {{ product.description }}
+  {%- endif -%}
+{%- endif -%}

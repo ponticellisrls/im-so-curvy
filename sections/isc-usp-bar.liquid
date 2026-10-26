@@ -1,0 +1,93 @@
+{% render 'isc-section-spacing' %}
+<div class="isc-usp-bar color-{{ section.settings.color_scheme }}">
+  <div class="isc-container isc-usp-bar__grid">
+    {%- for block in section.blocks -%}
+      <div class="isc-usp-bar__item" {{ block.shopify_attributes }}>
+        <span class="isc-usp-bar__title">{{ block.settings.title | escape }}</span>
+        {%- if block.settings.text != blank -%}
+          <span class="isc-usp-bar__text">{{ block.settings.text | escape }}</span>
+        {%- endif -%}
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "ISC: barra vantaggi",
+  "tag": "section",
+  "class": "section",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Spazi"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Spazio sopra",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Spazio sotto",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Vantaggio",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Titolo",
+          "default": "Spedizione gratuita"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Testo",
+          "default": "Su tutti gli ordini sopra i 59€"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ISC: barra vantaggi",
+      "blocks": [
+        {
+          "type": "item"
+        },
+        {
+          "type": "item"
+        },
+        {
+          "type": "item"
+        },
+        {
+          "type": "item"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

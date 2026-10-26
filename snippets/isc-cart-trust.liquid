@@ -1,0 +1,6 @@
+{%- comment -%} I'M So Curvy: garanzie sotto al pulsante di pagamento, con icone gioiello come in home {%- endcomment -%}
+<ul class="isc-ctrust list-unstyled" role="list">
+  {%- if settings.isc_trust_1 != blank -%}<li><span class="isc-ctrust__icon">{% render 'isc-jewel-icon', name: 'lock' %}</span><span>{{ settings.isc_trust_1 | escape }}</span></li>{%- endif -%}
+  {%- if settings.isc_trust_2 != blank -%}<li><span class="isc-ctrust__icon">{% render 'isc-jewel-icon', name: 'cash' %}</span><span>{{ settings.isc_trust_2 | escape }}</span></li>{%- endif -%}
+  {%- if settings.isc_trust_3 != blank -%}<li><span class="isc-ctrust__icon">{% render 'isc-jewel-icon', name: 'return' %}</span><span>{{ settings.isc_trust_3 | escape }}</span></li>{%- endif -%}
+</ul>

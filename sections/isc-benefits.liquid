@@ -1,0 +1,342 @@
+{% render 'isc-section-spacing' %}
+{%- assign s = section.settings -%}
+
+<isc-benefits
+  class="isc-benefits isc-benefits--icons-{{ s.icon_style }} isc-benefits--{{ s.style }} isc-benefits--ring-{{ s.ring }} isc-benefits--m-{{ s.mobile_layout }}"
+  style="--ben-speed: {{ s.speed }}s;"
+>
+  <div class="isc-container">
+    {%- if s.heading != blank -%}
+      <h2 class="isc-h2 isc-benefits__heading">{{ s.heading | escape }}</h2>
+    {%- endif -%}
+
+    {%- capture items -%}
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign b = block.settings
+          assign tag = 'div'
+          if b.link != blank
+            assign tag = 'a'
+          endif
+        -%}
+        <{{ tag }}
+          class="isc-benefit"
+          {% if b.link != blank %}href="{{ b.link }}"{% endif %}
+          style="--i: {{ forloop.index0 }};"
+          {{ block.shopify_attributes }}
+        >
+          <span class="isc-benefit__icon">
+            {%- if b.custom_icon != blank -%}
+              {{ b.custom_icon | image_url: width: 96 | image_tag: loading: 'lazy', alt: '', width: 48, height: 48 }}
+            {%- elsif s.icon_style == 'jewel' -%}
+              {% render 'isc-jewel-icon', name: b.icon %}
+            {%- else -%}
+              {% render 'isc-icon', name: b.icon %}
+            {%- endif -%}
+          </span>
+          <span class="isc-benefit__copy">
+            <span class="isc-benefit__title">{{ b.title | escape }}</span>
+            {%- if b.text != blank -%}
+              <span class="isc-benefit__text">{{ b.text | escape }}</span>
+            {%- endif -%}
+          </span>
+        </{{ tag }}>
+      {%- endfor -%}
+    {%- endcapture -%}
+
+    <div class="isc-benefits__row">{{ items }}</div>
+
+    {%- comment -%} Mobile: nastro che scorre (copia per il loop continuo) {%- endcomment -%}
+    <div class="isc-benefits__marquee" aria-hidden="true">
+      <div class="isc-benefits__track">{{ items | replace: 'shopify-editor-block', 'x-block' | replace: '<a ', '<a tabindex="-1" ' }}</div>
+      <div class="isc-benefits__track">{{ items | replace: 'shopify-editor-block', 'x-block' | replace: '<a ', '<a tabindex="-1" ' }}</div>
+    </div>
+  </div>
+</isc-benefits>
+
+<script>
+  if (!customElements.get('isc-benefits')) {
+    customElements.define(
+      'isc-benefits',
+      class extends HTMLElement {
+        connectedCallback() {
+          /* is-visible: prima comparsa (una volta). is-active: animazioni continue finché la sezione è sullo schermo */
+          if (!('IntersectionObserver' in window)) return this.classList.add('is-visible', 'is-active');
+          this.fallback = setTimeout(() => this.classList.add('is-visible', 'is-active'), 2000);
+          this.io = new IntersectionObserver(
+            (entries) => entries.forEach((e) => {
+              if (e.isIntersecting) {
+                clearTimeout(this.fallback);
+                this.classList.add('is-visible', 'is-active');
+              } else {
+                this.classList.remove('is-active');
+              }
+            }),
+            { threshold: 0.15 }
+          );
+          this.io.observe(this);
+        }
+        disconnectedCallback() { this.io && this.io.disconnect(); clearTimeout(this.fallback); }
+      }
+    );
+  }
+</script>
+
+{% schema %}
+{
+  "name": "ISC: vantaggi",
+  "tag": "section",
+  "class": "section",
+  "max_blocks": 8,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titolo",
+      "info": "Facoltativo."
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Stile",
+      "options": [
+        {
+          "value": "light",
+          "label": "Chiaro (cipria)"
+        },
+        {
+          "value": "white",
+          "label": "Bianco con bordo"
+        },
+        {
+          "value": "dark",
+          "label": "Bordeaux"
+        }
+      ],
+      "default": "dark"
+    },
+    {
+      "type": "select",
+      "id": "icon_style",
+      "label": "Icone",
+      "options": [
+        {
+          "value": "jewel",
+          "label": "Gioiello (rosa metallizzato e perla, animate)"
+        },
+        {
+          "value": "line",
+          "label": "A linea"
+        }
+      ],
+      "default": "jewel"
+    },
+    {
+      "type": "select",
+      "id": "ring",
+      "label": "Cerchio delle icone (solo icone a linea)",
+      "options": [
+        {
+          "value": "metal",
+          "label": "Anello metallico (perla e rosa)"
+        },
+        {
+          "value": "gold",
+          "label": "Anello rosa metallizzato"
+        },
+        {
+          "value": "plain",
+          "label": "Semplice"
+        }
+      ],
+      "default": "metal"
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile",
+      "options": [
+        {
+          "value": "marquee",
+          "label": "Nastro che scorre da solo"
+        },
+        {
+          "value": "grid",
+          "label": "Griglia 2 colonne"
+        },
+        {
+          "value": "scroll",
+          "label": "Scorrimento con il dito"
+        }
+      ],
+      "default": "marquee"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Velocità del nastro (mobile)",
+      "info": "Durata di un giro: più basso = più veloce.",
+      "min": 10,
+      "max": 60,
+      "step": 2,
+      "unit": "s",
+      "default": 26
+    },
+    {
+      "type": "header",
+      "content": "Spazi"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Spazio sopra",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Spazio sotto",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Vantaggio",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icona",
+          "options": [
+            {
+              "value": "truck",
+              "label": "Spedizione"
+            },
+            {
+              "value": "return",
+              "label": "Reso"
+            },
+            {
+              "value": "cash",
+              "label": "Contanti / contrassegno"
+            },
+            {
+              "value": "installments",
+              "label": "Pagamento a rate"
+            },
+            {
+              "value": "lock",
+              "label": "Pagamento sicuro"
+            },
+            {
+              "value": "chat",
+              "label": "Assistenza / chat"
+            },
+            {
+              "value": "shield",
+              "label": "Garanzia / qualità"
+            },
+            {
+              "value": "gift",
+              "label": "Regalo"
+            },
+            {
+              "value": "star",
+              "label": "Stella / recensioni"
+            },
+            {
+              "value": "hanger",
+              "label": "Gruccia / capi"
+            },
+            {
+              "value": "heart",
+              "label": "Cuore"
+            }
+          ],
+          "default": "truck"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon",
+          "label": "Icona personalizzata",
+          "info": "Facoltativa, sostituisce quella sopra (PNG o SVG quadrato)."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Titolo",
+          "default": "Spedizione gratuita"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Testo",
+          "default": "Sopra i 59€"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link",
+          "info": "Facoltativo (es. pagina spedizioni)."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ISC: vantaggi",
+      "blocks": [
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "truck",
+            "title": "Spedizione gratuita",
+            "text": "Sopra i 59€"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "return",
+            "title": "Resi facili",
+            "text": "Entro 14 giorni"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "cash",
+            "title": "Paghi alla consegna",
+            "text": "In contanti al corriere"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "installments",
+            "title": "Paga in 4 rate",
+            "text": "Con Scalapay, senza interessi"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "chat",
+            "title": "Assistenza WhatsApp",
+            "text": "Ti rispondiamo in giornata"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

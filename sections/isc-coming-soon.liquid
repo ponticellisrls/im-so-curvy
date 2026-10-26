@@ -1,0 +1,254 @@
+{%- liquid
+  assign s = section.settings
+  assign signup_id = 'IscLaunch-' | append: section.id
+-%}
+
+<isc-coming-soon class="isc-cs" data-launch="{{ s.launch_date | escape }}">
+  {%- comment -%} Sfondo: gradienti in movimento, grana e scritte giganti incrociate {%- endcomment -%}
+  <div class="isc-cs__bg" aria-hidden="true">
+    <span class="isc-cs__blob isc-cs__blob--1" data-depth="18"></span>
+    <span class="isc-cs__blob isc-cs__blob--2" data-depth="-24"></span>
+    <span class="isc-cs__blob isc-cs__blob--3" data-depth="12"></span>
+    <span class="isc-cs__grain"></span>
+
+    <div class="isc-cs__band isc-cs__band--1">
+      {%- for t in (1..2) -%}
+        <div class="isc-cs__band-track">
+          {%- for i in (1..6) -%}<span>{{ s.band_1 | escape }}</span><span class="isc-cs__band-star">✦</span>{%- endfor -%}
+        </div>
+      {%- endfor -%}
+    </div>
+    <div class="isc-cs__band isc-cs__band--2">
+      {%- for t in (1..2) -%}
+        <div class="isc-cs__band-track">
+          {%- for i in (1..6) -%}<span>{{ s.band_2 | escape }}</span><span class="isc-cs__band-star">✦</span>{%- endfor -%}
+        </div>
+      {%- endfor -%}
+    </div>
+
+    <span class="isc-cs__spark isc-cs__spark--1" data-depth="30">✦</span>
+    <span class="isc-cs__spark isc-cs__spark--2" data-depth="-20">✦</span>
+    <span class="isc-cs__spark isc-cs__spark--3" data-depth="40">✦</span>
+    <span class="isc-cs__spark isc-cs__spark--4" data-depth="-35">✦</span>
+  </div>
+
+  <div class="isc-cs__inner">
+    <div class="isc-cs__logo">
+      {%- if s.logo != blank -%}
+        {{ s.logo | image_url: width: 600 | image_tag: alt: shop.name, widths: '300, 450, 600', sizes: '220px' }}
+      {%- else -%}
+        <img src="{{ 'isc-logo-white.png' | asset_url }}" alt="{{ shop.name | escape }}" width="445" height="69">
+      {%- endif -%}
+    </div>
+
+    <h1 class="isc-cs__title">{{ s.heading }}</h1>
+
+    {%- if s.launch_date != blank -%}
+      <div class="isc-cs__countdown" data-isc-cs-countdown hidden>
+        <div><strong data-unit="d">00</strong><span>giorni</span></div>
+        <div><strong data-unit="h">00</strong><span>ore</span></div>
+        <div><strong data-unit="m">00</strong><span>min</span></div>
+        <div><strong data-unit="s">00</strong><span>sec</span></div>
+      </div>
+    {%- endif -%}
+
+    <div class="isc-cs__card">
+      {%- form 'customer', id: signup_id, class: 'isc-cs__form' -%}
+        <input type="hidden" name="contact[tags]" value="{{ s.tags | escape }}">
+        {%- if form.posted_successfully? -%}
+          <div class="isc-cs__success" role="status">
+            <span class="isc-cs__success-icon" aria-hidden="true">✦</span>
+            <p class="isc-cs__success-title">{{ s.success_heading | escape }}</p>
+            <p class="isc-cs__success-text">{{ s.success_text | escape }}</p>
+          </div>
+        {%- else -%}
+          <p class="isc-cs__offer">{{ s.offer }}</p>
+          <div class="isc-cs__fields">
+            <label class="visually-hidden" for="IscCsName-{{ section.id }}">Nome</label>
+            <input
+              id="IscCsName-{{ section.id }}"
+              class="isc-cs__input"
+              type="text"
+              name="contact[first_name]"
+              autocomplete="given-name"
+              placeholder="Nome"
+              required
+            >
+            <label class="visually-hidden" for="IscCsEmail-{{ section.id }}">Email</label>
+            <input
+              id="IscCsEmail-{{ section.id }}"
+              class="isc-cs__input"
+              type="email"
+              name="contact[email]"
+              autocomplete="email"
+              placeholder="Email"
+              required
+              {% if form.errors %}aria-invalid="true" aria-describedby="IscCsError-{{ section.id }}"{% endif %}
+            >
+          </div>
+          <label class="isc-cs__consent">
+            <input type="checkbox" required>
+            <span>{{ s.consent_text }}</span>
+          </label>
+          {%- if form.errors -%}
+            <p class="isc-cs__error" id="IscCsError-{{ section.id }}">
+              {{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}
+            </p>
+          {%- endif -%}
+          <button type="submit" class="isc-cs__submit">
+            <span>{{ s.button_label | escape }}</span>
+            <svg viewBox="0 0 20 10" fill="none" aria-hidden="true"><path d="M.5 5h17M13.2 1.3c.7 1.9 2.3 3.2 4.3 3.7-2 .5-3.6 1.8-4.3 3.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        {%- endif -%}
+      {%- endform -%}
+    </div>
+
+    {%- if settings.social_instagram_link != blank or settings.social_tiktok_link != blank or settings.social_facebook_link != blank -%}
+      <div class="isc-cs__social">
+        <span>{{ s.social_label | escape }}</span>
+        {%- render 'social-icons', class: 'isc-cs__social-list' -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Accesso con password per il proprietario {%- endcomment -%}
+  <button type="button" class="isc-cs__owner" data-isc-cs-owner>{{ s.owner_label | escape }}</button>
+  <dialog class="isc-cs__dialog" aria-label="Accesso con password">
+    <button type="button" class="isc-cs__dialog-close" data-isc-cs-close aria-label="Chiudi">×</button>
+    {%- form 'storefront_password', class: 'isc-cs__pw' -%}
+      <label for="IscCsPassword">Password del negozio</label>
+      <input type="password" name="password" id="IscCsPassword" autocomplete="current-password" class="isc-cs__input isc-cs__input--dark" required>
+      {%- if form.errors -%}
+        <p class="isc-cs__error" data-isc-cs-pw-error>{{ form.errors.messages.password | default: 'Password non corretta' }}</p>
+      {%- endif -%}
+      <button type="submit" class="isc-cs__submit isc-cs__submit--dark"><span>Entra</span></button>
+    {%- endform -%}
+  </dialog>
+</isc-coming-soon>
+
+<script>
+  if (!customElements.get('isc-coming-soon')) {
+    customElements.define(
+      'isc-coming-soon',
+      class extends HTMLElement {
+        connectedCallback() {
+          this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          this.setupCountdown();
+          this.setupOwner();
+          if (!this.reduced && window.matchMedia('(hover: hover)').matches) this.setupParallax();
+          /* dopo l'iscrizione la pagina si ricarica: porta il modulo in vista */
+          if (this.querySelector('.isc-cs__success, .isc-cs__form .isc-cs__error')) {
+            this.querySelector('.isc-cs__card').scrollIntoView({ block: 'center' });
+          }
+        }
+        setupCountdown() {
+          const box = this.querySelector('[data-isc-cs-countdown]');
+          if (!box) return;
+          const end = new Date((this.dataset.launch || '').replace(' ', 'T'));
+          if (isNaN(end)) return;
+          const units = {};
+          box.querySelectorAll('[data-unit]').forEach((el) => (units[el.dataset.unit] = el));
+          const pad = (n) => String(n).padStart(2, '0');
+          const tick = () => {
+            const ms = end - new Date();
+            if (ms <= 0) { box.hidden = true; clearInterval(this.timer); return; }
+            const v = { d: Math.floor(ms / 864e5), h: Math.floor((ms % 864e5) / 36e5), m: Math.floor((ms % 36e5) / 6e4), s: Math.floor((ms % 6e4) / 1e3) };
+            Object.keys(v).forEach((k) => {
+              const t = pad(v[k]);
+              if (units[k].textContent !== t) {
+                units[k].textContent = t;
+                units[k].classList.remove('is-tick');
+                void units[k].offsetWidth;
+                units[k].classList.add('is-tick');
+              }
+            });
+            box.hidden = false;
+          };
+          tick();
+          this.timer = setInterval(tick, 1000);
+        }
+        setupOwner() {
+          const dialog = this.querySelector('.isc-cs__dialog');
+          this.querySelector('[data-isc-cs-owner]').addEventListener('click', () => dialog.showModal());
+          this.querySelector('[data-isc-cs-close]').addEventListener('click', () => dialog.close());
+          if (this.querySelector('[data-isc-cs-pw-error]')) dialog.showModal();
+        }
+        setupParallax() {
+          const layers = this.querySelectorAll('[data-depth]');
+          let raf;
+          this.addEventListener('pointermove', (e) => {
+            const x = e.clientX / window.innerWidth - 0.5;
+            const y = e.clientY / window.innerHeight - 0.5;
+            cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(() => {
+              layers.forEach((el) => {
+                const d = parseFloat(el.dataset.depth);
+                el.style.translate = `${x * d}px ${y * d}px`;
+              });
+            });
+          });
+        }
+      }
+    );
+  }
+</script>
+
+{% schema %}
+{
+  "name": "ISC: coming soon",
+  "tag": "section",
+  "class": "section",
+  "enabled_on": { "templates": ["password"] },
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Logo (bianco)", "info": "Se vuoto usa il logo bianco del tema." },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Titolo",
+      "info": "Il corsivo viene mostrato con il solo contorno.",
+      "default": "Stiamo <em>arrivando</em>"
+    },
+    {
+      "type": "text",
+      "id": "launch_date",
+      "label": "Data di lancio",
+      "info": "Formato AAAA-MM-GG HH:MM (es. 2026-10-15 10:00). Vuoto = niente conto alla rovescia."
+    },
+    { "type": "header", "content": "Iscrizione" },
+    {
+      "type": "inline_richtext",
+      "id": "offer",
+      "label": "Offerta",
+      "default": "Registrati ora: al lancio ricevi <strong>-10%</strong> sul primo ordine."
+    },
+    { "type": "text", "id": "button_label", "label": "Testo pulsante", "default": "Voglio il mio -10%" },
+    {
+      "type": "inline_richtext",
+      "id": "consent_text",
+      "label": "Testo consenso",
+      "default": "Accetto di ricevere email da I'M So Curvy. Posso disiscrivermi quando voglio."
+    },
+    {
+      "type": "text",
+      "id": "tags",
+      "label": "Tag cliente",
+      "info": "Le iscritte vengono salvate tra i clienti con questi tag, per inviare lo sconto al lancio.",
+      "default": "newsletter,prelancio"
+    },
+    { "type": "text", "id": "success_heading", "label": "Titolo dopo l'iscrizione", "default": "Sei in lista!" },
+    {
+      "type": "text",
+      "id": "success_text",
+      "label": "Testo dopo l'iscrizione",
+      "default": "Al lancio ti scriviamo per prima, con il tuo codice -10%."
+    },
+    { "type": "header", "content": "Sfondo" },
+    { "type": "text", "id": "band_1", "label": "Scritta scorrevole 1", "default": "Coming soon" },
+    { "type": "text", "id": "band_2", "label": "Scritta scorrevole 2", "default": "I'M So Curvy" },
+    { "type": "header", "content": "Altro" },
+    { "type": "text", "id": "social_label", "label": "Testo social", "default": "Seguici" },
+    { "type": "text", "id": "owner_label", "label": "Link accesso proprietario", "default": "Entra con la password" }
+  ],
+  "presets": [{ "name": "ISC: coming soon" }]
+}
+{% endschema %}

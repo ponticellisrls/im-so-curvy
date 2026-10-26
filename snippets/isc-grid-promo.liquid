@@ -1,0 +1,39 @@
+{%- comment -%}
+  I'M So Curvy: box promozionale dentro la griglia della collezione.
+  Accepts:
+  - block: {Object} blocco isc_promo di main-collection-product-grid
+{%- endcomment -%}
+{%- liquid
+  assign b = block.settings
+  assign href = b.link | default: '#newsletter-popup'
+-%}
+<li
+  class="grid__item isc-gpromo-item{% if b.wide_mobile %} isc-gpromo-item--wide{% endif %}"
+  {% if b.placement == 'random' %}data-isc-random data-min="{{ b.random_min }}" data-max="{{ b.random_max }}"{% endif %}
+  {{ block.shopify_attributes }}
+>
+  {%- if b.placement == 'random' -%}<isc-promo-slot></isc-promo-slot>{%- endif -%}
+  <a href="{{ href }}" class="isc-gpromo isc-gpromo--{{ b.style }}">
+    <span class="isc-gpromo__glow" aria-hidden="true"></span>
+    <span class="isc-gpromo__media">
+      <span class="isc-gpromo__spark isc-gpromo__spark--1" aria-hidden="true">✦</span>
+      <span class="isc-gpromo__spark isc-gpromo__spark--2" aria-hidden="true">✦</span>
+      {%- if b.image != blank -%}
+        {{ b.image | image_url: width: 700 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 22vw, 45vw', widths: '350, 500, 700', alt: '' }}
+      {%- else -%}
+        <img src="{{ 'isc-newsletter-box.webp' | asset_url }}" alt="" loading="lazy" width="900" height="647">
+      {%- endif -%}
+    </span>
+    <span class="isc-gpromo__copy">
+      {%- if b.eyebrow != blank -%}<span class="isc-gpromo__eyebrow">{{ b.eyebrow | escape }}</span>{%- endif -%}
+      {%- if b.heading != blank -%}<span class="isc-gpromo__heading">{{ b.heading }}</span>{%- endif -%}
+      {%- if b.text != blank -%}<span class="isc-gpromo__text">{{ b.text | escape }}</span>{%- endif -%}
+      {%- if b.button_label != blank -%}
+        <span class="isc-gpromo__btn">
+          {{ b.button_label | escape }}
+          <svg viewBox="0 0 20 10" fill="none" aria-hidden="true"><path d="M.5 5h17M13.2 1.3c.7 1.9 2.3 3.2 4.3 3.7-2 .5-3.6 1.8-4.3 3.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      {%- endif -%}
+    </span>
+  </a>
+</li>

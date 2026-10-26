@@ -1,0 +1,505 @@
+{%- liquid
+  assign s = section.settings
+  assign has_button = false
+  if s.button_label != blank
+    assign has_button = true
+  endif
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .isc-ann {
+    --ann-size: {{ s.font_size_mobile }}px;
+    --ann-weight: {{ s.font_weight }};
+    --ann-spacing: {{ s.letter_spacing | divided_by: 100.0 }}em;
+    --ann-gap: {{ s.gap }}px;
+    --ann-pad: {{ s.padding | times: 0.8 | round }}px;
+    --ann-duration: {{ s.speed }}s;
+    {%- if s.text_color != blank and s.text_color.alpha != 0.0 %}
+      --ann-color: {{ s.text_color }};
+    {%- endif %}
+    {%- if s.background_color != blank and s.background_color.alpha != 0.0 %}
+      --ann-bg: {{ s.background_color }};
+    {%- endif %}
+    {%- if s.separator_color != blank and s.separator_color.alpha != 0.0 %}
+      --ann-sep-color: {{ s.separator_color }};
+    {%- endif %}
+    {%- if s.button_color != blank and s.button_color.alpha != 0.0 %}
+      --ann-btn-color: {{ s.button_color }};
+    {%- endif %}
+  }
+
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .isc-ann {
+      --ann-size: {{ s.font_size }}px;
+      --ann-pad: {{ s.padding }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- comment -%} Messaggi con gli attributi dell'editor (una sola copia) {%- endcomment -%}
+{%- capture messages_static -%}
+  {%- for block in section.blocks -%}
+    {%- unless forloop.first -%}
+      <span class="isc-ann__sep" aria-hidden="true">{{ s.separator | escape }}</span>
+    {%- endunless -%}
+    {%- render 'isc-announcement-message', block: block, attributes: true -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- comment -%} Messaggi per il marquee: ripetuti, senza attributi editor {%- endcomment -%}
+{%- capture messages_loop -%}
+  {%- for block in section.blocks -%}
+    {%- render 'isc-announcement-message', block: block, attributes: false -%}
+    <span class="isc-ann__sep" aria-hidden="true">{{ s.separator | escape }}</span>
+  {%- endfor -%}
+  {%- if has_button and s.button_position == 'inline' -%}
+    <a href="{{ s.button_link | default: routes.all_products_collection_url }}" class="isc-ann__button isc-ann__button--{{ s.button_style }}" tabindex="-1">{{ s.button_label | escape }}</a>
+    <span class="isc-ann__sep" aria-hidden="true">{{ s.separator | escape }}</span>
+  {%- endif -%}
+{%- endcapture -%}
+
+<isc-announcement
+  class="isc-ann color-{{ s.color_scheme }}{% if s.gradient %} isc-ann--gradient{% endif %}{% if s.uppercase %} isc-ann--uppercase{% endif %}{% if s.italic %} isc-ann--italic{% endif %}{% if s.font == 'heading' %} isc-ann--heading-font{% endif %}{% if s.border_bottom %} isc-ann--border{% endif %}{% if s.pause_on_hover %} isc-ann--pause{% endif %}{% if s.direction == 'right' %} isc-ann--reverse{% endif %}{% if has_button and s.button_position == 'right' %} isc-ann--has-side-button{% endif %}"
+  data-desktop="{{ s.mode_desktop }}"
+  data-mobile="{{ s.mode_mobile }}"
+  data-interval="{{ s.slide_interval }}"
+  role="region"
+  aria-label="Annunci"
+>
+  <div class="isc-ann__body">
+    {%- comment -%} 1. Scorrevole {%- endcomment -%}
+    <div class="isc-ann__marquee" aria-hidden="true">
+      {%- for track in (1..2) -%}
+        <div class="isc-ann__track">
+          {%- for i in (1..6) -%}
+            <span class="isc-ann__group">{{ messages_loop }}</span>
+          {%- endfor -%}
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {%- comment -%} 2. Fisso {%- endcomment -%}
+    <div class="isc-ann__static">
+      {{ messages_static }}
+      {%- if has_button and s.button_position == 'inline' -%}
+        <a href="{{ s.button_link | default: routes.all_products_collection_url }}" class="isc-ann__button isc-ann__button--{{ s.button_style }}">{{ s.button_label | escape }}</a>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} 3. Slide: un messaggio alla volta {%- endcomment -%}
+    <div class="isc-ann__slides" aria-live="polite">
+      {%- for block in section.blocks -%}
+        <div class="isc-ann__slide{% if forloop.first %} is-active{% endif %}" data-index="{{ forloop.index0 }}" data-block-id="{{ block.id }}">
+          {%- render 'isc-announcement-message', block: block, attributes: false -%}
+          {%- if has_button and s.button_position == 'inline' -%}
+            <a href="{{ s.button_link | default: routes.all_products_collection_url }}" class="isc-ann__button isc-ann__button--{{ s.button_style }}">{{ s.button_label | escape }}</a>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+
+  {%- if has_button and s.button_position == 'right' -%}
+    <a href="{{ s.button_link | default: routes.all_products_collection_url }}" class="isc-ann__button isc-ann__button--{{ s.button_style }} isc-ann__button--side">
+      {{- s.button_label | escape -}}
+    </a>
+  {%- endif -%}
+</isc-announcement>
+
+<script>
+  if (!customElements.get('isc-announcement')) {
+    customElements.define(
+      'isc-announcement',
+      class extends HTMLElement {
+        connectedCallback() {
+          this.slides = Array.from(this.querySelectorAll('.isc-ann__slide'));
+          this.index = 0;
+          this.mq = window.matchMedia('(min-width: 750px)');
+          this.onChange = () => this.update();
+          this.mq.addEventListener('change', this.onChange);
+          this.addEventListener('mouseenter', () => (this.hovered = true));
+          this.addEventListener('mouseleave', () => (this.hovered = false));
+          this.update();
+          document.addEventListener('shopify:block:select', (event) => {
+            const slide = this.slides.findIndex((el) => el.dataset.blockId === event.detail.blockId);
+            if (slide > -1) { this.show(slide); this.stop(); }
+          });
+          document.addEventListener('shopify:block:deselect', () => this.update());
+        }
+        disconnectedCallback() {
+          this.stop();
+          this.mq.removeEventListener('change', this.onChange);
+        }
+        update() {
+          this.stop();
+          const mode = this.mq.matches ? this.dataset.desktop : this.dataset.mobile;
+          if (mode !== 'slide' || this.slides.length < 2) return;
+          const ms = Math.max(2, parseInt(this.dataset.interval, 10) || 4) * 1000;
+          this.timer = setInterval(() => {
+            if (!this.hovered || !this.classList.contains('isc-ann--pause')) this.show(this.index + 1);
+          }, ms);
+        }
+        stop() { clearInterval(this.timer); }
+        show(i) {
+          const next = (i + this.slides.length) % this.slides.length;
+          if (next === this.index) return;
+          this.slides[this.index].classList.remove('is-active');
+          this.slides[this.index].classList.add('is-leaving');
+          const prev = this.slides[this.index];
+          setTimeout(() => prev.classList.remove('is-leaving'), 500);
+          this.slides[next].classList.add('is-active');
+          this.index = next;
+        }
+      }
+    );
+  }
+</script>
+
+{% schema %}
+{
+  "name": "ISC: barra annunci",
+  "tag": "section",
+  "class": "section",
+  "max_blocks": 8,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Comportamento"
+    },
+    {
+      "type": "select",
+      "id": "mode_desktop",
+      "label": "Desktop",
+      "options": [
+        {
+          "value": "marquee",
+          "label": "Scorrevole"
+        },
+        {
+          "value": "static",
+          "label": "Fisso"
+        },
+        {
+          "value": "slide",
+          "label": "Slide (un messaggio alla volta)"
+        }
+      ],
+      "default": "marquee"
+    },
+    {
+      "type": "select",
+      "id": "mode_mobile",
+      "label": "Mobile",
+      "options": [
+        {
+          "value": "marquee",
+          "label": "Scorrevole"
+        },
+        {
+          "value": "static",
+          "label": "Fisso"
+        },
+        {
+          "value": "slide",
+          "label": "Slide (un messaggio alla volta)"
+        }
+      ],
+      "default": "marquee"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Scorrevole: durata di un giro",
+      "info": "Più basso = più veloce.",
+      "min": 6,
+      "max": 90,
+      "step": 2,
+      "unit": "s",
+      "default": 30
+    },
+    {
+      "type": "select",
+      "id": "direction",
+      "label": "Scorrevole: direzione",
+      "options": [
+        {
+          "value": "left",
+          "label": "Verso sinistra"
+        },
+        {
+          "value": "right",
+          "label": "Verso destra"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "slide_interval",
+      "label": "Slide: secondi per messaggio",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "unit": "s",
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pausa al passaggio del mouse",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Testo"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Dimensione desktop",
+      "min": 10,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "label": "Dimensione mobile",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Spessore",
+      "options": [
+        {
+          "value": "300",
+          "label": "Light"
+        },
+        {
+          "value": "400",
+          "label": "Regular"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semibold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "800",
+          "label": "Extra bold"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "select",
+      "id": "font",
+      "label": "Carattere",
+      "options": [
+        {
+          "value": "body",
+          "label": "Testo (Jost)"
+        },
+        {
+          "value": "heading",
+          "label": "Titoli (Jost spaziato)"
+        }
+      ],
+      "default": "body"
+    },
+    {
+      "type": "checkbox",
+      "id": "italic",
+      "label": "Corsivo",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "uppercase",
+      "label": "Tutto maiuscolo",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "label": "Spaziatura lettere",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "default": 8
+    },
+    {
+      "type": "paragraph",
+      "content": "Puoi anche mettere in grassetto o corsivo singole parole dentro ogni messaggio."
+    },
+    {
+      "type": "header",
+      "content": "Colori e spazi"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-3"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Colore testo (sostituisce lo schema)"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Colore sfondo (sostituisce lo schema)"
+    },
+    {
+      "type": "checkbox",
+      "id": "gradient",
+      "label": "Sfumatura come il footer",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "separator",
+      "label": "Separatore",
+      "default": "·"
+    },
+    {
+      "type": "color",
+      "id": "separator_color",
+      "label": "Colore separatore"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Distanza tra i messaggi",
+      "min": 8,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Altezza barra (spazio sopra e sotto)",
+      "min": 4,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "checkbox",
+      "id": "border_bottom",
+      "label": "Linea sotto la barra",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Pulsante"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Testo pulsante",
+      "info": "Lascia vuoto per nascondere il pulsante."
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Link pulsante"
+    },
+    {
+      "type": "select",
+      "id": "button_position",
+      "label": "Posizione",
+      "options": [
+        {
+          "value": "right",
+          "label": "Fisso a destra"
+        },
+        {
+          "value": "inline",
+          "label": "Insieme ai messaggi"
+        }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Stile",
+      "options": [
+        {
+          "value": "solid",
+          "label": "Pieno"
+        },
+        {
+          "value": "outline",
+          "label": "Bordo"
+        },
+        {
+          "value": "link",
+          "label": "Link sottolineato"
+        }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Colore pulsante"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Messaggio",
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "Testo",
+          "info": "Puoi usare grassetto e corsivo.",
+          "default": "Spedizione gratuita sopra i 59€"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "color",
+          "id": "color",
+          "label": "Colore di questo messaggio"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ISC: barra annunci",
+      "blocks": [
+        {
+          "type": "item"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

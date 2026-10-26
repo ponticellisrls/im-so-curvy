@@ -1,0 +1,49 @@
+{%- comment -%} I'M So Curvy: extra in fondo al menu mobile (promo, link rapidi, social) {%- endcomment -%}
+<div class="isc-mx">
+  {%- if settings.isc_menu_promo != blank -%}
+    <a
+      href="{{ settings.isc_menu_promo_link | default: '#newsletter-popup' }}"
+      class="isc-mx__promo"
+      {% if settings.isc_menu_promo_link == blank %}data-isc-newsletter-open{% endif %}
+    >
+      <span class="isc-mx__promo-spark" aria-hidden="true">✦</span>
+      <span class="isc-mx__promo-text">{{ settings.isc_menu_promo | escape }}</span>
+      <span class="isc-mx__promo-cta">
+        {{- settings.isc_menu_promo_cta | escape -}}
+        <svg viewBox="0 0 20 10" fill="none" aria-hidden="true"><path d="M.5 5h17M13.2 1.3c.7 1.9 2.3 3.2 4.3 3.7-2 .5-3.6 1.8-4.3 3.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    </a>
+  {%- endif -%}
+
+  <ul class="isc-mx__quick list-unstyled" role="list">
+    {%- if shop.customer_accounts_enabled -%}
+      <li>
+        <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}">
+          <span class="isc-mx__ico">{{- 'icon-account.svg' | inline_asset_content -}}</span>
+          {%- if customer %}Il mio account{% else %}Accedi{% endif -%}
+        </a>
+      </li>
+    {%- endif -%}
+    {%- if settings.isc_menu_track != blank -%}
+      <li><a href="{{ settings.isc_menu_track }}"><span class="isc-mx__ico">{% render 'isc-icon', name: 'truck' %}</span>Traccia ordine</a></li>
+    {%- endif -%}
+    {%- if settings.isc_whatsapp != blank -%}
+      {%- liquid
+        assign wa = settings.isc_whatsapp | remove: ' ' | remove: '+' | remove: '-'
+        assign wa_first = wa | slice: 0, 2
+        unless wa_first == '39'
+          assign wa = '39' | append: wa
+        endunless
+      -%}
+      <li><a href="https://wa.me/{{ wa }}" target="_blank" rel="noopener"><span class="isc-mx__ico">{% render 'isc-icon', name: 'whatsapp' %}</span>Assistenza WhatsApp</a></li>
+    {%- endif -%}
+  </ul>
+
+  {%- if settings.social_instagram_link != blank or settings.social_tiktok_link != blank or settings.social_facebook_link != blank -%}
+    <ul class="isc-mx__social list-unstyled" role="list">
+      {%- if settings.social_instagram_link != blank -%}<li><a href="{{ settings.social_instagram_link }}" target="_blank" rel="noopener" aria-label="Instagram"><span class="svg-wrapper">{{ 'icon-instagram.svg' | inline_asset_content }}</span></a></li>{%- endif -%}
+      {%- if settings.social_tiktok_link != blank -%}<li><a href="{{ settings.social_tiktok_link }}" target="_blank" rel="noopener" aria-label="TikTok"><span class="svg-wrapper">{{ 'icon-tiktok.svg' | inline_asset_content }}</span></a></li>{%- endif -%}
+      {%- if settings.social_facebook_link != blank -%}<li><a href="{{ settings.social_facebook_link }}" target="_blank" rel="noopener" aria-label="Facebook"><span class="svg-wrapper">{{ 'icon-facebook.svg' | inline_asset_content }}</span></a></li>{%- endif -%}
+    </ul>
+  {%- endif -%}
+</div>

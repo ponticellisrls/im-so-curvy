@@ -1,0 +1,331 @@
+{%- liquid
+  assign s = section.settings
+  assign form_id = 'IscPopupNewsletter-' | append: section.id
+-%}
+
+<isc-newsletter-popup
+  class="isc-nlp"
+  data-form-id="{{ form_id }}"
+  {% render 'isc-popup-data', key: 'isc-nlp-closed' %}
+>
+  <dialog class="isc-nlp__dialog isc-nlp--{{ s.theme }} color-{{ s.color_scheme }}" aria-labelledby="IscNlpTitle-{{ section.id }}">
+    <button type="button" class="isc-nlp__close" data-isc-nlp-close aria-label="Chiudi">
+      <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5.5 5.5 9 9m0-9-9 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+    </button>
+
+    <div class="isc-nlp__media">
+      {%- if s.image != blank -%}
+        {{
+          s.image
+          | image_url: width: 900
+          | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 380px, 100vw', widths: '400, 600, 900', alt: ''
+        }}
+      {%- else -%}
+        <span class="isc-nlp__graphic" aria-hidden="true">
+          <span class="isc-nlp__glow"></span>
+          <span class="isc-nlp__big">{{ s.graphic_text | escape }}</span>
+          <span class="isc-nlp__gift">{% render 'isc-gift' %}</span>
+          <span class="isc-nlp__spark isc-nlp__spark--1">✦</span>
+          <span class="isc-nlp__spark isc-nlp__spark--2">✦</span>
+          <span class="isc-nlp__spark isc-nlp__spark--3">✦</span>
+          <span class="isc-nlp__spark isc-nlp__spark--4">✦</span>
+        </span>
+      {%- endif -%}
+    </div>
+
+    <div class="isc-nlp__body">
+      {%- form 'customer', id: form_id, class: 'isc-nlp__form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter,popup">
+        {%- if form.posted_successfully? -%}
+          <p class="isc-nlp__eyebrow">{{ s.eyebrow | escape }}</p>
+          <h2 class="isc-nlp__title" id="IscNlpTitle-{{ section.id }}">{{ s.success_heading | escape }}</h2>
+          <p class="isc-nlp__text">{{ s.success_text | escape }}</p>
+          {%- if s.discount_code != blank -%}
+            <div class="isc-nlp__code">
+              <span>{{ s.discount_code | escape }}</span>
+              <button type="button" class="isc-nlp__copy" data-isc-copy="{{ s.discount_code | escape }}">Copia</button>
+            </div>
+          {%- endif -%}
+          <a href="{{ s.success_link | default: routes.all_products_collection_url }}" class="isc-nlp__submit">{{ s.success_button | escape }}</a>
+          <span data-isc-nlp-success hidden></span>
+        {%- else -%}
+          <p class="isc-nlp__eyebrow">{{ s.eyebrow | escape }}</p>
+          <h2 class="isc-nlp__title" id="IscNlpTitle-{{ section.id }}">{{ s.heading }}</h2>
+          {%- if s.text != blank -%}
+            <p class="isc-nlp__text">{{ s.text | escape }}</p>
+          {%- endif -%}
+          <label for="IscNlpEmail-{{ section.id }}" class="visually-hidden">Email</label>
+          <input
+            id="IscNlpEmail-{{ section.id }}"
+            class="isc-nlp__input"
+            type="email"
+            name="contact[email]"
+            autocomplete="email"
+            placeholder="La tua email"
+            required
+            {% if form.errors %}aria-invalid="true" aria-describedby="IscNlpError-{{ section.id }}"{% endif %}
+          >
+          {%- if form.errors -%}
+            <p class="isc-nlp__error" id="IscNlpError-{{ section.id }}">
+              {{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}
+            </p>
+            <span data-isc-nlp-error hidden></span>
+          {%- endif -%}
+          <button type="submit" class="isc-nlp__submit">
+            <span>{{ s.button_label | escape }}</span>
+            <svg viewBox="0 0 20 10" fill="none" aria-hidden="true"><path d="M.5 5h17M13.2 1.3c.7 1.9 2.3 3.2 4.3 3.7-2 .5-3.6 1.8-4.3 3.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          {%- if s.privacy_text != blank -%}
+            <div class="isc-nlp__privacy">{{ s.privacy_text }}</div>
+          {%- endif -%}
+          <button type="button" class="isc-nlp__dismiss" data-isc-nlp-close>{{ s.dismiss_label | escape }}</button>
+        {%- endif -%}
+      {%- endform -%}
+    </div>
+  </dialog>
+</isc-newsletter-popup>
+
+
+{% schema %}
+{
+  "name": "ISC: popup newsletter",
+  "tag": "div",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Apertura automatica"
+    },
+    {
+      "type": "paragraph",
+      "content": "Si apre sempre anche dai link a #newsletter-popup (es. la card -10%)."
+    },
+    {
+      "type": "checkbox",
+      "id": "auto_open",
+      "label": "Apri da solo",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "trigger",
+      "label": "Quando aprirlo",
+      "options": [
+        {
+          "value": "delay",
+          "label": "Dopo qualche secondo"
+        },
+        {
+          "value": "scroll",
+          "label": "Dopo aver scorso la pagina"
+        },
+        {
+          "value": "exit",
+          "label": "Quando sta per uscire (desktop)"
+        }
+      ],
+      "default": "delay"
+    },
+    {
+      "type": "range",
+      "id": "delay",
+      "label": "Dopo quanti secondi",
+      "min": 0,
+      "max": 90,
+      "step": 1,
+      "unit": "s",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "scroll_percent",
+      "label": "Dopo quanta pagina scorsa",
+      "min": 10,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "days_hidden",
+      "label": "Se lo chiude, riproporlo dopo",
+      "min": 1,
+      "max": 90,
+      "step": 1,
+      "unit": "gg",
+      "default": 7
+    },
+    {
+      "type": "select",
+      "id": "show_on",
+      "label": "Pagine",
+      "options": [
+        {
+          "value": "all",
+          "label": "Tutte"
+        },
+        {
+          "value": "home",
+          "label": "Solo home"
+        },
+        {
+          "value": "products",
+          "label": "Solo prodotti e collezioni"
+        },
+        {
+          "value": "no_cart",
+          "label": "Tutte tranne il carrello"
+        }
+      ],
+      "default": "no_cart"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_desktop",
+      "label": "Mostra su desktop",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_mobile",
+      "label": "Mostra su mobile",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_subscribed",
+      "label": "Non mostrarlo a chi è già iscritto (clienti con account)",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Durata"
+    },
+    {
+      "type": "text",
+      "id": "start_date",
+      "label": "Mostra da",
+      "info": "Facoltativo. Formato AAAA-MM-GG HH:MM"
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "Mostra fino a",
+      "info": "Facoltativo. Formato AAAA-MM-GG HH:MM"
+    },
+    {
+      "type": "header",
+      "content": "Contenuto"
+    },
+    {
+      "type": "select",
+      "id": "theme",
+      "label": "Stile",
+      "options": [
+        {
+          "value": "dark",
+          "label": "Bordeaux e rosa"
+        },
+        {
+          "value": "light",
+          "label": "Chiaro"
+        }
+      ],
+      "default": "dark"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Immagine (a sinistra)",
+      "info": "Se vuota viene mostrato il pacco regalo animato con la scritta qui sotto."
+    },
+    {
+      "type": "text",
+      "id": "graphic_text",
+      "label": "Testo grafica",
+      "default": "-10%"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Etichetta",
+      "default": "Newsletter I'M So Curvy"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Titolo",
+      "default": "<strong>-10%</strong> sul tuo primo ordine"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Testo",
+      "default": "Iscriviti: ricevi subito il codice sconto e sei la prima a sapere di nuovi arrivi e promo riservate."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Testo pulsante",
+      "default": "Voglio il mio -10%"
+    },
+    {
+      "type": "text",
+      "id": "dismiss_label",
+      "label": "Testo \"no grazie\"",
+      "default": "No grazie, pago prezzo pieno"
+    },
+    {
+      "type": "richtext",
+      "id": "privacy_text",
+      "label": "Nota privacy",
+      "default": "<p>Iscrivendoti accetti di ricevere email promozionali. Puoi disiscriverti in qualsiasi momento.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Dopo l'iscrizione"
+    },
+    {
+      "type": "text",
+      "id": "success_heading",
+      "label": "Titolo",
+      "default": "Benvenuta in I'M So Curvy!"
+    },
+    {
+      "type": "text",
+      "id": "success_text",
+      "label": "Testo",
+      "default": "Ecco il tuo codice sconto: usalo al checkout."
+    },
+    {
+      "type": "text",
+      "id": "discount_code",
+      "label": "Codice sconto da mostrare",
+      "info": "Crea il codice in Sconti su Shopify e scrivilo qui. Se vuoto il codice non viene mostrato."
+    },
+    {
+      "type": "text",
+      "id": "success_button",
+      "label": "Testo pulsante",
+      "default": "Inizia lo shopping"
+    },
+    {
+      "type": "url",
+      "id": "success_link",
+      "label": "Link pulsante"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "ISC: popup newsletter"
+    }
+  ]
+}
+{% endschema %}

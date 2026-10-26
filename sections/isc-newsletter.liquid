@@ -1,0 +1,105 @@
+{% render 'isc-section-spacing' %}
+{%- liquid
+  assign s = section.settings
+  assign form_id = 'IscNewsletter-' | append: section.id
+-%}
+
+<div class="isc-nl isc-nl--{{ s.style }}" id="newsletter">
+  <span class="isc-nl__glow" aria-hidden="true"></span>
+  <div class="isc-container isc-nl__inner">
+    <div class="isc-nl__visual" aria-hidden="true">
+      <span class="isc-nl__spark isc-nl__spark--1">✦</span>
+      <span class="isc-nl__spark isc-nl__spark--2">✦</span>
+      <span class="isc-nl__spark isc-nl__spark--3">✦</span>
+      <span class="isc-nl__img">
+        {%- if s.image != blank -%}
+          {{ s.image | image_url: width: 900 | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 340px, 60vw', widths: '400, 600, 900', alt: '' }}
+        {%- else -%}
+          <img src="{{ 'isc-newsletter-box.webp' | asset_url }}" alt="" loading="lazy" width="900" height="647">
+        {%- endif -%}
+      </span>
+    </div>
+
+    <div class="isc-nl__copy">
+      {%- if s.eyebrow != blank -%}
+        <p class="isc-nl__eyebrow">{{ s.eyebrow | escape }}</p>
+      {%- endif -%}
+      <h3 class="isc-nl__heading">{{ s.heading }}</h3>
+      {%- if s.text != blank -%}
+        <p class="isc-nl__text">{{ s.text | escape }}</p>
+      {%- endif -%}
+    </div>
+
+    {%- form 'customer', id: form_id, class: 'isc-nl__form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      {%- if form.posted_successfully? -%}
+        <p class="isc-nl__msg" role="status">
+          <span aria-hidden="true">✦</span> {{ s.success_text | escape }}
+        </p>
+      {%- else -%}
+        <div class="isc-nl__field">
+          <label for="IscNewsletterEmail-{{ section.id }}" class="visually-hidden">Email</label>
+          <input
+            id="IscNewsletterEmail-{{ section.id }}"
+            type="email"
+            name="contact[email]"
+            required
+            autocomplete="email"
+            placeholder="{{ s.placeholder | escape }}"
+            class="isc-nl__input"
+            {% if form.errors %}aria-invalid="true" aria-describedby="IscNewsletterError-{{ section.id }}"{% endif %}
+          >
+          <button type="submit" class="isc-nl__button">
+            <span>{{ s.button_label | escape }}</span>
+            <svg viewBox="0 0 20 10" fill="none" aria-hidden="true"><path d="M.5 5h17M13.2 1.3c.7 1.9 2.3 3.2 4.3 3.7-2 .5-3.6 1.8-4.3 3.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        {%- if form.errors -%}
+          <p id="IscNewsletterError-{{ section.id }}" class="isc-nl__msg isc-nl__msg--error">
+            {{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}
+          </p>
+        {%- elsif s.note != blank -%}
+          <p class="isc-nl__note">{{ s.note | escape }}</p>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endform -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "ISC: newsletter",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Immagine", "info": "Meglio PNG con sfondo trasparente. Se vuota usa shopper e cappelliera I'M So Curvy." },
+    { "type": "text", "id": "eyebrow", "label": "Etichetta", "default": "Newsletter I'M So Curvy" },
+    { "type": "inline_richtext", "id": "heading", "label": "Titolo", "info": "Il grassetto diventa oro.", "default": "<strong>-10%</strong> sul tuo primo ordine" },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Testo",
+      "default": "Iscriviti e ricevi subito il codice sconto, più nuovi arrivi e promo riservate prima di tutti."
+    },
+    { "type": "text", "id": "placeholder", "label": "Testo nel campo email", "default": "La tua email" },
+    { "type": "text", "id": "button_label", "label": "Testo pulsante", "default": "Iscriviti" },
+    { "type": "text", "id": "note", "label": "Nota sotto il campo", "default": "Niente spam, solo novità che ti stanno a pennello. Ti disiscrivi quando vuoi." },
+    { "type": "text", "id": "success_text", "label": "Messaggio dopo l'iscrizione", "default": "Sei dentro! Controlla la tua email per il codice sconto." },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Sfondo",
+      "options": [
+        { "value": "light", "label": "Cipria" },
+        { "value": "white", "label": "Bianco" },
+        { "value": "dark", "label": "Bordeaux" }
+      ],
+      "default": "light"
+    },
+    { "type": "header", "content": "Spazi" },
+    { "type": "range", "id": "padding_top", "label": "Spazio sopra", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "padding_bottom", "label": "Spazio sotto", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 }
+  ],
+  "presets": [{ "name": "ISC: newsletter" }]
+}
+{% endschema %}

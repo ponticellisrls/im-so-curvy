@@ -1,0 +1,207 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "breadcrumb": {
+      "type": "isc-breadcrumb",
+      "settings": {}
+    },
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "eyebrow": {
+          "type": "isc_eyebrow",
+          "settings": {
+            "text": ""
+          }
+        },
+        "rating": {
+          "type": "isc_rating",
+          "settings": {
+            "source": "shop",
+            "show_empty": true,
+            "empty_text": "Scrivi la prima recensione",
+            "link": ""
+          },
+          "disabled": true
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {
+            "isc_save_style": "percent",
+            "isc_save_suffix": "di sconto",
+            "isc_scalapay": false,
+            "isc_scalapay_text": "da [importo]/mese in [rate] rate",
+            "isc_scalapay_n": "4",
+            "isc_scalapay_min": 0,
+            "isc_rate_text": "",
+            "isc_rate_n": 4,
+            "isc_rate_min": 0
+          }
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button",
+            "swatch_shape": "square",
+            "isc_size_guide": "",
+            "isc_size_table": "46 = 100 cm | 84 cm | 108 cm\n48 = 104 cm | 88 cm | 112 cm\n50 = 108 cm | 92 cm | 116 cm\n52 = 112 cm | 96 cm | 120 cm\n54 = 116 cm | 100 cm | 124 cm\n56 = 120 cm | 104 cm | 128 cm\n58 = 124 cm | 108 cm | 132 cm\n60 = 128 cm | 112 cm | 136 cm",
+            "isc_size_tip": "Misure del corpo, prese con il metro morbido sopra l'intimo. Ogni scheda indica la vestibilità del capo: se sei tra due taglie scegli la più grande. Hai dubbi? Scrivici e ti consigliamo noi.",
+            "isc_colors_first": true,
+            "isc_show_fit": true,
+            "isc_size_head": "Taglia IT | Seno | Vita | Fianchi"
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "isc_inline_quantity": false,
+            "show_dynamic_checkout": false,
+            "show_gift_card_recipient": false
+          }
+        },
+        "payments": {
+          "type": "isc_payments",
+          "settings": {}
+        },
+        "delivery": {
+          "type": "isc_delivery",
+          "settings": {
+            "icon": "box",
+            "cutoff_hour": 14,
+            "min_days": 1,
+            "max_days": 2,
+            "note": "Spedizione in 48/72h · Reso facile entro 14 giorni"
+          }
+        },
+        "upsell": {
+          "type": "isc_upsell",
+          "settings": {
+            "heading": "Completa il look",
+            "collection": ""
+          }
+        },
+        "tab_desc": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Dettagli prodotto",
+            "icon": "none",
+            "isc_show_description": true,
+            "content": "",
+            "page": ""
+          }
+        },
+        "tab_ship": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Spedizione e resi",
+            "icon": "none",
+            "isc_show_description": false,
+            "content": "<p>Spediamo in tutta Italia con corriere espresso: consegna in 48/72 ore lavorative. Reso semplice entro 14 giorni dalla consegna: trovi tutti i dettagli nella pagina dedicata.</p>",
+            "page": ""
+          }
+        },
+        "tab_pay": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Pagamenti",
+            "icon": "none",
+            "isc_show_description": false,
+            "content": "<p>Paga con carta, PayPal, Apple Pay o Google Pay oppure in contanti alla consegna. Tutti i pagamenti online sono protetti.</p>",
+            "page": ""
+          }
+        },
+        "tab_help": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "Assistenza",
+            "icon": "none",
+            "isc_show_description": false,
+            "content": "<p>Hai dubbi sulla taglia o sull'ordine? Scrivici a <a href=\"mailto:imsocurvy2025@gmail.com\" title=\"mailto:imsocurvy2025@gmail.com\">imsocurvy2025@gmail.com</a>: il servizio clienti risponde dalle 9 alle 20.</p>",
+            "page": ""
+          }
+        },
+        "trust": {
+          "type": "isc_trust",
+          "settings": {
+            "icon_1": "truck",
+            "title_1": "Spedizione",
+            "text_1": "In 48/72h",
+            "icon_2": "return",
+            "title_2": "Resi",
+            "text_2": "Entro 14 giorni",
+            "icon_3": "chat",
+            "title_3": "Assistenza",
+            "text_3": "Dalle 9 alle 20",
+            "icon_4": "lock",
+            "title_4": "Pagamenti",
+            "text_4": "Anche alla consegna"
+          }
+        }
+      },
+      "block_order": [
+        "eyebrow",
+        "rating",
+        "title",
+        "price",
+        "variant_picker",
+        "buy_buttons",
+        "payments",
+        "delivery",
+        "upsell",
+        "tab_desc",
+        "tab_ship",
+        "tab_pay",
+        "tab_help",
+        "trust"
+      ],
+      "settings": {
+        "isc_reviews_collapsed": true,
+        "isc_sticky_atc": true,
+        "enable_sticky_info": true,
+        "color_scheme": "scheme-1",
+        "media_size": "medium",
+        "constrain_to_viewport": false,
+        "media_fit": "cover",
+        "gallery_layout": "thumbnail",
+        "mobile_thumbnails": "show",
+        "media_position": "left",
+        "image_zoom": "lightbox",
+        "hide_variants": false,
+        "enable_video_looping": false,
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "settings": {
+        "heading": "Ti potrebbe piacere",
+        "products_to_show": 10,
+        "columns_desktop": 6,
+        "columns_mobile": "2",
+        "image_ratio": "portrait",
+        "show_rating": true,
+        "color_scheme": "scheme-1",
+        "padding_top": 56,
+        "padding_bottom": 28
+      }
+    }
+  },
+  "order": [
+    "breadcrumb",
+    "main",
+    "related-products"
+  ]
+}

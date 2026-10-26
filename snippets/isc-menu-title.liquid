@@ -1,0 +1,47 @@
+{%- comment -%}
+  I'M So Curvy: titolo di una voce di menu "pulito" per il footer.
+  - toglie emoji e simboli (parole senza lettere, es. "🔍📦" o "→")
+  - solo la prima lettera maiuscola ("NUOVI ARRIVI" -> "Nuovi arrivi"), anche dopo " / "
+  Accepts:
+  - text: {String}
+{%- endcomment -%}
+{%- liquid
+  assign words = text | strip | split: ' '
+  assign out = ''
+  for w in words
+    assign up = w | upcase
+    assign down = w | downcase
+    assign has_digit = false
+    for d in (0..9)
+      assign ds = d | append: ''
+      if w contains ds
+        assign has_digit = true
+        break
+      endif
+    endfor
+    if up != down or has_digit or w == '/' or w == '&' or w == '-' or w == '·'
+      if out == ''
+        assign out = w
+      else
+        assign out = out | append: ' ' | append: w
+      endif
+    endif
+  endfor
+  if out == ''
+    assign out = text
+  endif
+  comment
+    Ogni parte separata da " / " prende la maiuscola iniziale (es. "Accedi / Registrati")
+  endcomment
+  assign parts = out | downcase | split: ' / '
+  assign res = ''
+  for p in parts
+    assign cp = p | capitalize
+    if forloop.first
+      assign res = cp
+    else
+      assign res = res | append: ' / ' | append: cp
+    endif
+  endfor
+  echo res | escape
+-%}

@@ -1,0 +1,51 @@
+{%- comment -%}
+  I'M So Curvy: menu laterale delle pagine informative (assistenza + note legali), senza doppioni.
+{%- endcomment -%}
+{%- liquid
+  assign m1 = settings.isc_info_menu_1
+  if m1 == blank
+    assign m1 = linklists['servizio-clienti']
+  endif
+  assign m2 = settings.isc_info_menu_2
+  assign m3 = settings.isc_info_menu_3
+  assign seen = ''
+  assign current = request.path
+-%}
+<nav class="isc-info__nav" aria-label="{{ settings.isc_info_title | default: 'Assistenza' | escape }}">
+  {%- for menu in (1..3) -%}
+    {%- case forloop.index -%}
+      {%- when 1 -%}{%- assign lst = m1 -%}{%- assign grp = m1.title -%}
+      {%- when 2 -%}{%- assign lst = m2 -%}{%- assign grp = m2.title -%}
+      {%- else -%}{%- assign lst = m3 -%}{%- assign grp = m3.title -%}
+    {%- endcase -%}
+    {%- if lst != blank and lst.links.size > 0 -%}
+      <p class="isc-info__nav-title">{{ grp | escape }}</p>
+      <ul class="list-unstyled" role="list">
+        {%- for link in lst.links -%}
+          {%- assign key = '|' | append: link.url | append: link.title | handleize | append: '|' -%}
+          {%- if customer and link.url contains '/login' -%}{%- continue -%}{%- endif -%}
+          {%- unless seen contains key -%}
+            {%- assign seen = seen | append: key -%}
+            <li>
+              <a href="{{ link.url }}"{% if link.url == current %} class="is-active" aria-current="page"{% endif %}>
+                {% render 'isc-menu-title', text: link.title %}
+              </a>
+            </li>
+          {%- endunless -%}
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if settings.isc_whatsapp != blank and settings.isc_info_help != blank -%}
+    {%- assign wa = settings.isc_whatsapp | remove: ' ' | remove: '+' | remove: '-' -%}
+    {%- assign wa_first = wa | slice: 0, 2 -%}
+    {%- unless wa_first == '39' %}{% assign wa = '39' | append: wa %}{% endunless -%}
+    <a class="isc-info__help" href="https://wa.me/{{ wa }}" target="_blank" rel="noopener">
+      <span class="isc-info__help-icon" aria-hidden="true">{% render 'isc-jewel-icon', name: 'chat' %}</span>
+      <span>
+        <strong>{{ settings.isc_info_help | escape }}</strong>
+        <span>{{ settings.isc_info_help_text | escape }}</span>
+      </span>
+    </a>
+  {%- endif -%}
+</nav>

@@ -1,0 +1,28 @@
+{%- comment -%}
+  I'M So Curvy: cursore a due maniglie per il filtro prezzo. Guida i due campi "Da" / "A" di Dawn,
+  che restano (accessibili e usati per inviare il filtro).
+  Accepts:
+  - filter: {Object} filtro price_range
+{%- endcomment -%}
+{%- liquid
+  assign max = filter.range_max | divided_by: 100.0 | ceil
+  assign lo = 0
+  assign hi = max
+  if filter.min_value.value
+    assign lo = filter.min_value.value | divided_by: 100.0 | floor
+  endif
+  if filter.max_value.value
+    assign hi = filter.max_value.value | divided_by: 100.0 | ceil
+  endif
+-%}
+<isc-price-slider class="isc-ps" style="--lo: {{ lo | times: 100.0 | divided_by: max }}%; --hi: {{ hi | times: 100.0 | divided_by: max }}%;">
+  <div class="isc-ps__values" aria-hidden="true">
+    <span><span data-isc-ps-lo>{{ lo }}</span> €</span>
+    <span><span data-isc-ps-hi>{{ hi }}</span> €</span>
+  </div>
+  <div class="isc-ps__track">
+    <span class="isc-ps__fill"></span>
+    <input type="range" min="0" max="{{ max }}" step="1" value="{{ lo }}" aria-label="Prezzo minimo" data-isc-ps-min>
+    <input type="range" min="0" max="{{ max }}" step="1" value="{{ hi }}" aria-label="Prezzo massimo" data-isc-ps-max>
+  </div>
+</isc-price-slider>

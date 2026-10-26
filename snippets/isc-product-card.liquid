@@ -1,0 +1,140 @@
+{%- comment -%}
+  I'M So Curvy: scheda prodotto del carosello, con scelta rapida della taglia.
+  Accepts:
+  - product: {Object}
+  - settings_block: {Object} impostazioni della sezione
+  - section_id: {String}
+{%- endcomment -%}
+{%- liquid
+  assign s = settings_block
+  assign v = product.selected_or_first_available_variant
+
+  assign size_option = null
+  for option in product.options_with_values
+    assign n = option.name | downcase
+    if n == 'taglia' or n == 'numero' or n == 'size' or n == 'misura' or n == 'taglie'
+      assign size_option = option
+    endif
+  endfor
+
+  comment
+    Aggiunta rapida: prodotto senza varianti, oppure con la sola opzione taglia.
+  endcomment
+  assign quick = 'link'
+  if product.has_only_default_variant
+    assign quick = 'direct'
+  elsif size_option and product.options.size == 1
+    assign quick = 'sizes'
+  endif
+
+  assign badge = ''
+  assign badge_class = ''
+  if product.available == false
+    assign badge = 'Esaurito'
+    assign badge_class = 'dark'
+  elsif product.compare_at_price > product.price
+    assign pct = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round
+    assign badge = '-' | append: pct | append: '%'
+    assign badge_class = 'sale'
+  elsif product.tags contains 'best-seller' or product.tags contains 'Best seller'
+    assign badge = 'Best seller'
+    assign badge_class = 'dark'
+  elsif product.tags contains 'nuovo' or product.tags contains 'Nuovo'
+    assign badge = 'Nuovo'
+    assign badge_class = 'dark'
+  endif
+
+  assign rating = product.metafields.reviews.rating.value
+-%}
+
+<div class="isc-pcard" data-isc-pcard>
+  <a href="{{ product.url }}" class="isc-pcard__media" tabindex="-1" aria-hidden="true"{% if product.featured_media %} style="--pc-ratio: {{ product.featured_media.aspect_ratio }};"{% endif %}>
+    {%- if product.featured_media -%}
+      {{
+        product.featured_media
+        | image_url: width: 700
+        | image_tag: loading: 'lazy', sizes: '(min-width: 1100px) 20vw, (min-width: 750px) 33vw, 45vw', widths: '300, 450, 600, 700', alt: product.featured_media.alt, class: 'isc-pcard__img'
+      }}
+      {%- if s.show_secondary and product.media[1] != null -%}
+        {{
+          product.media[1]
+          | image_url: width: 700
+          | image_tag: loading: 'lazy', sizes: '(min-width: 1100px) 20vw, (min-width: 750px) 33vw, 45vw', widths: '300, 450, 600, 700', alt: '', class: 'isc-pcard__img isc-pcard__img--hover'
+        }}
+      {%- endif -%}
+    {%- else -%}
+      {{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    {%- endif -%}
+  </a>
+
+  {%- if s.show_badges and badge != '' -%}
+    <span class="isc-pcard__badge isc-pcard__badge--{{ badge_class }}">{{ badge }}</span>
+  {%- endif -%}
+
+  {%- if quick == 'sizes' and product.available -%}
+    <div class="isc-pcard__sizes" data-isc-sizes hidden>
+      <div class="isc-pcard__sizes-head">
+        <span>Scegli la taglia</span>
+        <button type="button" class="isc-pcard__sizes-close" data-isc-sizes-close aria-label="Chiudi">×</button>
+      </div>
+      <div class="isc-pcard__sizes-grid">
+        {%- for variant in product.variants -%}
+          <button
+            type="button"
+            class="isc-pcard__size"
+            data-isc-add="{{ variant.id }}"
+            {% unless variant.available %}disabled{% endunless %}
+          >
+            {{- variant.title | escape -}}
+          </button>
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="isc-pcard__body">
+    <a href="{{ product.url }}" class="isc-pcard__title">{% render 'isc-title-case', text: product.title %}</a>
+
+    <div class="isc-pcard__meta">
+      <span class="isc-pcard__price">
+        <span class="isc-pcard__now{% if product.compare_at_price > product.price %} is-sale{% endif %}">
+          {%- if product.price_varies -%}da {% endif -%}{{ product.price | money }}
+        </span>
+        {%- if product.compare_at_price > product.price -%}
+          <s class="isc-pcard__was">{{ product.compare_at_price | money }}</s>
+        {%- endif -%}
+      </span>
+      {%- if s.show_rating and rating != blank -%}
+        <span class="isc-pcard__rating">
+          <span aria-hidden="true">★</span> {{ rating.rating | round: 1 | replace: '.', ',' }}
+        </span>
+      {%- endif -%}
+    </div>
+
+    {%- if s.show_swatches -%}
+      {% render 'isc-card-swatches', product: product %}
+    {%- endif -%}
+
+    {%- if s.show_button -%}
+      {%- if product.available == false -%}
+        <span class="isc-pcard__btn isc-pcard__btn--{{ s.button_style }} is-disabled">Esaurito</span>
+      {%- elsif quick == 'direct' -%}
+        <button type="button" class="isc-pcard__btn isc-pcard__btn--{{ s.button_style }}" data-isc-add="{{ v.id }}">
+          <span class="isc-pcard__btn-full">{{ s.button_label | escape }}</span>
+          <span class="isc-pcard__btn-short">Aggiungi</span>
+          {{- 'icon-isc-bag.svg' | inline_asset_content -}}
+        </button>
+      {%- elsif quick == 'sizes' -%}
+        <button type="button" class="isc-pcard__btn isc-pcard__btn--{{ s.button_style }}" data-isc-sizes-open aria-expanded="false">
+          <span class="isc-pcard__btn-full">{{ s.button_label | escape }}</span>
+          <span class="isc-pcard__btn-short">Aggiungi</span>
+          {{- 'icon-isc-bag.svg' | inline_asset_content -}}
+        </button>
+      {%- else -%}
+        <a href="{{ product.url }}" class="isc-pcard__btn isc-pcard__btn--{{ s.button_style }}">
+          <span>Scegli opzioni</span>
+        </a>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</div>

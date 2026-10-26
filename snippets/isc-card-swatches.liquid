@@ -1,0 +1,73 @@
+{%- comment -%}
+  I'M So Curvy: pallini colore sotto il prezzo nelle schede prodotto.
+  Usa lo swatch impostato in Shopify (colore o immagine); in mancanza prova
+  a ricavare il colore dal nome del valore.
+  Accepts:
+  - product: {Object}
+{%- endcomment -%}
+{%- liquid
+  assign color_option = null
+  for option in product.options_with_values
+    assign option_name = option.name | downcase
+    if option_name == 'colore' or option_name == 'color' or option_name == 'colour' or option_name == 'colori'
+      assign color_option = option
+      break
+    endif
+  endfor
+-%}
+
+{%- if color_option and color_option.values.size > 1 -%}
+  <ul class="isc-swatches list-unstyled" aria-label="{{ color_option.name | escape }}">
+    {%- for value in color_option.values limit: 6 -%}
+      {%- liquid
+        assign swatch_style = ''
+        if value.swatch.image
+          assign swatch_url = value.swatch.image | image_url: width: 40
+          assign swatch_style = 'background-image: url(' | append: swatch_url | append: ');'
+        elsif value.swatch.color
+          assign swatch_style = 'background-color: ' | append: value.swatch.color | append: ';'
+        else
+          assign name = value | downcase
+          assign hex = ''
+          if name contains 'nero' or name contains 'black'
+            assign hex = '#111111'
+          elsif name contains 'bianc' or name contains 'white'
+            assign hex = '#fafafa'
+          elsif name contains 'crema' or name contains 'panna' or name contains 'avorio'
+            assign hex = '#efe7da'
+          elsif name contains 'beige' or name contains 'sabbia' or name contains 'nude'
+            assign hex = '#d9c3a5'
+          elsif name contains 'taupe' or name contains 'tortora'
+            assign hex = '#b39a82'
+          elsif name contains 'marrone' or name contains 'cuoio' or name contains 'moro' or name contains 'brown'
+            assign hex = '#5a3f2e'
+          elsif name contains 'cammello' or name contains 'camel'
+            assign hex = '#b5835a'
+          elsif name contains 'grigi' or name contains 'grey' or name contains 'gray'
+            assign hex = '#9a9a96'
+          elsif name contains 'blu' or name contains 'navy'
+            assign hex = '#1f2a4a'
+          elsif name contains 'rosa' or name contains 'pink'
+            assign hex = '#e8b4bc'
+          elsif name contains 'ross' or name contains 'bordeaux' or name contains 'red'
+            assign hex = '#8e1b1b'
+          elsif name contains 'verde' or name contains 'green'
+            assign hex = '#a9c2ae'
+          elsif name contains 'oro' or name contains 'gold'
+            assign hex = '#c9a45c'
+          elsif name contains 'argent' or name contains 'silver'
+            assign hex = '#cecbc7'
+          endif
+          if hex != ''
+            assign swatch_style = 'background-color: ' | append: hex | append: ';'
+          endif
+        endif
+      -%}
+      {%- if swatch_style != '' -%}
+        <li class="isc-swatch" style="{{ swatch_style }}" title="{{ value | escape }}">
+          <span class="visually-hidden">{{ value | escape }}</span>
+        </li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+{%- endif -%}

@@ -1,0 +1,39 @@
+{%- comment -%}
+  I'M So Curvy: attributi data-* per l'apertura automatica dei popup (usati da assets/isc.js).
+  Accepts:
+  - key: {String} chiave per ricordare la chiusura
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  assign page_ok = true
+  case s.show_on
+    when 'home'
+      unless template.name == 'index'
+        assign page_ok = false
+      endunless
+    when 'no_cart'
+      if template.name == 'cart'
+        assign page_ok = false
+      endif
+    when 'products'
+      unless template.name == 'product' or template.name == 'collection'
+        assign page_ok = false
+      endunless
+  endcase
+  assign subscribed = false
+  if s.hide_subscribed and customer and customer.accepts_marketing
+    assign subscribed = true
+  endif
+-%}
+data-auto="{{ s.auto_open }}"
+data-trigger="{{ s.trigger }}"
+data-delay="{{ s.delay }}"
+data-scroll="{{ s.scroll_percent }}"
+data-days="{{ s.days_hidden }}"
+data-start="{{ s.start_date | escape }}"
+data-end="{{ s.end_date | escape }}"
+data-mobile="{{ s.show_mobile }}"
+data-desktop="{{ s.show_desktop }}"
+data-page-ok="{{ page_ok }}"
+data-subscribed="{{ subscribed }}"
+data-key="{{ key | escape }}"

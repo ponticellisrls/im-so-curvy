@@ -1,0 +1,63 @@
+{%- comment -%}
+  I'M So Curvy: contatti con icone sopra il modulo della pagina Contattaci.
+{%- endcomment -%}
+{%- assign s = section.settings -%}
+<div class="isc-cinfo">
+  {%- if s.intro != blank -%}<p class="isc-cinfo__intro">{{ s.intro | escape }}</p>{%- endif -%}
+  <ul class="isc-cinfo__list list-unstyled" role="list">
+    {%- if s.whatsapp != blank -%}
+      {%- assign wa = s.whatsapp | remove: ' ' | remove: '+' | remove: '-' -%}
+      {%- assign wa_first = wa | slice: 0, 2 -%}
+      {%- unless wa_first == '39' %}{% assign wa = '39' | append: wa %}{% endunless -%}
+      <li>
+        <a class="isc-cinfo__item" href="https://wa.me/{{ wa }}" target="_blank" rel="noopener">
+          <span class="isc-cinfo__icon">{% render 'isc-icon', name: 'whatsapp' %}</span>
+          <span><span class="isc-cinfo__label">WhatsApp</span><strong>{{ s.whatsapp | escape }}</strong>{%- if s.whatsapp_note != blank -%}<span class="isc-cinfo__note">{{ s.whatsapp_note | escape }}</span>{%- endif -%}</span>
+        </a>
+      </li>
+    {%- endif -%}
+    {%- if s.email != blank -%}
+      <li>
+        <a class="isc-cinfo__item" href="mailto:{{ s.email | escape }}">
+          <span class="isc-cinfo__icon">{% render 'isc-icon', name: 'mail' %}</span>
+          <span><span class="isc-cinfo__label">Email</span><strong>{{ s.email | escape }}</strong></span>
+        </a>
+      </li>
+    {%- endif -%}
+    {%- if s.hours != blank -%}
+      <li>
+        <div class="isc-cinfo__item">
+          <span class="isc-cinfo__icon">{% render 'isc-icon', name: 'clock' %}</span>
+          <span><span class="isc-cinfo__label">Orari</span><strong>{{ s.hours | escape | newline_to_br }}</strong></span>
+        </div>
+      </li>
+    {%- endif -%}
+    {%- if s.address != blank -%}
+      <li>
+        <div class="isc-cinfo__item">
+          <span class="isc-cinfo__icon">{% render 'isc-icon', name: 'pin' %}</span>
+          <span><span class="isc-cinfo__label">Sede</span><strong>{{ s.address | escape | newline_to_br }}</strong></span>
+        </div>
+      </li>
+    {%- endif -%}
+  </ul>
+  {%- if s.form_heading != blank -%}<p class="isc-cinfo__form-title">{{ s.form_heading | escape }}</p>{%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "ISC: contatti",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "text", "id": "intro", "label": "Testo introduttivo", "default": "Siamo qui per aiutarti con ordini, taglie, resi e spedizioni: il servizio clienti risponde dalle 9 alle 20." },
+    { "type": "text", "id": "whatsapp", "label": "WhatsApp", "info": "Vuoto per nasconderlo." },
+    { "type": "text", "id": "whatsapp_note", "label": "Nota WhatsApp", "default": "Risposta in giornata" },
+    { "type": "text", "id": "email", "label": "Email" },
+    { "type": "textarea", "id": "hours", "label": "Orari", "info": "Es. Lun–Ven 9:00–17:00" },
+    { "type": "textarea", "id": "address", "label": "Sede", "default": "NEW GENERATION SRLS\nVia Flotard de Lauzieres 32\n80046 San Giorgio a Cremano (NA)" },
+    { "type": "text", "id": "form_heading", "label": "Titolo sopra il modulo", "default": "Oppure scrivici qui" }
+  ],
+  "presets": [{ "name": "ISC: contatti" }]
+}
+{% endschema %}

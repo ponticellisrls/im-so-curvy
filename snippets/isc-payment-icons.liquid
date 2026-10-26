@@ -1,0 +1,13 @@
+{%- comment -%}
+  I'M So Curvy: icone dei metodi di pagamento scelti in Impostazioni tema (stessa lista per footer e carrello).
+  Accepts:
+  - class: {String}
+{%- endcomment -%}
+{%- assign types = settings.isc_payment_icons | default: 'american_express,apple_pay,google_pay,maestro,master,paypal,visa' | remove: ' ' | split: ',' -%}
+<ul class="{{ class }} list-unstyled" role="list" aria-label="Metodi di pagamento">
+  {%- for type in types -%}
+    {%- if type != blank -%}
+      <li class="isc-pay">{{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}</li>
+    {%- endif -%}
+  {%- endfor -%}
+</ul>

@@ -1,0 +1,22 @@
+{%- comment -%}
+  I'M So Curvy: miniatura di un altro colore nella pagina prodotto.
+  Accepts:
+  - p: {Object} il prodotto dell'altro colore
+{%- endcomment -%}
+{%- liquid
+  assign pname = ''
+  for o in p.options_with_values
+    assign on = o.name | downcase
+    if on == 'colore' or on == 'color' or on == 'colori'
+      assign pname = o.values.first
+    endif
+  endfor
+  assign pname = pname | downcase | replace: '  ', ' ' | capitalize
+-%}
+<li>
+  <a href="{{ p.url }}" class="isc-colors__item{% unless p.available %} is-soldout{% endunless %}" title="{{ pname | escape }}" aria-label="{{ pname | escape }}">
+    {%- if p.featured_image -%}
+      {{ p.featured_image | image_url: width: 120 | image_tag: loading: 'lazy', widths: '60, 120', sizes: '52px', alt: '' }}
+    {%- endif -%}
+  </a>
+</li>

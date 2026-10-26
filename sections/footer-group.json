@@ -1,0 +1,146 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.footer.name",
+  "type": "footer",
+  "sections": {
+    "newsletter": {
+      "type": "isc-newsletter",
+      "settings": {
+        "eyebrow": "Newsletter I'M So Curvy",
+        "heading": "<strong>-10%</strong> sul tuo primo ordine",
+        "text": "Iscriviti e ricevi subito il codice sconto, più nuovi arrivi e promo riservate prima di tutte.",
+        "placeholder": "La tua email",
+        "button_label": "Iscriviti",
+        "note": "Niente spam, solo novità che ti stanno a pennello. Ti disiscrivi quando vuoi.",
+        "success_text": "Sei dentro! Controlla la tua email per il codice sconto.",
+        "style": "light",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "footer": {
+      "type": "isc-footer",
+      "blocks": {
+        "menu-1": {
+          "type": "menu",
+          "settings": {
+            "heading": "Shop",
+            "menu": "main-menu"
+          }
+        },
+        "menu-2": {
+          "type": "menu",
+          "settings": {
+            "heading": "Legal",
+            "menu": "footer-menu-1"
+          }
+        },
+        "menu-3": {
+          "type": "menu",
+          "settings": {
+            "heading": "Info",
+            "menu": "footer"
+          }
+        },
+        "contact-1": {
+          "type": "contact",
+          "settings": {
+            "heading": "Contatti",
+            "address": "NEW GENERATION SRLS\nVia Flotard de Lauzieres 32\n80046 San Giorgio a Cremano (NA)",
+            "whatsapp": "",
+            "email": "imsocurvy2025@gmail.com",
+            "hours": "Servizio clienti dalle 9 alle 20",
+            "link_label": "Modulo di contatto",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "menu-1",
+        "menu-3",
+        "menu-2",
+        "contact-1"
+      ],
+      "settings": {
+        "text": "<p>Moda curvy dalla 46 alla 60: capi pensati per valorizzare le tue forme, ogni giorno.</p>",
+        "legal": "I'M So Curvy · NEW GENERATION SRLS · P.IVA 10812741212",
+        "legal_menu": "",
+        "show_payment": true,
+        "withdraw_label": "",
+        "withdraw_link": "",
+        "wordmark": "I'M So Curvy",
+        "powered_label": "VPDC Solutions",
+        "powered_link": "https://www.vpdcsolutions.it/",
+        "color_scheme": "scheme-3"
+      }
+    },
+    "newsletter-popup": {
+      "type": "isc-newsletter-popup",
+      "settings": {
+        "auto_open": true,
+        "trigger": "delay",
+        "delay": 10,
+        "scroll_percent": 40,
+        "days_hidden": 7,
+        "show_on": "no_cart",
+        "show_desktop": true,
+        "show_mobile": true,
+        "hide_subscribed": true,
+        "start_date": "",
+        "end_date": "",
+        "theme": "dark",
+        "graphic_text": "-10%",
+        "eyebrow": "Newsletter I'M So Curvy",
+        "heading": "<strong>-10%</strong> sul tuo primo ordine",
+        "text": "Iscriviti: ricevi subito il codice sconto e sei la prima a sapere di nuovi arrivi e promo riservate.",
+        "button_label": "Voglio il mio -10%",
+        "dismiss_label": "No grazie, pago prezzo pieno",
+        "privacy_text": "<p>Iscrivendoti accetti di ricevere email promozionali. Puoi disiscriverti in qualsiasi momento.</p>",
+        "success_heading": "Benvenuta in I'M So Curvy!",
+        "success_text": "Ecco il tuo codice sconto: usalo al checkout.",
+        "discount_code": "WELCOME10",
+        "success_button": "Inizia lo shopping",
+        "success_link": "shopify://collections/nuovi-arrivi",
+        "color_scheme": "scheme-1"
+      }
+    },
+    "promo-popup": {
+      "type": "isc-promo-popup",
+      "disabled": true,
+      "settings": {
+        "link": "",
+        "label": "Promozione",
+        "caption": "",
+        "button_label": "",
+        "button_style": "dark",
+        "button_position": "below",
+        "size": "medium",
+        "auto_open": true,
+        "trigger": "delay",
+        "delay": 5,
+        "scroll_percent": 30,
+        "days_hidden": 3,
+        "show_on": "home",
+        "show_desktop": true,
+        "show_mobile": true,
+        "hide_subscribed": false,
+        "start_date": "",
+        "end_date": ""
+      }
+    }
+  },
+  "order": [
+    "newsletter",
+    "footer",
+    "newsletter-popup",
+    "promo-popup"
+  ]
+}

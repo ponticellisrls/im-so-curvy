@@ -1,0 +1,152 @@
+{%- comment -%}
+  I'M So Curvy: pagina "Traccia il tuo ordine".
+  Accesso agli ordini (account Shopify con codice via email), passaggi illustrati,
+  ricerca diretta sul sito del corriere con il numero di spedizione, aiuto WhatsApp.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  if customer
+    assign account_url = routes.account_url
+  else
+    assign account_url = routes.account_login_url
+  endif
+  assign couriers = section.blocks | where: 'type', 'courier'
+-%}
+<div class="isc-track">
+  {%- if s.intro != blank -%}<p class="isc-track__intro">{{ s.intro | escape }}</p>{%- endif -%}
+
+  <div class="isc-track__hero">
+    <span class="isc-track__jewel" aria-hidden="true">{% render 'isc-jewel-icon', name: 'truck' %}</span>
+    <div class="isc-track__hero-copy">
+      <p class="isc-track__hero-title">{{ s.account_title | escape }}</p>
+      <p class="isc-track__hero-text">{{ s.account_text | escape }}</p>
+    </div>
+    <a href="{{ account_url }}" class="isc-track__btn">
+      {{ s.account_button | escape }}
+      <svg viewBox="0 0 20 10" fill="none" aria-hidden="true"><path d="M.5 5h17M13.2 1.3c.7 1.9 2.3 3.2 4.3 3.7-2 .5-3.6 1.8-4.3 3.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+
+  <p class="isc-track__subtitle">{{ s.steps_title | escape }}</p>
+  <ol class="isc-track__steps list-unstyled" role="list">
+    {%- for i in (1..3) -%}
+      {%- liquid
+        assign t_key = 'step_' | append: i | append: '_title'
+        assign x_key = 'step_' | append: i | append: '_text'
+        case i
+          when 1
+            assign ic = 'box'
+          when 2
+            assign ic = 'truck'
+          else
+            assign ic = 'gift'
+        endcase
+      -%}
+      <li class="isc-track__step">
+        <span class="isc-track__num">{{ i }}</span>
+        <span class="isc-track__step-icon" aria-hidden="true">{% render 'isc-jewel-icon', name: ic %}</span>
+        <strong>{{ s[t_key] | escape }}</strong>
+        <span>{{ s[x_key] | escape }}</span>
+      </li>
+    {%- endfor -%}
+  </ol>
+
+  {%- if couriers.size > 0 -%}
+    <p class="isc-track__subtitle">{{ s.courier_title | escape }}</p>
+    <form class="isc-track__form" data-isc-track>
+      {%- if couriers.size > 1 -%}
+        <label class="visually-hidden" for="IscTrackCourier">Corriere</label>
+        <select id="IscTrackCourier" class="isc-track__select" data-isc-track-courier>
+          {%- for c in couriers -%}
+            <option value="{{ c.settings.url | escape }}">{{ c.settings.name | escape }}</option>
+          {%- endfor -%}
+        </select>
+      {%- else -%}
+        <input type="hidden" data-isc-track-courier value="{{ couriers.first.settings.url | escape }}">
+      {%- endif -%}
+      <label class="visually-hidden" for="IscTrackNumber">Numero di spedizione</label>
+      <input id="IscTrackNumber" class="isc-track__input" type="text" required autocomplete="off" placeholder="{{ s.courier_placeholder | escape }}" data-isc-track-number>
+      <button type="submit" class="isc-track__submit">{{ s.courier_button | escape }}</button>
+    </form>
+    {%- if s.courier_note != blank -%}<p class="isc-track__note">{{ s.courier_note | escape }}</p>{%- endif -%}
+  {%- endif -%}
+
+  {%- if s.help_title != blank and settings.isc_whatsapp != blank -%}
+    {%- assign wa = settings.isc_whatsapp | remove: ' ' | remove: '+' | remove: '-' -%}
+    {%- assign wa_first = wa | slice: 0, 2 -%}
+    {%- unless wa_first == '39' %}{% assign wa = '39' | append: wa %}{% endunless -%}
+    <a class="isc-track__help" href="https://wa.me/{{ wa }}?text={{ s.help_message | url_encode }}" target="_blank" rel="noopener">
+      <span class="isc-track__help-icon" aria-hidden="true">{% render 'isc-icon', name: 'whatsapp' %}</span>
+      <span class="isc-track__help-copy">
+        <strong>{{ s.help_title | escape }}</strong>
+        <span>{{ s.help_text | escape }}</span>
+      </span>
+      <span class="isc-track__help-cta">{{ s.help_button | escape }} →</span>
+    </a>
+  {%- endif -%}
+</div>
+
+<script>
+  (function () {
+    var form = document.currentScript.previousElementSibling.querySelector('[data-isc-track]');
+    if (!form) return;
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var num = form.querySelector('[data-isc-track-number]').value.trim();
+      var url = form.querySelector('[data-isc-track-courier]').value;
+      if (!num || !url) return;
+      window.open(url.replace('{numero}', encodeURIComponent(num)), '_blank', 'noopener');
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "ISC: traccia ordine",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "textarea", "id": "intro", "label": "Testo introduttivo", "default": "Segui il tuo ordine in pochi secondi: trovi lo stato aggiornato nel tuo account o direttamente sul sito del corriere." },
+    { "type": "header", "content": "I tuoi ordini" },
+    { "type": "text", "id": "account_title", "label": "Titolo", "default": "Vedi i tuoi ordini" },
+    { "type": "text", "id": "account_text", "label": "Testo", "default": "Accedi con la tua email: ti mandiamo un codice, niente password. Trovi tutti gli ordini con il tracciamento aggiornato." },
+    { "type": "text", "id": "account_button", "label": "Pulsante", "default": "Accedi ai tuoi ordini" },
+    { "type": "header", "content": "Come funziona" },
+    { "type": "text", "id": "steps_title", "label": "Titolo", "default": "Come funziona" },
+    { "type": "text", "id": "step_1_title", "label": "Passo 1 titolo", "default": "Prepariamo il pacco" },
+    { "type": "text", "id": "step_1_text", "label": "Passo 1 testo", "default": "Ricevi la conferma d'ordine via email." },
+    { "type": "text", "id": "step_2_title", "label": "Passo 2 titolo", "default": "Il pacco parte" },
+    { "type": "text", "id": "step_2_text", "label": "Passo 2 testo", "default": "Ricevi in automatico l'email di spedizione con il link di tracciamento." },
+    { "type": "text", "id": "step_3_title", "label": "Passo 3 titolo", "default": "Arriva da te" },
+    { "type": "text", "id": "step_3_text", "label": "Passo 3 testo", "default": "Segui la consegna fino alla tua porta, con gli aggiornamenti del corriere." },
+    { "type": "header", "content": "Aiuto" },
+    { "type": "text", "id": "help_title", "label": "Titolo", "default": "Non trovi l'email di spedizione?" },
+    { "type": "text", "id": "help_text", "label": "Testo", "default": "Controlla anche nello spam, oppure scrivici con il numero d'ordine: ti mandiamo noi il link." },
+    { "type": "text", "id": "help_button", "label": "Pulsante", "default": "Scrivici su WhatsApp" },
+    { "type": "text", "id": "help_message", "label": "Messaggio precompilato", "default": "Ciao! Vorrei sapere dov'è il mio ordine n. " },
+    { "type": "header", "content": "Numero di spedizione (facoltativo)" },
+    { "type": "paragraph", "content": "Compare solo se aggiungi almeno un blocco Corriere." },
+    { "type": "text", "id": "courier_title", "label": "Titolo", "default": "Hai già il numero di spedizione?" },
+    { "type": "text", "id": "courier_placeholder", "label": "Testo nel campo", "default": "Inserisci il numero di spedizione" },
+    { "type": "text", "id": "courier_button", "label": "Pulsante", "default": "Traccia" },
+    { "type": "text", "id": "courier_note", "label": "Nota", "default": "Lo trovi nell'email di spedizione. Si apre il sito del corriere in una nuova scheda." }
+  ],
+  "blocks": [
+    {
+      "type": "courier",
+      "name": "Corriere",
+      "settings": [
+        { "type": "text", "id": "name", "label": "Nome", "default": "Corriere" },
+        {
+          "type": "text",
+          "id": "url",
+          "label": "Link di tracciamento",
+          "info": "{numero} viene sostituito dal numero di spedizione. BRT: https://vas.brt.it/vas/sped_det_show.hsm?Nspediz={numero} · GLS: https://www.gls-italy.com/it/servizi-per-destinatari/ricerca-spedizione?match={numero}",
+          "default": "https://www.sda.it/wps/portal/Servizi_online/dettaglio-spedizione?locale=it&tracing.letteraVettura={numero}"
+        }
+      ]
+    }
+  ],
+  "presets": [{ "name": "ISC: traccia ordine" }]
+}
+{% endschema %}

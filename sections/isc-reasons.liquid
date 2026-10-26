@@ -1,0 +1,108 @@
+{% render 'isc-section-spacing' %}
+<section class="isc-section color-{{ section.settings.color_scheme }}">
+  <div class="isc-container">
+    <h2 class="isc-h2 isc-reasons__heading">{{ section.settings.heading | escape }}</h2>
+    <div class="isc-reasons__grid">
+      {%- for block in section.blocks -%}
+        <div
+          class="isc-reasons__item{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+          {{ block.shopify_attributes }}
+          {% if settings.animations_reveal_on_scroll %}
+            data-cascade
+            style="--animation-order: {{ forloop.index }};"
+          {% endif %}
+        >
+          <span class="isc-reasons__num">{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</span>
+          <span class="isc-reasons__title">{{ block.settings.title | escape }}</span>
+          <span class="isc-reasons__text">{{ block.settings.text | escape }}</span>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "ISC: perché noi",
+  "tag": "div",
+  "class": "section",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titolo",
+      "default": "Perché I'M So Curvy"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Spazi"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Spazio sopra",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Spazio sotto",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "reason",
+      "name": "Motivo",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Titolo",
+          "default": "Modelli selezionati"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Testo",
+          "default": "Nuovi arrivi ogni settimana, scelti seguendo le tendenze di stagione."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ISC: perché noi",
+      "blocks": [
+        {
+          "type": "reason"
+        },
+        {
+          "type": "reason"
+        },
+        {
+          "type": "reason"
+        },
+        {
+          "type": "reason"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

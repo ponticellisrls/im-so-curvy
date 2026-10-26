@@ -1,0 +1,575 @@
+{%- liquid
+  assign s = section.settings
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .isc-stories {
+    --story-size: {{ s.size_mobile }}px;
+    --story-circle-bg: {{ s.circle_bg }};
+    --story-ring: {{ s.ring_color }};
+    --story-zoom: {{ s.image_zoom | divided_by: 100.0 }};
+    --story-gap: {{ s.gap_mobile }}px;
+    --story-pad-top: {{ s.padding_top | times: 0.75 | round }}px;
+    --story-pad-bottom: {{ s.padding_bottom | times: 0.75 | round }}px;
+    {%- if s.all_bg != blank and s.all_bg.alpha != 0.0 %}--story-all-bg: {{ s.all_bg }};{%- endif %}
+    {%- if s.all_color != blank and s.all_color.alpha != 0.0 %}--story-all-color: {{ s.all_color }};{%- endif %}
+  }
+
+  @media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .isc-stories {
+      --story-size: {{ s.size }}px;
+      --story-gap: {{ s.gap }}px;
+      --story-pad-top: {{ s.padding_top }}px;
+      --story-pad-bottom: {{ s.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="isc-stories color-{{ s.color_scheme }} isc-stories--ring-{{ s.ring_style }} isc-stories--fit-{{ s.image_fit }} isc-stories--all-{{ s.all_style }}{% if s.blend %} isc-stories--blend{% endif %}{% if s.boxed %} isc-stories--boxed{% endif %}{% if s.dividers %} isc-stories--dividers{% endif %}{% if s.center %} isc-stories--center{% endif %}">
+  <div class="isc-container">
+    {%- if s.heading != blank -%}
+      <div class="isc-stories__head">
+        <h2 class="isc-h2">{{ s.heading | escape }}</h2>
+      </div>
+    {%- endif -%}
+
+    <isc-stories class="isc-stories__frame">
+      <button type="button" class="isc-stories__arrow isc-stories__arrow--prev" aria-label="Indietro" hidden>
+        <span class="svg-wrapper">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+      </button>
+
+      <ul class="isc-stories__list list-unstyled" role="list">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign c = block.settings.collection
+            assign image = block.settings.image | default: c.featured_image
+            assign label = block.settings.title | default: c.title | default: 'Categoria'
+            assign url = block.settings.link | default: c.url | default: routes.collections_url
+          -%}
+          <li
+            class="isc-story{% if block.settings.ring or s.ring_scope == 'all' %} isc-story--ring{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+            {{ block.shopify_attributes }}
+            {% if settings.animations_reveal_on_scroll %}
+              data-cascade
+              style="--animation-order: {{ forloop.index }};"
+            {% endif %}
+          >
+            <a href="{{ url }}" class="isc-story__link">
+              <span class="isc-story__circle">
+                {%- if block.settings.style == 'graphic' -%}
+                  {%- liquid
+                    assign spark = '#fbe4ea'
+                    case block.settings.palette
+                      when 'graphite'
+                        assign g1 = '#a3406b'
+                        assign g2 = '#3d0c24'
+                        assign spark = '#ffffff'
+                      when 'mono'
+                        assign g1 = '#6b5a61'
+                        assign g2 = '#241a1f'
+                      when 'taupe'
+                        assign g1 = '#c99aa8'
+                        assign g2 = '#4a1230'
+                      when 'gold'
+                        assign g1 = '#e0a0b5'
+                        assign g2 = '#660033'
+                      when 'red'
+                        assign g1 = '#b0123f'
+                        assign g2 = '#3d0c24'
+                      when 'sunset'
+                        assign g1 = '#fa7e1e'
+                        assign g2 = '#962fbf'
+                      when 'custom'
+                        assign g1 = block.settings.color_1
+                        assign g2 = block.settings.color_2
+                      else
+                        assign g1 = '#a3406b'
+                        assign g2 = '#3d0c24'
+                        assign spark = '#ffffff'
+                    endcase
+                  -%}
+                  <span class="isc-story__img isc-story__graphic" style="--g1: {{ g1 }}; --g2: {{ g2 }}; --spark: {{ spark }};">
+                    <span class="isc-story__sheen" aria-hidden="true"></span>
+                    <span class="isc-story__spark isc-story__spark--1" aria-hidden="true">✦</span>
+                    <span class="isc-story__spark isc-story__spark--2" aria-hidden="true">✦</span>
+                    <span class="isc-story__spark isc-story__spark--3" aria-hidden="true">✦</span>
+                    <span class="isc-story__gtext" aria-hidden="true">
+                      <span class="isc-story__gline1">{{ block.settings.graphic_line_1 | escape }}</span>
+                      {%- if block.settings.graphic_line_2 != blank -%}
+                        <span class="isc-story__gline2">{{ block.settings.graphic_line_2 | escape }}</span>
+                      {%- endif -%}
+                    </span>
+                  </span>
+                {%- else -%}
+                <span class="isc-story__img"{% if block.settings.zoom > 0 %} style="--story-zoom: {{ block.settings.zoom | divided_by: 100.0 }};"{% endif %}>
+                  {%- if image != blank -%}
+                    {{
+                      image
+                      | image_url: width: 400
+                      | image_tag: loading: 'lazy', sizes: '160px', widths: '160, 240, 320, 400', alt: label
+                    }}
+                  {%- else -%}
+                    {{ 'collection-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                  {%- endif -%}
+                </span>
+                {%- endif -%}
+                {%- if block.settings.badge != blank -%}
+                  <span class="isc-story__badge">{{ block.settings.badge | escape }}</span>
+                {%- endif -%}
+              </span>
+              <span class="isc-story__label">{{ label | escape }}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+
+        {%- if s.show_all -%}
+          <li class="isc-story isc-story--all">
+            <a href="{{ s.all_link | default: routes.collections_url }}" class="isc-story__link isc-story__all">
+              <span class="isc-story__circle isc-story__all-circle">
+                <svg class="isc-story__all-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 7.6V7c0-.8.7-1.2 1.3-1.6a2 2 0 1 0-3.1-1.7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                  <path d="M12 7.6l-8.4 6.9c-.9.7-.4 2.1.8 2.1h15.2c1.2 0 1.7-1.4.8-2.1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+                  <path d="M12 21s-2.4-1.4-2.4-3c0-.7.5-1.3 1.2-1.3.5 0 .9.3 1.2.7.3-.4.7-.7 1.2-.7.7 0 1.2.6 1.2 1.3 0 1.6-2.4 3-2.4 3z" fill="currentColor"/>
+                </svg>
+                <span class="isc-story__all-label isc-story__all-label--inside">{{ s.all_label | escape }}</span>
+              </span>
+              <span class="isc-story__label isc-story__all-label--below">{{ s.all_label | escape }}</span>
+            </a>
+          </li>
+        {%- endif -%}
+      </ul>
+
+      <button type="button" class="isc-stories__arrow isc-stories__arrow--next" aria-label="Avanti" hidden>
+        <span class="svg-wrapper">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+      </button>
+    </isc-stories>
+  </div>
+</div>
+
+<script>
+  if (!customElements.get('isc-stories')) {
+    customElements.define(
+      'isc-stories',
+      class extends HTMLElement {
+        connectedCallback() {
+          this.list = this.querySelector('.isc-stories__list');
+          this.prev = this.querySelector('.isc-stories__arrow--prev');
+          this.next = this.querySelector('.isc-stories__arrow--next');
+          const step = () => this.list.clientWidth * 0.8;
+          this.prev.addEventListener('click', () => this.list.scrollBy({ left: -step(), behavior: 'smooth' }));
+          this.next.addEventListener('click', () => this.list.scrollBy({ left: step(), behavior: 'smooth' }));
+          this.update = this.update.bind(this);
+          this.list.addEventListener('scroll', this.update, { passive: true });
+          this.ro = new ResizeObserver(this.update);
+          this.ro.observe(this.list);
+          this.update();
+        }
+        disconnectedCallback() {
+          this.ro && this.ro.disconnect();
+        }
+        update() {
+          const max = this.list.scrollWidth - this.list.clientWidth;
+          const overflow = max > 4;
+          this.classList.toggle('is-scrollable', overflow);
+          this.prev.hidden = !overflow || this.list.scrollLeft <= 4;
+          this.next.hidden = !overflow || this.list.scrollLeft >= max - 4;
+        }
+      }
+    );
+  }
+</script>
+
+{% schema %}
+{
+  "name": "ISC: categorie stories",
+  "tag": "section",
+  "class": "section",
+  "max_blocks": 16,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titolo",
+      "info": "Facoltativo."
+    },
+    {
+      "type": "header",
+      "content": "Cerchi"
+    },
+    {
+      "type": "range",
+      "id": "size",
+      "label": "Dimensione desktop",
+      "min": 72,
+      "max": 180,
+      "step": 4,
+      "unit": "px",
+      "default": 128
+    },
+    {
+      "type": "range",
+      "id": "size_mobile",
+      "label": "Dimensione mobile",
+      "min": 56,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "color",
+      "id": "circle_bg",
+      "label": "Sfondo del cerchio",
+      "default": "#f6ecef"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Immagine",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Riempi il cerchio"
+        },
+        {
+          "value": "contain",
+          "label": "Intera dentro al cerchio"
+        }
+      ],
+      "default": "contain"
+    },
+    {
+      "type": "range",
+      "id": "image_zoom",
+      "label": "Zoom immagine",
+      "min": 60,
+      "max": 160,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "checkbox",
+      "id": "blend",
+      "label": "Rendi trasparente lo sfondo bianco delle foto",
+      "info": "La foto si fonde con il colore del cerchio (meglio PNG scontornato).",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "ring_style",
+      "label": "Anello",
+      "options": [
+        {
+          "value": "instagram",
+          "label": "Sfumato Instagram"
+        },
+        {
+          "value": "solid",
+          "label": "Pieno"
+        },
+        {
+          "value": "none",
+          "label": "Nessuno"
+        }
+      ],
+      "default": "instagram"
+    },
+    {
+      "type": "select",
+      "id": "ring_scope",
+      "label": "Anello su",
+      "options": [
+        {
+          "value": "all",
+          "label": "Tutte le categorie"
+        },
+        {
+          "value": "selected",
+          "label": "Solo quelle con \"anello\" attivo"
+        }
+      ],
+      "default": "all"
+    },
+    {
+      "type": "color",
+      "id": "ring_color",
+      "label": "Colore anello pieno",
+      "default": "#111111"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "boxed",
+      "label": "Riquadro con bordo",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "dividers",
+      "label": "Linee divisorie tra le categorie",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "center",
+      "label": "Centra se c'è spazio",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Distanza tra i cerchi desktop",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "label": "Distanza tra i cerchi mobile",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Spazio sopra",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Spazio sotto",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Tessera \"Vedi tutte\""
+    },
+    {
+      "type": "checkbox",
+      "id": "show_all",
+      "label": "Mostra",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "all_style",
+      "label": "Forma",
+      "options": [
+        {
+          "value": "circle",
+          "label": "Cerchio come le altre"
+        },
+        {
+          "value": "tile",
+          "label": "Riquadro"
+        }
+      ],
+      "default": "circle"
+    },
+    {
+      "type": "text",
+      "id": "all_label",
+      "label": "Testo",
+      "default": "Tutte le categorie"
+    },
+    {
+      "type": "url",
+      "id": "all_link",
+      "label": "Link"
+    },
+    {
+      "type": "color",
+      "id": "all_bg",
+      "label": "Colore sfondo",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "all_color",
+      "label": "Colore testo",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "story",
+      "name": "Categoria",
+      "settings": [
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Contenuto del cerchio",
+          "options": [
+            {
+              "value": "image",
+              "label": "Foto"
+            },
+            {
+              "value": "graphic",
+              "label": "Grafica animata (senza foto)"
+            }
+          ],
+          "default": "image"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collezione"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Immagine",
+          "info": "Quadrata, soggetto al centro (es. 1000×1000). Se vuota usa l'immagine della collezione."
+        },
+        {
+          "type": "range",
+          "id": "zoom",
+          "label": "Zoom immagine",
+          "info": "0 = come impostato nella sezione.",
+          "min": 0,
+          "max": 160,
+          "step": 5,
+          "unit": "%",
+          "default": 0
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Titolo",
+          "info": "Se vuoto usa il nome della collezione."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link",
+          "info": "Se vuoto porta alla collezione."
+        },
+        {
+          "type": "checkbox",
+          "id": "ring",
+          "label": "Anello attorno (come una storia non vista)",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge",
+          "info": "Es. New, -30%"
+        },
+        {
+          "type": "header",
+          "content": "Grafica animata"
+        },
+        {
+          "type": "text",
+          "id": "graphic_line_1",
+          "label": "Testo riga 1",
+          "default": "NEW"
+        },
+        {
+          "type": "text",
+          "id": "graphic_line_2",
+          "label": "Testo riga 2 (contorno)",
+          "default": "IN"
+        },
+        {
+          "type": "select",
+          "id": "palette",
+          "label": "Colori",
+          "options": [
+            {
+              "value": "graphite",
+              "label": "Vino (bordeaux scuro, stelline bianche)"
+            },
+            {
+              "value": "mono",
+              "label": "Inchiostro (quasi nero, stelline rosa)"
+            },
+            {
+              "value": "taupe",
+              "label": "Malva (rosa antico e prugna)"
+            },
+            {
+              "value": "gold",
+              "label": "Rosa cipria (rosa e bordeaux)"
+            },
+            {
+              "value": "sunset",
+              "label": "Instagram (arancio e viola)"
+            },
+            {
+              "value": "red",
+              "label": "Lampone e vino"
+            },
+            {
+              "value": "custom",
+              "label": "Personalizzati"
+            }
+          ],
+          "default": "graphite"
+        },
+        {
+          "type": "color",
+          "id": "color_1",
+          "label": "Colore 1",
+          "default": "#8f7d84"
+        },
+        {
+          "type": "color",
+          "id": "color_2",
+          "label": "Colore 2",
+          "default": "#2b0717"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ISC: categorie stories",
+      "blocks": [
+        {
+          "type": "story"
+        },
+        {
+          "type": "story"
+        },
+        {
+          "type": "story"
+        },
+        {
+          "type": "story"
+        },
+        {
+          "type": "story"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

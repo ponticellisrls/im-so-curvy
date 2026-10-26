@@ -1,0 +1,65 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "isc-404",
+      "settings": {
+        "image": "",
+        "eyebrow": "Errore 404 · Pagina non trovata",
+        "heading": "Questa pagina è <em>fuori taglia</em>.",
+        "text": "Abbiamo cercato ovunque, perfino in fondo all'armadio, ma qui non c'è niente. Torna alla home o cerca il tuo prossimo capo preferito.",
+        "show_search": true,
+        "search_placeholder": "Cerca abiti, tailleur, maglie…",
+        "button1": "Torna alla home",
+        "link1": "",
+        "button2": "Scopri i nuovi arrivi",
+        "link2": "",
+        "menu": "main-menu",
+        "shortcuts_label": "Oppure vai dritta a",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    },
+    "bestseller": {
+      "type": "isc-product-carousel",
+      "settings": {
+        "collection": "nuovi-arrivi",
+        "products_to_show": 12,
+        "heading": "Intanto, i nuovi arrivi",
+        "heading_accent": true,
+        "subheading": "",
+        "link_label": "Vedi tutti i nuovi arrivi",
+        "link": "",
+        "columns_desktop": 5,
+        "columns_tablet": 3,
+        "columns_mobile": "2.3",
+        "card_style": "bordered",
+        "media_bg": "#ffffff",
+        "image_ratio": "portrait",
+        "image_fit": "cover",
+        "show_secondary": true,
+        "show_badges": true,
+        "show_rating": false,
+        "show_swatches": false,
+        "show_button": false,
+        "button_label": "Aggiungi al carrello",
+        "button_style": "outline",
+        "color_scheme": "scheme-1",
+        "padding_top": 48,
+        "padding_bottom": 72
+      }
+    }
+  },
+  "order": [
+    "main",
+    "bestseller"
+  ]
+}

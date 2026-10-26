@@ -1,0 +1,828 @@
+{%- liquid
+  assign s = section.settings
+
+  assign pos = s.content_position | split: '-'
+  assign pos_v = pos[0]
+  assign pos_h = pos[1]
+  case pos_v
+    when 'top'
+      assign v = 'flex-start'
+    when 'bottom'
+      assign v = 'flex-end'
+    else
+      assign v = 'center'
+  endcase
+  case pos_h
+    when 'left'
+      assign h = 'flex-start'
+    when 'right'
+      assign h = 'flex-end'
+    else
+      assign h = 'center'
+  endcase
+  case s.content_position_mobile
+    when 'top'
+      assign v_m = 'flex-start'
+    when 'bottom'
+      assign v_m = 'flex-end'
+    else
+      assign v_m = 'center'
+  endcase
+
+  case s.text_color_mode
+    when 'dark'
+      assign text_color = '#111111'
+    when 'custom'
+      assign text_color = s.text_color
+    else
+      assign text_color = '#ffffff'
+  endcase
+
+  case s.text_align
+    when 'center'
+      assign self = 'center'
+    when 'right'
+      assign self = 'flex-end'
+    else
+      assign self = 'flex-start'
+  endcase
+  case s.text_align_mobile
+    when 'center'
+      assign self_m = 'center'
+    when 'right'
+      assign self_m = 'flex-end'
+    else
+      assign self_m = 'flex-start'
+  endcase
+
+  assign overlay_opacity = s.overlay_opacity | divided_by: 100.0
+  assign box_opacity = s.box_opacity | divided_by: 100.0
+
+  assign image = s.image
+  assign focal = 'center'
+  if s.image_position == 'auto'
+    if image.presentation.focal_point != blank
+      assign focal = image.presentation.focal_point
+    endif
+  else
+    assign focal = s.image_position | replace: '-', ' '
+  endif
+  assign focal_mobile = focal
+  if s.image_mobile != blank and s.image_mobile.presentation.focal_point != blank and s.image_position == 'auto'
+    assign focal_mobile = s.image_mobile.presentation.focal_point
+  endif
+
+  assign is_split = false
+  if s.layout == 'split' or s.layout == 'split_left'
+    assign is_split = true
+  endif
+
+  assign heading_class = 'isc-hero__heading'
+  if s.heading_font == 'regular'
+    assign heading_class = heading_class | append: ' isc-hero__heading--regular'
+  endif
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .isc-hero {
+    --hero-v: {{ v }};
+    --hero-h: {{ h }};
+    --hero-v-m: {{ v_m }};
+    --hero-align: {{ s.text_align }};
+    --hero-align-m: {{ s.text_align_mobile }};
+    --hero-self: {{ self }};
+    --hero-self-m: {{ self_m }};
+    --hero-text: {{ text_color }};
+    --hero-overlay: {{ s.overlay_color }};
+    --hero-overlay-opacity: {{ overlay_opacity }};
+    --hero-box: {{ s.box_color }};
+    --hero-box-opacity: {{ box_opacity }};
+    --hero-content-width: {{ s.content_width }}px;
+    --hero-heading: {{ s.heading_size }}px;
+    --hero-heading-m: {{ s.heading_size_mobile }}px;
+    --hero-text-size: {{ s.text_size }}px;
+    --hero-focal: {{ focal }};
+    --hero-focal-m: {{ focal_mobile }};
+    {%- if image != blank and s.height == 'image' %}
+      --hero-ratio: {{ image.aspect_ratio }};
+    {%- endif %}
+    {%- if s.image_mobile != blank and s.height_mobile == 'image' %}
+      --hero-ratio-m: {{ s.image_mobile.aspect_ratio }};
+    {%- elsif image != blank and s.height_mobile == 'image' %}
+      --hero-ratio-m: {{ image.aspect_ratio }};
+    {%- endif %}
+  }
+{%- endstyle -%}
+
+<section
+  class="isc-hero isc-hero--{{ s.layout }} isc-hero--h-{{ s.height }} isc-hero--hm-{{ s.height_mobile }} isc-hero--mobile-{{ s.mobile_layout }} isc-hero--overlay-{{ s.overlay_style }} isc-hero--box-{{ s.content_box }} isc-hero--anim-{{ s.image_animation }}{% if s.text_shadow %} isc-hero--shadow{% endif %}{% if s.content_animation %} isc-hero--reveal{% endif %} isc-hero--buttons-full color-{{ s.color_scheme }}"
+>
+  <div class="isc-hero__media">
+    {%- if s.video != blank -%}
+      {{
+        s.video
+        | video_tag:
+          autoplay: true,
+          loop: true,
+          muted: true,
+          playsinline: true,
+          controls: false,
+          image_size: '1920x',
+          class: 'isc-hero__video'
+      }}
+    {%- elsif image != blank -%}
+      <picture>
+        {%- if s.image_mobile != blank -%}
+          <source
+            media="(max-width: 749px)"
+            srcset="{{ s.image_mobile | image_url: width: 750 }} 750w, {{ s.image_mobile | image_url: width: 1100 }} 1100w, {{ s.image_mobile | image_url: width: 1500 }} 1500w"
+            sizes="100vw"
+          >
+        {%- endif -%}
+        {%- if is_split -%}
+          {%- assign sizes = '(min-width: 990px) 50vw, 100vw' -%}
+        {%- else -%}
+          {%- assign sizes = '100vw' -%}
+        {%- endif -%}
+        {{
+          image
+          | image_url: width: 3000
+          | image_tag:
+            loading: 'eager',
+            fetchpriority: 'high',
+            sizes: sizes,
+            widths: '750, 1100, 1500, 1920, 2400, 3000',
+            alt: image.alt
+        }}
+      </picture>
+    {%- else -%}
+      {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    {%- endif -%}
+    <span class="isc-hero__overlay" aria-hidden="true"></span>
+  </div>
+
+  <div class="isc-hero__inner">
+    <div class="isc-hero__content">
+      {%- if s.eyebrow != blank -%}
+        <p class="isc-hero__eyebrow isc-hero__eyebrow--{{ s.eyebrow_style }}">{{ s.eyebrow | escape }}</p>
+      {%- endif -%}
+      {%- if s.heading != blank -%}
+        <h1 class="{{ heading_class }}">{{ s.heading }}</h1>
+      {%- endif -%}
+      {%- if s.text != blank -%}
+        <p class="isc-hero__text">{{ s.text | escape | newline_to_br }}</p>
+      {%- endif -%}
+      {%- if s.button_label_1 != blank or s.button_label_2 != blank -%}
+        <div class="isc-hero__buttons">
+          {%- if s.button_label_1 != blank -%}
+            <a href="{{ s.button_link_1 | default: routes.all_products_collection_url }}" class="isc-btn isc-btn--{{ s.button_style_1 }}">
+              {{- s.button_label_1 | escape -}}
+            </a>
+          {%- endif -%}
+          {%- if s.button_label_2 != blank -%}
+            <a href="{{ s.button_link_2 | default: routes.collections_url }}" class="isc-btn isc-btn--{{ s.button_style_2 }}">
+              {{- s.button_label_2 | escape -}}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- if s.banner_link != blank -%}
+    <a href="{{ s.banner_link }}" class="isc-hero__link" tabindex="-1" aria-hidden="true"></a>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "ISC: hero",
+  "tag": "div",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Disposizione",
+      "options": [
+        {
+          "value": "fullbleed",
+          "label": "Immagine a tutta pagina"
+        },
+        {
+          "value": "boxed",
+          "label": "Immagine nel riquadro della pagina"
+        },
+        {
+          "value": "split",
+          "label": "Testo a sinistra, immagine a destra"
+        },
+        {
+          "value": "split_left",
+          "label": "Immagine a sinistra, testo a destra"
+        }
+      ],
+      "default": "fullbleed"
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Altezza desktop",
+      "options": [
+        {
+          "value": "small",
+          "label": "Bassa"
+        },
+        {
+          "value": "medium",
+          "label": "Media"
+        },
+        {
+          "value": "large",
+          "label": "Alta"
+        },
+        {
+          "value": "full",
+          "label": "Schermo intero"
+        },
+        {
+          "value": "image",
+          "label": "Adatta all'immagine"
+        }
+      ],
+      "default": "large"
+    },
+    {
+      "type": "select",
+      "id": "height_mobile",
+      "label": "Altezza mobile",
+      "options": [
+        {
+          "value": "small",
+          "label": "Bassa"
+        },
+        {
+          "value": "medium",
+          "label": "Media"
+        },
+        {
+          "value": "large",
+          "label": "Alta"
+        },
+        {
+          "value": "full",
+          "label": "Schermo intero"
+        },
+        {
+          "value": "image",
+          "label": "Come l'immagine"
+        }
+      ],
+      "default": "large"
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Testo su mobile",
+      "options": [
+        {
+          "value": "overlay",
+          "label": "Sopra l'immagine"
+        },
+        {
+          "value": "below",
+          "label": "Sotto l'immagine"
+        }
+      ],
+      "default": "overlay"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Schema colori",
+      "info": "Usato per il riquadro del testo nei layout divisi e per il testo sotto l'immagine su mobile.",
+      "default": "scheme-3"
+    },
+    {
+      "type": "header",
+      "content": "Immagine"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Immagine desktop"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Immagine mobile",
+      "info": "Consigliata verticale (es. 1080×1350). Se vuota viene usata quella desktop."
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video di sfondo",
+      "info": "Facoltativo. Se presente sostituisce l'immagine (senza audio, in loop)."
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Punto focale",
+      "info": "\"Automatico\" usa il punto focale impostato su Shopify (Contenuti > File).",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Automatico"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "top",
+          "label": "Alto"
+        },
+        {
+          "value": "bottom",
+          "label": "Basso"
+        },
+        {
+          "value": "left",
+          "label": "Sinistra"
+        },
+        {
+          "value": "right",
+          "label": "Destra"
+        },
+        {
+          "value": "left-top",
+          "label": "Alto a sinistra"
+        },
+        {
+          "value": "right-top",
+          "label": "Alto a destra"
+        },
+        {
+          "value": "left-bottom",
+          "label": "Basso a sinistra"
+        },
+        {
+          "value": "right-bottom",
+          "label": "Basso a destra"
+        }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "select",
+      "id": "image_animation",
+      "label": "Animazione immagine",
+      "options": [
+        {
+          "value": "none",
+          "label": "Nessuna"
+        },
+        {
+          "value": "zoom",
+          "label": "Zoom all'apertura"
+        },
+        {
+          "value": "kenburns",
+          "label": "Zoom lento continuo"
+        }
+      ],
+      "default": "zoom"
+    },
+    {
+      "type": "header",
+      "content": "Overlay (per leggere meglio il testo)"
+    },
+    {
+      "type": "select",
+      "id": "overlay_style",
+      "label": "Tipo",
+      "options": [
+        {
+          "value": "none",
+          "label": "Nessuno"
+        },
+        {
+          "value": "solid",
+          "label": "Uniforme"
+        },
+        {
+          "value": "left",
+          "label": "Sfumato da sinistra"
+        },
+        {
+          "value": "right",
+          "label": "Sfumato da destra"
+        },
+        {
+          "value": "bottom",
+          "label": "Sfumato dal basso"
+        },
+        {
+          "value": "top",
+          "label": "Sfumato dall'alto"
+        },
+        {
+          "value": "vignette",
+          "label": "Vignettatura"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Colore",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Intensità",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 65
+    },
+    {
+      "type": "header",
+      "content": "Posizione del testo"
+    },
+    {
+      "type": "select",
+      "id": "content_position",
+      "label": "Posizione desktop",
+      "options": [
+        {
+          "value": "top-left",
+          "label": "In alto a sinistra"
+        },
+        {
+          "value": "top-center",
+          "label": "In alto al centro"
+        },
+        {
+          "value": "top-right",
+          "label": "In alto a destra"
+        },
+        {
+          "value": "middle-left",
+          "label": "Al centro a sinistra"
+        },
+        {
+          "value": "middle-center",
+          "label": "Al centro"
+        },
+        {
+          "value": "middle-right",
+          "label": "Al centro a destra"
+        },
+        {
+          "value": "bottom-left",
+          "label": "In basso a sinistra"
+        },
+        {
+          "value": "bottom-center",
+          "label": "In basso al centro"
+        },
+        {
+          "value": "bottom-right",
+          "label": "In basso a destra"
+        }
+      ],
+      "default": "middle-left"
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Allineamento desktop",
+      "options": [
+        {
+          "value": "left",
+          "label": "Sinistra"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Destra"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "content_position_mobile",
+      "label": "Posizione mobile",
+      "options": [
+        {
+          "value": "top",
+          "label": "In alto"
+        },
+        {
+          "value": "middle",
+          "label": "Al centro"
+        },
+        {
+          "value": "bottom",
+          "label": "In basso"
+        }
+      ],
+      "default": "bottom"
+    },
+    {
+      "type": "select",
+      "id": "text_align_mobile",
+      "label": "Allineamento mobile",
+      "options": [
+        {
+          "value": "left",
+          "label": "Sinistra"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Destra"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Larghezza massima del testo",
+      "min": 320,
+      "max": 1000,
+      "step": 20,
+      "unit": "px",
+      "default": 680
+    },
+    {
+      "type": "header",
+      "content": "Stile del testo"
+    },
+    {
+      "type": "select",
+      "id": "text_color_mode",
+      "label": "Colore testo (sopra l'immagine)",
+      "options": [
+        {
+          "value": "light",
+          "label": "Chiaro"
+        },
+        {
+          "value": "dark",
+          "label": "Scuro"
+        },
+        {
+          "value": "custom",
+          "label": "Personalizzato"
+        }
+      ],
+      "default": "light"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Colore personalizzato",
+      "default": "#ffffff"
+    },
+    {
+      "type": "checkbox",
+      "id": "text_shadow",
+      "label": "Ombra leggera sul testo",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "content_box",
+      "label": "Riquadro dietro al testo",
+      "options": [
+        {
+          "value": "none",
+          "label": "Nessuno"
+        },
+        {
+          "value": "solid",
+          "label": "Pieno"
+        },
+        {
+          "value": "blur",
+          "label": "Vetro sfocato"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "color",
+      "id": "box_color",
+      "label": "Colore riquadro",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "box_opacity",
+      "label": "Opacità riquadro",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 40
+    },
+    {
+      "type": "checkbox",
+      "id": "content_animation",
+      "label": "Animazione di entrata del testo",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Testi"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Etichetta",
+      "default": "Collezione Autunno Inverno 2026"
+    },
+    {
+      "type": "select",
+      "id": "eyebrow_style",
+      "label": "Stile etichetta",
+      "options": [
+        {
+          "value": "text",
+          "label": "Testo"
+        },
+        {
+          "value": "pill",
+          "label": "Badge"
+        },
+        {
+          "value": "line",
+          "label": "Con linea"
+        }
+      ],
+      "default": "line"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Titolo",
+      "info": "Il testo in corsivo viene mostrato con il solo contorno.",
+      "default": "Ama le tue <em>curve</em>"
+    },
+    {
+      "type": "select",
+      "id": "heading_font",
+      "label": "Carattere titolo",
+      "options": [
+        {
+          "value": "expanded",
+          "label": "Largo (come il logo)"
+        },
+        {
+          "value": "regular",
+          "label": "Normale"
+        }
+      ],
+      "default": "expanded"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Dimensione titolo desktop",
+      "min": 32,
+      "max": 180,
+      "step": 2,
+      "unit": "px",
+      "default": 96
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Dimensione titolo mobile",
+      "min": 24,
+      "max": 90,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Testo",
+      "default": "Abiti, tailleur e maglie curvy dalla 46 alla 60, scelti per la nuova stagione."
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Dimensione testo",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Pulsanti"
+    },
+    {
+      "type": "text",
+      "id": "button_label_1",
+      "label": "Pulsante 1: testo",
+      "default": "Acquista ora"
+    },
+    {
+      "type": "url",
+      "id": "button_link_1",
+      "label": "Pulsante 1: link"
+    },
+    {
+      "type": "select",
+      "id": "button_style_1",
+      "label": "Pulsante 1: stile",
+      "options": [
+        {
+          "value": "light",
+          "label": "Pieno chiaro"
+        },
+        {
+          "value": "dark",
+          "label": "Pieno scuro"
+        },
+        {
+          "value": "outline",
+          "label": "Bordo"
+        },
+        {
+          "value": "link",
+          "label": "Link sottolineato"
+        }
+      ],
+      "default": "light"
+    },
+    {
+      "type": "text",
+      "id": "button_label_2",
+      "label": "Pulsante 2: testo",
+      "default": "Scopri le novità"
+    },
+    {
+      "type": "url",
+      "id": "button_link_2",
+      "label": "Pulsante 2: link"
+    },
+    {
+      "type": "select",
+      "id": "button_style_2",
+      "label": "Pulsante 2: stile",
+      "options": [
+        {
+          "value": "light",
+          "label": "Pieno chiaro"
+        },
+        {
+          "value": "dark",
+          "label": "Pieno scuro"
+        },
+        {
+          "value": "outline",
+          "label": "Bordo"
+        },
+        {
+          "value": "link",
+          "label": "Link sottolineato"
+        }
+      ],
+      "default": "outline"
+    },
+    {
+      "type": "url",
+      "id": "banner_link",
+      "label": "Link su tutto il banner",
+      "info": "Facoltativo: rende cliccabile tutta l'immagine."
+    }
+  ],
+  "presets": [
+    {
+      "name": "ISC: hero"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,30 @@
+{%- comment -%}
+  I'M So Curvy: un messaggio della barra annunci.
+  Accepts:
+  - block: {Object}
+  - attributes: {Boolean} aggiunge gli attributi dell'editor (solo per una copia)
+{%- endcomment -%}
+{%- liquid
+  assign style = ''
+  if block.settings.color != blank and block.settings.color.alpha != 0.0
+    assign style = 'color: ' | append: block.settings.color | append: ';'
+  endif
+-%}
+{%- if block.settings.link != blank -%}
+  <a
+    href="{{ block.settings.link }}"
+    class="isc-ann__msg"
+    {% if style != '' %}style="{{ style }}"{% endif %}
+    {% if attributes %}{{ block.shopify_attributes }}{% else %}tabindex="-1"{% endif %}
+  >
+    {{- block.settings.text -}}
+  </a>
+{%- else -%}
+  <span
+    class="isc-ann__msg"
+    {% if style != '' %}style="{{ style }}"{% endif %}
+    {% if attributes %}{{ block.shopify_attributes }}{% endif %}
+  >
+    {{- block.settings.text -}}
+  </span>
+{%- endif -%}

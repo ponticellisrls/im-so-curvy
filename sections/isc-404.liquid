@@ -1,0 +1,124 @@
+{%- comment -%}
+  I'M So Curvy: pagina 404. "Questa pagina è fuori taglia": 404 gigante con un abito sulla gruccia al posto
+  dello zero, cuori che attraversano la pagina, ricerca, pulsanti e scorciatoie alle categorie.
+{%- endcomment -%}
+{% render 'isc-section-spacing' %}
+{%- liquid
+  assign s = section.settings
+  assign menu = s.menu
+-%}
+
+<div class="isc-404">
+  <span class="isc-404__glow" aria-hidden="true"></span>
+
+  {%- comment -%} cuori che salgono {%- endcomment -%}
+  <div class="isc-404__trail" aria-hidden="true">
+    {%- for i in (1..9) -%}
+      {%- assign odd = forloop.index | modulo: 2 -%}
+      <span class="isc-404__step{% if odd == 0 %} isc-404__step--r{% endif %}" style="--i: {{ forloop.index0 }};">
+        <svg viewBox="0 0 24 22" fill="currentColor"><path d="M12 21.5S.5 14.8.5 7C.5 3.4 3.3.5 6.7.5c2.2 0 4.1 1.1 5.3 2.9C13.2 1.6 15.1.5 17.3.5c3.4 0 6.2 2.9 6.2 6.5 0 7.8-11.5 14.5-11.5 14.5z"/></svg>
+      </span>
+    {%- endfor -%}
+  </div>
+
+  <div class="isc-container isc-404__inner">
+    <div class="isc-404__code" aria-hidden="true">
+      <span>4</span>
+      <span class="isc-404__zero">
+        <span class="isc-404__ring"></span>
+        <span class="isc-404__spark isc-404__spark--1">✦</span>
+        <span class="isc-404__spark isc-404__spark--2">✦</span>
+        {%- if s.image != blank -%}
+          {{ s.image | image_url: width: 600 | image_tag: class: 'isc-404__shoe', alt: '', widths: '300, 600', sizes: '(min-width: 750px) 260px, 150px' }}
+        {%- else -%}
+          <svg class="isc-404__shoe isc-404__dress" viewBox="0 0 200 240" fill="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="Isc404Dress" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#a3406b"/><stop offset=".55" stop-color="#660033"/><stop offset="1" stop-color="#3d0c24"/>
+              </linearGradient>
+              <linearGradient id="Isc404Rose" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#fbe4ea"/><stop offset=".45" stop-color="#d98aa3"/><stop offset="1" stop-color="#8f3460"/>
+              </linearGradient>
+            </defs>
+            <path d="M100 30v-6c0-4 3.6-6.2 6.6-8.4a10 10 0 1 0-15.8-8.2" stroke="url(#Isc404Rose)" stroke-width="5" stroke-linecap="round"/>
+            <path d="M100 31L42 66c-5 3-3 10.5 2.8 10.5h110.4c5.8 0 7.8-7.5 2.8-10.5z" stroke="url(#Isc404Rose)" stroke-width="5" stroke-linejoin="round"/>
+            <path d="M76 70c6 10 15 15 24 15s18-5 24-15l8 4c-2 14-6 26-6 40 10 20 22 48 32 112H42c10-64 22-92 32-112 0-14-4-26-6-40z" fill="url(#Isc404Dress)"/>
+            <path d="M74 114c10 6 18 8 26 8s16-2 26-8" stroke="url(#Isc404Rose)" stroke-width="6" stroke-linecap="round"/>
+            <path d="M100 122c-4 30-10 66-24 104M100 122c4 30 10 66 24 104" stroke="#fff" stroke-opacity=".12" stroke-width="3"/>
+            <path d="M100 127s-9-5.3-9-10.8c0-2.7 2.1-4.7 4.6-4.7 1.8 0 3.4 1 4.4 2.4 1-1.4 2.6-2.4 4.4-2.4 2.5 0 4.6 2 4.6 4.7 0 5.5-9 10.8-9 10.8z" fill="url(#Isc404Rose)"/>
+          </svg>
+        {%- endif -%}
+      </span>
+      <span>4</span>
+    </div>
+
+    {%- if s.eyebrow != blank -%}<p class="isc-404__eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
+    <h1 class="isc-404__title">{{ s.heading }}</h1>
+    {%- if s.text != blank -%}<p class="isc-404__text">{{ s.text | escape }}</p>{%- endif -%}
+
+    {%- if s.show_search -%}
+      <form action="{{ routes.search_url }}" method="get" role="search" class="isc-404__search">
+        <label for="Isc404Search" class="visually-hidden">Cerca</label>
+        <input id="Isc404Search" type="search" name="q" placeholder="{{ s.search_placeholder | escape }}" autocomplete="off">
+        <input type="hidden" name="options[prefix]" value="last">
+        <button type="submit" aria-label="Cerca">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="8.5" cy="8.5" r="6" stroke="currentColor" stroke-width="1.6"/><path d="m13 13 5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      </form>
+    {%- endif -%}
+
+    <div class="isc-404__actions">
+      {%- if s.button1 != blank -%}
+        <a href="{{ s.link1 | default: routes.root_url }}" class="isc-404__btn isc-404__btn--dark">
+          {{ s.button1 | escape }}
+          <svg viewBox="0 0 20 10" fill="none" aria-hidden="true"><path d="M.5 5h17M13.2 1.3c.7 1.9 2.3 3.2 4.3 3.7-2 .5-3.6 1.8-4.3 3.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      {%- endif -%}
+      {%- if s.button2 != blank -%}
+        <a href="{{ s.link2 | default: routes.all_products_collection_url }}" class="isc-404__btn isc-404__btn--outline">{{ s.button2 | escape }}</a>
+      {%- endif -%}
+    </div>
+
+    {%- if menu != blank and menu.links.size > 0 -%}
+      <div class="isc-404__shortcuts">
+        {%- if s.shortcuts_label != blank -%}<span class="isc-404__shortcuts-label">{{ s.shortcuts_label | escape }}</span>{%- endif -%}
+        <ul class="list-unstyled" role="list">
+          {%- for link in menu.links limit: 8 -%}
+            <li><a href="{{ link.url }}">{% render 'isc-menu-title', text: link.title %}</a></li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "ISC: pagina 404",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Immagine al posto dello zero", "info": "PNG con sfondo trasparente. Vuota = abito sulla gruccia I'M So Curvy." },
+    { "type": "text", "id": "eyebrow", "label": "Etichetta", "default": "Errore 404 · Pagina non trovata" },
+    { "type": "inline_richtext", "id": "heading", "label": "Titolo", "default": "Questa pagina è <em>fuori taglia</em>." },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Testo",
+      "default": "Abbiamo cercato ovunque, perfino in fondo all'armadio, ma qui non c'è niente. Torna alla home o cerca il tuo prossimo capo preferito."
+    },
+    { "type": "checkbox", "id": "show_search", "label": "Mostra la ricerca", "default": true },
+    { "type": "text", "id": "search_placeholder", "label": "Testo nel campo ricerca", "default": "Cerca abiti, tailleur, maglie…" },
+    { "type": "text", "id": "button1", "label": "Pulsante 1", "default": "Torna alla home" },
+    { "type": "url", "id": "link1", "label": "Link pulsante 1" },
+    { "type": "text", "id": "button2", "label": "Pulsante 2", "default": "Scopri i nuovi arrivi" },
+    { "type": "url", "id": "link2", "label": "Link pulsante 2" },
+    { "type": "link_list", "id": "menu", "label": "Scorciatoie (menu)", "default": "main-menu" },
+    { "type": "text", "id": "shortcuts_label", "label": "Testo prima delle scorciatoie", "default": "Oppure vai dritta a" },
+    { "type": "header", "content": "Spazi" },
+    { "type": "range", "id": "padding_top", "label": "Spazio sopra", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 },
+    { "type": "range", "id": "padding_bottom", "label": "Spazio sotto", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 0 }
+  ],
+  "presets": [{ "name": "ISC: pagina 404" }]
+}
+{% endschema %}

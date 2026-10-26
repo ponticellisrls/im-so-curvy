@@ -1,0 +1,17 @@
+{%- comment -%}
+  I'M So Curvy: box "Effettua un reso" in fondo alla politica di reso.
+  Porta all'account cliente Shopify, dove si richiede il reso dalla pagina dell'ordine.
+{%- endcomment -%}
+{%- if customer -%}{%- assign wd_url = routes.account_url -%}{%- else -%}{%- assign wd_url = routes.account_login_url -%}{%- endif -%}
+<section class="isc-wd" id="recesso" aria-labelledby="IscWdTitle">
+  <div class="isc-wd__form">
+    <div class="isc-wd__head">
+      <span class="isc-wd__icon" aria-hidden="true">{% render 'isc-jewel-icon', name: 'return' %}</span>
+      <div>
+        <p class="isc-wd__title" id="IscWdTitle">Vuoi restituire un prodotto?</p>
+        <p class="isc-wd__sub">Hai 14 giorni dalla consegna. Accedi con la tua email (ti mandiamo un codice, niente password), apri l'ordine e clicca "Richiedi reso".</p>
+      </div>
+    </div>
+    <a href="{{ wd_url }}" class="isc-wd__open isc-wd__link">Effettua un reso</a>
+  </div>
+</section>

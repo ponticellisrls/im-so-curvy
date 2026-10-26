@@ -1,0 +1,216 @@
+{%- assign s = section.settings -%}
+{%- assign seen_urls = '' -%}
+
+<footer class="isc-ft">
+  <span class="isc-ft__glow" aria-hidden="true"></span>
+
+  <div class="isc-container isc-ft__inner">
+    <div class="isc-ft__grid">
+      {%- comment -%} Marchio {%- endcomment -%}
+      <div class="isc-ft__brand">
+        <a href="{{ routes.root_url }}" class="isc-ft__logo-link" aria-label="{{ shop.name | escape }}">
+          {%- if s.logo != blank -%}
+            {{ s.logo | image_url: width: 440 | image_tag: loading: 'lazy', class: 'isc-ft__logo', alt: shop.name, widths: '220, 440' }}
+          {%- else -%}
+            <img src="{{ 'isc-logo-white.png' | asset_url }}" alt="{{ shop.name | escape }}" class="isc-ft__logo" width="445" height="69" loading="lazy">
+          {%- endif -%}
+        </a>
+        {%- if s.text != blank -%}
+          <div class="isc-ft__about">{{ s.text }}</div>
+        {%- endif -%}
+        {%- if settings.social_instagram_link != blank or settings.social_tiktok_link != blank or settings.social_facebook_link != blank -%}
+          <ul class="isc-ft__social list-unstyled" role="list">
+            {%- if settings.social_instagram_link != blank -%}
+              <li><a href="{{ settings.social_instagram_link }}" target="_blank" rel="noopener" aria-label="Instagram"><span class="svg-wrapper">{{ 'icon-instagram.svg' | inline_asset_content }}</span></a></li>
+            {%- endif -%}
+            {%- if settings.social_tiktok_link != blank -%}
+              <li><a href="{{ settings.social_tiktok_link }}" target="_blank" rel="noopener" aria-label="TikTok"><span class="svg-wrapper">{{ 'icon-tiktok.svg' | inline_asset_content }}</span></a></li>
+            {%- endif -%}
+            {%- if settings.social_facebook_link != blank -%}
+              <li><a href="{{ settings.social_facebook_link }}" target="_blank" rel="noopener" aria-label="Facebook"><span class="svg-wrapper">{{ 'icon-facebook.svg' | inline_asset_content }}</span></a></li>
+            {%- endif -%}
+          </ul>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Menu (fisarmonica su mobile) e contatti {%- endcomment -%}
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'menu' -%}
+            {%- if block.settings.menu != blank -%}
+              <details class="isc-ft__col" data-isc-ft-col {{ block.shopify_attributes }}>
+                <summary class="isc-ft__title">
+                  {{ block.settings.heading | default: block.settings.menu.title | escape }}
+                  <span class="isc-ft__plus" aria-hidden="true"></span>
+                </summary>
+                <ul class="isc-ft__links list-unstyled" role="list">
+                  {%- for link in block.settings.menu.links -%}
+                    {%- assign url_key = '|' | append: link.url | append: link.title | handleize | append: '|' -%}
+                    {%- if customer and link.url contains '/login' -%}{%- continue -%}{%- endif -%}
+                    {%- unless seen_urls contains url_key -%}
+                      {%- assign seen_urls = seen_urls | append: url_key -%}
+                      <li><a href="{{ link.url }}"><span>{% render 'isc-menu-title', text: link.title %}</span></a></li>
+                    {%- endunless -%}
+                  {%- endfor -%}
+                </ul>
+              </details>
+            {%- endif -%}
+          {%- when 'contact' -%}
+            <details class="isc-ft__col isc-ft__col--contact" data-isc-ft-col {{ block.shopify_attributes }}>
+              <summary class="isc-ft__title">
+                {{ block.settings.heading | escape }}
+                <span class="isc-ft__plus" aria-hidden="true"></span>
+              </summary>
+              <ul class="isc-ft__contact list-unstyled" role="list">
+                {%- if block.settings.address != blank -%}
+                  <li><span class="isc-ft__ico">{% render 'isc-icon', name: 'pin' %}</span><span>{{ block.settings.address | escape | newline_to_br }}</span></li>
+                {%- endif -%}
+                {%- if block.settings.whatsapp != blank -%}
+                  {%- assign wa = block.settings.whatsapp | remove: ' ' | remove: '+' | remove: '-' -%}
+                  {%- assign wa_first = wa | slice: 0, 2 -%}
+                  {%- unless wa_first == '39' %}{% assign wa = '39' | append: wa %}{% endunless -%}
+                  <li><span class="isc-ft__ico">{% render 'isc-icon', name: 'whatsapp' %}</span><a href="https://wa.me/{{ wa }}" target="_blank" rel="noopener">{{ block.settings.whatsapp | escape }}</a></li>
+                {%- endif -%}
+                {%- if block.settings.email != blank -%}
+                  <li><span class="isc-ft__ico">{% render 'isc-icon', name: 'mail' %}</span><a href="mailto:{{ block.settings.email | escape }}">{{ block.settings.email | escape }}</a></li>
+                {%- endif -%}
+                {%- if block.settings.hours != blank -%}
+                  <li><span class="isc-ft__ico">{% render 'isc-icon', name: 'clock' %}</span><span>{{ block.settings.hours | escape }}</span></li>
+                {%- endif -%}
+                {%- if block.settings.link_label != blank -%}
+                  <li><span class="isc-ft__ico">{% render 'isc-icon', name: 'mail' %}</span><a href="{{ block.settings.link | default: '/pages/contact' }}">{{ block.settings.link_label | escape }}</a></li>
+                {%- endif -%}
+              </ul>
+            </details>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+
+    {%- comment -%} Barra finale {%- endcomment -%}
+    <div class="isc-ft__bottom">
+      <span class="isc-ft__legal">
+        © {{ 'now' | date: '%Y' }} {{ s.legal | escape }}
+        {%- if s.withdraw_label != blank -%}
+          {%- if s.withdraw_link != blank -%}{%- assign wd_url = s.withdraw_link -%}{%- elsif customer -%}{%- assign wd_url = routes.account_url -%}{%- else -%}{%- assign wd_url = routes.account_login_url -%}{%- endif -%}
+          <a href="{{ wd_url }}" class="isc-ft__withdraw">{{ s.withdraw_label | escape }}</a>
+        {%- endif -%}
+      </span>
+
+      {%- if s.legal_menu != blank and s.legal_menu.links.size > 0 -%}
+        <ul class="isc-ft__legal-links list-unstyled" role="list">
+          {%- for link in s.legal_menu.links -%}
+            <li><a href="{{ link.url }}">{% render 'isc-menu-title', text: link.title %}</a></li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      {%- if s.show_payment -%}
+        {% render 'isc-payment-icons', class: 'isc-ft__payments' %}
+      {%- endif -%}
+
+      <div class="isc-ft__end">
+        {%- if s.powered_label != blank -%}
+          <a href="{{ s.powered_link | default: 'https://www.vpdcsolutions.it/' }}" class="isc-ft__powered" target="_blank" rel="noopener">
+            <span class="isc-ft__powered-by">Powered by</span>
+            <span class="isc-ft__powered-name">{{ s.powered_label | escape }}</span>
+            <svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M3 9l6-6M4.5 3H9v4.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        {%- endif -%}
+        <button type="button" class="isc-ft__top" data-isc-top aria-label="Torna su">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 16.5v-13M6.3 7.2c1.9-.7 3.2-2.3 3.7-4.3.5 2 1.8 3.6 3.7 4.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {%- if s.wordmark != blank -%}
+    <div class="isc-ft__wordmark" aria-hidden="true">
+      {%- for t in (1..2) -%}
+        <div class="isc-ft__wordmark-track">
+          {%- for i in (1..4) -%}<span>{{ s.wordmark | escape }}</span><span class="isc-ft__wordmark-star">✦</span>{%- endfor -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</footer>
+
+<script>
+  (function () {
+    var root = document.currentScript.previousElementSibling;
+    if (!root) return;
+    /* colonne aperte su desktop, a fisarmonica su mobile */
+    var mq = window.matchMedia('(min-width: 750px)');
+    var cols = root.querySelectorAll('[data-isc-ft-col]');
+    function sync() { cols.forEach(function (c) { c.open = mq.matches; }); }
+    sync();
+    mq.addEventListener('change', sync);
+    root.querySelectorAll('[data-isc-ft-col] > summary').forEach(function (sm) {
+      sm.addEventListener('click', function (e) { if (mq.matches) e.preventDefault(); });
+    });
+    var top = root.querySelector('[data-isc-top]');
+    if (top) top.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "ISC: footer",
+  "tag": "div",
+  "class": "section",
+  "max_blocks": 5,
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Logo (versione bianca)" },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Presentazione",
+      "default": "<p>Moda curvy dalla 46 alla 60: capi pensati per valorizzare le tue forme, ogni giorno.</p>"
+    },
+    {
+      "type": "text",
+      "id": "legal",
+      "label": "Dati legali",
+      "default": "I'M So Curvy · NEW GENERATION SRLS · P.IVA 10812741212"
+    },
+    { "type": "link_list", "id": "legal_menu", "label": "Note legali (barra in fondo)", "info": "Es. Condizioni di vendita, Politica dei resi, Privacy policy." },
+    { "type": "checkbox", "id": "show_payment", "label": "Mostra metodi di pagamento", "default": true },
+    { "type": "text", "id": "withdraw_label", "label": "Link recesso/reso", "info": "Vuoto per nasconderlo." },
+    { "type": "url", "id": "withdraw_link", "label": "Destinazione link recesso", "info": "Vuoto = account cliente (ordini e resi)." },
+    { "type": "text", "id": "wordmark", "label": "Scritta gigante in fondo", "info": "Vuota per nasconderla.", "default": "I'M So Curvy" },
+    { "type": "header", "content": "Firma" },
+    { "type": "text", "id": "powered_label", "label": "Powered by", "default": "VPDC Solutions" },
+    { "type": "url", "id": "powered_link", "label": "Link" },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-3"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Titolo" },
+        { "type": "link_list", "id": "menu", "label": "Menu" }
+      ]
+    },
+    {
+      "type": "contact",
+      "name": "Contatti",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Titolo", "default": "Contatti" },
+        { "type": "textarea", "id": "address", "label": "Indirizzo" },
+        { "type": "text", "id": "whatsapp", "label": "WhatsApp", "info": "Es. 333 123 4567 (diventa un link a WhatsApp)." },
+        { "type": "text", "id": "email", "label": "Email" },
+        { "type": "text", "id": "hours", "label": "Orari" },
+        { "type": "text", "id": "link_label", "label": "Link in fondo", "default": "Modulo di contatto" },
+        { "type": "url", "id": "link", "label": "Destinazione link", "info": "Vuoto = pagina Contattaci." }
+      ]
+    }
+  ],
+  "presets": [{ "name": "ISC: footer" }]
+}
+{% endschema %}

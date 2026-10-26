@@ -1,0 +1,167 @@
+{% render 'isc-section-spacing' %}
+<section class="isc-section color-{{ section.settings.color_scheme }}">
+  <div class="isc-container">
+    <div class="isc-section__head">
+      <h2 class="isc-h2">{{ section.settings.heading | escape }}</h2>
+      {%- if section.settings.link_label != blank -%}
+        <a href="{{ section.settings.link | default: routes.collections_url }}" class="isc-link">{{ section.settings.link_label | escape }}</a>
+      {%- endif -%}
+    </div>
+
+    <div class="isc-categories__grid">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign c = block.settings.collection
+          assign image = block.settings.image | default: c.featured_image
+          assign label = block.settings.title | default: c.title | default: 'Categoria'
+        -%}
+        <a
+          href="{{ c.url | default: routes.collections_url }}"
+          class="isc-category{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+          {{ block.shopify_attributes }}
+          {% if settings.animations_reveal_on_scroll %}
+            data-cascade
+            style="--animation-order: {{ forloop.index }};"
+          {% endif %}
+        >
+          <div class="isc-category__media">
+            {%- if image != blank -%}
+              {{
+                image
+                | image_url: width: 900
+                | image_tag: loading: 'lazy', sizes: '(min-width: 990px) 20vw, 50vw', widths: '360, 540, 720, 900', alt: label
+              }}
+            {%- elsif block.settings.demo_image != blank -%}
+              <img src="{{ block.settings.demo_image | asset_url }}" alt="" loading="lazy" width="1600" height="2000">
+            {%- else -%}
+              <span class="isc-category__ph">foto categoria — {{ label | escape }}</span>
+            {%- endif -%}
+          </div>
+          <div class="isc-category__meta">
+            <span class="isc-category__name">{{ label | escape }}</span>
+            {%- if section.settings.show_count and c != blank -%}
+              <span class="isc-category__count">{{ c.products_count }} modelli</span>
+            {%- endif -%}
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "ISC: categorie",
+  "tag": "div",
+  "class": "section",
+  "max_blocks": 10,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titolo",
+      "default": "Acquista per categoria"
+    },
+    {
+      "type": "text",
+      "id": "link_label",
+      "label": "Testo link",
+      "default": "Tutte le categorie"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_count",
+      "label": "Mostra numero di modelli",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Spazi"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Spazio sopra",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Spazio sotto",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Categoria",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collezione"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Titolo",
+          "info": "Se vuoto viene usato il nome della collezione."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Immagine",
+          "info": "Se vuota viene usata l'immagine della collezione."
+        },
+        {
+          "type": "text",
+          "id": "demo_image",
+          "label": "Immagine demo (file del tema)",
+          "info": "Usata solo se non scegli un'immagine sopra."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ISC: categorie",
+      "blocks": [
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        },
+        {
+          "type": "category"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

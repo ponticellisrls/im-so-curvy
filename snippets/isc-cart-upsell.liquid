@@ -1,0 +1,54 @@
+{%- comment -%} I'M So Curvy: suggerimenti compatti nel carrello (aumentano lo scontrino medio) {%- endcomment -%}
+{%- assign up = settings.isc_cart_upsell -%}
+{%- if up != blank and up.products_count > 0 -%}
+  {%- liquid
+    assign in_cart = ''
+    for item in cart.items
+      assign in_cart = in_cart | append: '|' | append: item.product_id | append: '|'
+    endfor
+    assign shown = 0
+  -%}
+  {%- capture cards -%}
+    {%- for p in up.products limit: 12 -%}
+      {%- assign key = '|' | append: p.id | append: '|' -%}
+      {%- if shown < 4 and p.available -%}{%- unless in_cart contains key -%}
+        {%- assign shown = shown | plus: 1 -%}
+        <li class="isc-cup__card">
+          <a href="{{ p.url }}" class="isc-cup__media" tabindex="-1">
+            {%- if p.featured_media -%}
+              {{ p.featured_media | image_url: width: 160 | image_tag: loading: 'lazy', widths: '80, 160', sizes: '64px', alt: p.title }}
+            {%- endif -%}
+          </a>
+          <div class="isc-cup__info">
+            <a href="{{ p.url }}" class="isc-cup__title">{% render 'isc-title-case', text: p.title %}</a>
+            <span class="isc-cup__price">
+              {{- p.price | money -}}
+              {%- if p.compare_at_price > p.price %} <s>{{ p.compare_at_price | money }}</s>{% endif -%}
+            </span>
+            {%- if p.has_only_default_variant -%}
+              <button type="button" class="isc-cup__add" data-isc-add="{{ p.selected_or_first_available_variant.id }}" aria-label="Aggiungi {{ p.title | escape }}">
+                <span>+ Aggiungi</span>
+              </button>
+            {%- else -%}
+              <div class="isc-cup__pick">
+                <label class="visually-hidden" for="IscCup-{{ p.id }}">Taglia</label>
+                <select id="IscCup-{{ p.id }}" class="isc-cup__select">
+                  {%- for v in p.variants -%}
+                    <option value="{{ v.id }}"{% unless v.available %} disabled{% endunless %}>{{ v.title | escape }}</option>
+                  {%- endfor -%}
+                </select>
+                <button type="button" class="isc-cup__add" data-isc-add-select aria-label="Aggiungi {{ p.title | escape }}"><span>+</span></button>
+              </div>
+            {%- endif -%}
+          </div>
+        </li>
+      {%- endunless -%}{%- endif -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+  {%- if shown > 0 -%}
+    <div class="isc-cup">
+      <p class="isc-cup__heading">{{ settings.isc_cart_upsell_title | escape }}</p>
+      <ul class="isc-cup__list list-unstyled" role="list">{{ cards }}</ul>
+    </div>
+  {%- endif -%}
+{%- endif -%}

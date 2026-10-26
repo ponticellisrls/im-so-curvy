@@ -1,0 +1,69 @@
+{%- comment -%}
+  I'M So Curvy: riepilogo ordine nella pagina carrello (colonna destra su desktop).
+  Sta dentro .js-contents di main-cart-items, quindi Dawn lo ridisegna a ogni cambio di quantità.
+{%- endcomment -%}
+{%- liquid
+  assign isc_full = 0
+  for item in cart.items
+    assign isc_line = item.original_line_price
+    assign isc_cmp = item.variant.compare_at_price | times: item.quantity
+    if isc_cmp > isc_line
+      assign isc_line = isc_cmp
+    endif
+    assign isc_full = isc_full | plus: isc_line
+  endfor
+  assign isc_saved = isc_full | minus: cart.total_price
+-%}
+<aside class="isc-cp__summary" aria-label="Riepilogo ordine">
+  <p class="isc-cp__summary-title">Riepilogo ordine</p>
+  {% render 'isc-cart-shipping' %}
+
+  <div class="isc-cp__rows">
+    <div class="isc-cp__row">
+      <span>Subtotale ({{ cart.item_count }} {% if cart.item_count == 1 %}articolo{% else %}articoli{% endif %})</span>
+      <span>{{ isc_full | money }}</span>
+    </div>
+    {%- if isc_saved > 0 -%}
+      <div class="isc-cp__row isc-cp__row--save">
+        <span>{{ settings.isc_saved_label | default: 'Stai risparmiando' | escape }}</span>
+        <span>-{{ isc_saved | money }}</span>
+      </div>
+    {%- endif -%}
+    {%- for discount in cart.cart_level_discount_applications -%}
+      <div class="isc-cp__row isc-cp__row--save">
+        <span>{{ discount.title | escape }}</span>
+        <span>-{{ discount.total_allocated_amount | money }}</span>
+      </div>
+    {%- endfor -%}
+    <div class="isc-cp__row">
+      <span>Spedizione</span>
+      {%- assign isc_threshold = settings.isc_free_shipping | times: 100 -%}
+      <span>{% if isc_threshold > 0 and cart.total_price >= isc_threshold %}<strong class="isc-cp__free">Gratis</strong>{% else %}Calcolata al pagamento{% endif %}</span>
+    </div>
+  </div>
+
+  <div class="isc-cp__total-row{% if isc_saved > 0 %} is-sale{% endif %}">
+    <span>Totale</span>
+    <span>{{ cart.total_price | money_with_currency }}</span>
+  </div>
+
+  <button
+    type="submit"
+    id="checkout"
+    class="cart__checkout-button button isc-checkout"
+    name="checkout"
+    form="cart"
+  >
+    <span class="isc-checkout__lock" aria-hidden="true">{% render 'isc-icon', name: 'lock' %}</span>
+    <span>{{ settings.isc_checkout_label | default: 'Vai al pagamento' | escape }}</span>
+    <span class="isc-checkout__sep" aria-hidden="true"></span>
+    <span class="isc-checkout__total">{{ cart.total_price | money }}</span>
+  </button>
+  {%- if settings.isc_cart_express and additional_checkout_buttons -%}
+    <div class="isc-express">
+      <span class="isc-express__label">oppure paga con</span>
+      <div class="additional-checkout-buttons additional-checkout-buttons--vertical">{{ content_for_additional_checkout_buttons }}</div>
+    </div>
+  {%- endif -%}
+  {% render 'isc-cart-trust' %}
+</aside>
