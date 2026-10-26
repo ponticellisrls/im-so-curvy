@@ -6400,3 +6400,28 @@ h1 strong, h2 strong, h3 strong,
   margin-inline: auto;
 }
 .isc-look__img img { object-position: center top; }
+
+/* Stories: foto verticali sempre allineate dall'alto (il volto resta nel cerchio, anche con lo zoom) */
+.isc-story__img img {
+  object-position: center top;
+  transform-origin: center top;
+}
+
+/* Header: icone ricerca, account, carrello e menu più grandi e con tratto più deciso */
+.header__icon .icon-isc-search,
+.header__icon .icon-isc-account,
+.header__icon--cart .icon-isc-bag,
+.header__icon .icon-isc-menu {
+  width: 2.8rem;
+  height: 2.8rem;
+}
+.header__icon .svg-wrapper { width: 4.6rem; height: 4.6rem; }
+.header__icon:hover .icon { transform: scale(1.06); }
+.header__icon .icon { transition: transform 0.2s ease; }
+.header__icon--cart .cart-count-bubble { top: 0.4rem; right: 0.2rem; }
+@media screen and (max-width: 749px) {
+  .header__icon .icon-isc-search,
+  .header__icon .icon-isc-account,
+  .header__icon--cart .icon-isc-bag,
+  .header__icon .icon-isc-menu { width: 2.6rem; height: 2.6rem; }
+}
