@@ -508,8 +508,8 @@
           "type": "benefit",
           "settings": {
             "icon": "truck",
-            "title": "Spedizione in 48/72h",
-            "text": "In tutta Italia",
+            "title": "Spedizione gratuita",
+            "text": "Da 60€ · in 48/72h",
             "link": ""
           }
         },

@@ -4,8 +4,7 @@ Modifiche lasciate in sospeso, da decidere con il cliente:
 
 1. **Numero WhatsApp** — non trovato sul sito. Inserirlo in Impostazioni tema → «Carrello e menu mobile»:
    si accendono i link WhatsApp (menu mobile, pagine informative, contatti, traccia ordine).
-2. **Barra spedizione gratuita** nel carrello — spenta (soglia a 0) perché la soglia non è nota.
-   Impostarla nella stessa sezione.
+2. ~~Barra spedizione gratuita~~ — fatto: soglia 60€.
 3. **Tabella taglie** — misure seno/vita/fianchi 46–60 indicative: da verificare con le misure reali
    (blocco «Selettore varianti» della pagina prodotto).
 4. **Scalapay e stelle recensioni** — disattivati perché non risultano attivi sul negozio.

@@ -17,7 +17,7 @@
         "msg-1": {
           "type": "item",
           "settings": {
-            "text": "Spedizione in 48/72h",
+            "text": "Spedizione gratuita da 60€",
             "link": "",
             "color": ""
           }
@@ -41,7 +41,7 @@
         "msg-4": {
           "type": "item",
           "settings": {
-            "text": "Reso facile entro 14 giorni",
+            "text": "Spedizione in 48/72h · Reso facile entro 14 giorni",
             "link": "",
             "color": ""
           }
@@ -56,7 +56,7 @@
       "settings": {
         "mode_desktop": "marquee",
         "mode_mobile": "marquee",
-        "speed": 40,
+        "speed": 75,
         "direction": "left",
         "slide_interval": 4,
         "pause_on_hover": true,

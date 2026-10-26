@@ -6425,3 +6425,30 @@ h1 strong, h2 strong, h3 strong,
   .header__icon--cart .icon-isc-bag,
   .header__icon .icon-isc-menu { width: 2.6rem; height: 2.6rem; }
 }
+
+/* Schede prodotto: titolo su una sola riga con "…" (prezzi e titoli sempre allineati tra le schede) */
+.isc-pcard__title,
+.card-wrapper .card__heading,
+.isc-cup__title, .isc-cupsell__title,
+.predictive-search__item-heading {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-wrapper .card__heading a { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+
+/* prezzo pieno (non scontato) in nero */
+.isc-pcard__now:not(.is-sale),
+.price:not(.price--on-sale) .price__regular .price-item--regular,
+.card-information .price:not(.price--on-sale) .price-item--regular {
+  color: #111;
+}
+.card-wrapper .card__content { grid-template-columns: minmax(0, 1fr); }
+.card-wrapper .card__information,
+.card-wrapper .card__content { min-width: 0; max-width: 100%; }
+
+/* Carrello: garanzie su tre colonne uguali, testo che va a capo senza accavallarsi */
+.isc-ctrust { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.isc-ctrust li { white-space: normal; overflow-wrap: anywhere; hyphens: auto; font-size: 9px; letter-spacing: 0.04em; line-height: 1.3; }

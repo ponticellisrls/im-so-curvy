@@ -82,7 +82,7 @@
             "cutoff_hour": 14,
             "min_days": 1,
             "max_days": 2,
-            "note": "Spedizione in 48/72h · Reso facile entro 14 giorni"
+            "note": "Spedizione gratuita da 60€ · Reso facile entro 14 giorni"
           }
         },
         "upsell": {
@@ -108,7 +108,7 @@
             "heading": "Spedizione e resi",
             "icon": "none",
             "isc_show_description": false,
-            "content": "<p>Spediamo in tutta Italia con corriere espresso: consegna in 48/72 ore lavorative. Reso semplice entro 14 giorni dalla consegna: trovi tutti i dettagli nella pagina dedicata.</p>",
+            "content": "<p>Spedizione gratuita per ordini da 60€. Spediamo in tutta Italia con corriere espresso: consegna in 48/72 ore lavorative. Reso semplice entro 14 giorni dalla consegna: trovi tutti i dettagli nella pagina dedicata.</p>",
             "page": ""
           }
         },
@@ -137,7 +137,7 @@
           "settings": {
             "icon_1": "truck",
             "title_1": "Spedizione",
-            "text_1": "In 48/72h",
+            "text_1": "Gratis da 60€",
             "icon_2": "return",
             "title_2": "Resi",
             "text_2": "Entro 14 giorni",
