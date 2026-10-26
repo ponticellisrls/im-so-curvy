@@ -14,9 +14,9 @@
 <nav class="isc-info__nav" aria-label="{{ settings.isc_info_title | default: 'Assistenza' | escape }}">
   {%- for menu in (1..3) -%}
     {%- case forloop.index -%}
-      {%- when 1 -%}{%- assign lst = m1 -%}{%- assign grp = m1.title -%}
-      {%- when 2 -%}{%- assign lst = m2 -%}{%- assign grp = m2.title -%}
-      {%- else -%}{%- assign lst = m3 -%}{%- assign grp = m3.title -%}
+      {%- when 1 -%}{%- assign lst = m1 -%}{%- assign grp = settings.isc_info_menu_1_label | default: m1.title -%}
+      {%- when 2 -%}{%- assign lst = m2 -%}{%- assign grp = settings.isc_info_menu_2_label | default: m2.title -%}
+      {%- else -%}{%- assign lst = m3 -%}{%- assign grp = settings.isc_info_menu_3_label | default: m3.title -%}
     {%- endcase -%}
     {%- if lst != blank and lst.links.size > 0 -%}
       <p class="isc-info__nav-title">{{ grp | escape }}</p>

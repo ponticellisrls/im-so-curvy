@@ -270,7 +270,9 @@
           "shadow": "#241a1f"
         }
       }
-    }
+    },
+    "isc_info_menu_1_label": "Assistenza",
+    "isc_info_menu_2_label": "Note legali"
   },
   "presets": {
     "Dawn": {

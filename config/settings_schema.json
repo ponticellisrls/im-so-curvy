@@ -1473,8 +1473,11 @@
       { "type": "checkbox", "id": "isc_info_nav", "label": "Menu laterale nelle pagine e nelle policy", "default": true },
       { "type": "text", "id": "isc_info_title", "label": "Titolo del menu", "default": "Assistenza" },
       { "type": "link_list", "id": "isc_info_menu_1", "label": "Menu 1", "info": "Vuoto = menu Servizio clienti." },
+      { "type": "text", "id": "isc_info_menu_1_label", "label": "Titolo menu 1", "info": "Vuoto = nome del menu nell'admin." },
       { "type": "link_list", "id": "isc_info_menu_2", "label": "Menu 2", "default": "footer" },
+      { "type": "text", "id": "isc_info_menu_2_label", "label": "Titolo menu 2", "info": "Vuoto = nome del menu nell'admin." },
       { "type": "link_list", "id": "isc_info_menu_3", "label": "Menu 3", "info": "Es. Note legali." },
+      { "type": "text", "id": "isc_info_menu_3_label", "label": "Titolo menu 3", "info": "Vuoto = nome del menu nell'admin." },
       { "type": "text", "id": "isc_info_help", "label": "Box aiuto: titolo", "default": "Hai bisogno di aiuto?" },
       { "type": "text", "id": "isc_info_help_text", "label": "Box aiuto: testo", "default": "Scrivici: il servizio clienti risponde dalle 9 alle 20." }
     ]

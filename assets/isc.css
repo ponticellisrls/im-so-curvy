@@ -6459,3 +6459,16 @@ h1 strong, h2 strong, h3 strong,
   .isc-ft__col--2 .isc-ft__links { display: block; columns: 2; column-gap: 32px; }
   .isc-ft__col--2 .isc-ft__links li { break-inside: avoid; margin-bottom: 12px; }
 }
+
+/* Pagine informative: titolo allineato alla prima riga del menu laterale, stile titoli del brand */
+.isc-info__content .main-page-title,
+.isc-info__content .shopify-policy__title h1 {
+  margin-top: -0.12em !important;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+.isc-info__content .shopify-app-block,
+.isc-info__content .section-template--apps,
+.isc-info__content [id*='__revoq'] { max-width: 760px; }
+.isc-info__content [id*='__revoq'] .page-width { padding: 0 !important; }
