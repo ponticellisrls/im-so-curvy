@@ -6,12 +6,15 @@
   assign key = 'isc-promo-' | append: section.id
   if s.image != blank
     assign key = key | append: '-' | append: s.image.id
+  elsif s.image_asset != blank
+    assign key = key | append: '-' | append: s.image_asset | handleize
   endif
   assign link = s.link
 -%}
 
 <isc-promo-popup
   class="isc-pp isc-pp--{{ s.size }}"
+  style="--pp-ratio: {{ s.ratio | default: '1 / 1' }};"
   {% render 'isc-popup-data', key: key %}
 >
   <dialog class="isc-pp__dialog" aria-label="{{ s.label | default: 'Promozione' | escape }}">
@@ -29,6 +32,15 @@
           {%- assign pp_alt = s.image.alt | default: s.label -%}
           {{ s.image | image_url: width: 1200 | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 560px, 92vw', widths: '500, 750, 1000, 1200', alt: pp_alt }}
         </picture>
+      {%- elsif s.image_asset != blank -%}
+        {%- comment -%} Immagine caricata tra i file del tema (assets/) {%- endcomment -%}
+        <img
+          src="{{ s.image_asset | asset_img_url: '1000x' }}"
+          srcset="{{ s.image_asset | asset_img_url: '600x' }} 600w, {{ s.image_asset | asset_img_url: '1000x' }} 1000w, {{ s.image_asset | asset_img_url: '1200x' }} 1200w"
+          sizes="(min-width: 750px) 560px, 92vw"
+          alt="{{ s.label | escape }}"
+          loading="lazy"
+        >
       {%- else -%}
         <span class="isc-pp__placeholder">
           <strong>Carica un'immagine 1:1</strong>
@@ -67,6 +79,18 @@
     { "type": "header", "content": "Contenuto" },
     { "type": "image_picker", "id": "image", "label": "Immagine 1:1", "info": "Consigliata 1080 × 1080 px." },
     { "type": "image_picker", "id": "image_mobile", "label": "Immagine mobile (facoltativa)", "info": "Anche verticale 4:5 (1080 × 1350)." },
+    { "type": "text", "id": "image_asset", "label": "Oppure immagine dai file del tema", "info": "Nome del file nella cartella assets del tema (es. isc-promo-halloween.jpg). Usata solo se Immagine è vuota." },
+    {
+      "type": "select",
+      "id": "ratio",
+      "label": "Proporzione",
+      "options": [
+        { "value": "1 / 1", "label": "Quadrata 1:1" },
+        { "value": "4 / 5", "label": "Verticale 4:5" },
+        { "value": "3 / 4", "label": "Verticale 3:4" }
+      ],
+      "default": "1 / 1"
+    },
     { "type": "url", "id": "link", "label": "Link", "info": "Rende cliccabile l'immagine." },
     { "type": "text", "id": "label", "label": "Nome della promo (per l'accessibilità)", "default": "Promozione" },
     { "type": "text", "id": "caption", "label": "Testo sotto l'immagine", "info": "Facoltativo." },

@@ -6536,3 +6536,12 @@ li.isc-fgroup-hidden { display: none !important; }
 [data-isc-facet='tipo-di-prodotto'] .facets__label.active .facet-checkbox__text-label,
 [data-isc-facet='tipo-di-prodotto'] .facets__label:has(input:checked) .facet-checkbox__text-label { color: #fff; }
 [data-isc-facet='tipo-di-prodotto'] .facets__label.disabled { opacity: 0.35; }
+
+/* Popup promo: proporzione scelta nella sezione (quadrata o verticale), sempre dentro lo schermo */
+.isc-pp .isc-pp__media { aspect-ratio: var(--pp-ratio, 1 / 1); }
+.isc-pp .isc-pp__dialog { width: min(var(--pp-w), calc(100vw - 32px), calc((100svh - 140px) * var(--pp-r, 1))); }
+.isc-pp[style*='4 / 5'] { --pp-r: 0.8; }
+.isc-pp[style*='3 / 4'] { --pp-r: 0.75; }
+@media screen and (max-width: 749px) {
+  .isc-pp .isc-pp__media:has(source) { aspect-ratio: auto; }
+}

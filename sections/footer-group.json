@@ -105,30 +105,30 @@
         "success_button": "Inizia lo shopping",
         "success_link": "shopify://collections/nuovi-arrivi",
         "color_scheme": "scheme-1"
-      }
+      },
+      "disabled": true
     },
     "promo-popup": {
       "type": "isc-promo-popup",
-      "disabled": true,
       "settings": {
-        "link": "",
-        "label": "Promozione",
+        "link": "shopify://collections/tutti-i-prodotti",
+        "label": "Halloween Sale: -20% su tutti i prodotti",
         "caption": "",
-        "button_label": "",
+        "button_label": "Scopri le offerte",
         "button_style": "dark",
         "button_position": "below",
         "size": "medium",
         "auto_open": true,
         "trigger": "delay",
-        "delay": 5,
+        "delay": 3,
         "scroll_percent": 30,
-        "days_hidden": 3,
-        "show_on": "home",
+        "days_hidden": 1,
+        "show_on": "all",
         "show_desktop": true,
         "show_mobile": true,
         "hide_subscribed": false,
-        "start_date": "",
-        "end_date": ""
+        "image_asset": "isc-promo-halloween.jpg",
+        "ratio": "4 / 5"
       }
     }
   },
