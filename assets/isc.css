@@ -6545,3 +6545,8 @@ li.isc-fgroup-hidden { display: none !important; }
 @media screen and (max-width: 749px) {
   .isc-pp .isc-pp__media:has(source) { aspect-ratio: auto; }
 }
+
+/* Header sempre sopra il contenuto della pagina (frecce dei caroselli, pannello taglie, card promo
+   hanno z-index 3-4); resta sotto carrello, menu e popup */
+.section-header.shopify-section-group-header-group,
+.shopify-section-header-sticky { z-index: 20; }
