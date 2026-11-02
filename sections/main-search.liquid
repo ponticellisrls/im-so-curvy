@@ -92,7 +92,7 @@
       endcapture
       assign isc_keep = isc_keep | strip
       if isc_keep != blank
-        assign isc_count = isc_keep | split: '|' | compact | size
+        assign isc_count = isc_keep | remove_first: '|' | split: '|' | size
       endif
     endif
   -%}
@@ -253,7 +253,8 @@
                 enable_filtering: section.settings.enable_filtering,
                 enable_sorting: section.settings.enable_sorting,
                 filter_type: section.settings.filter_type,
-                paginate: paginate
+                paginate: paginate,
+                isc_results_count: isc_count
               %}
             </aside>
           {%- endif -%}

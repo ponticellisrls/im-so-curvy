@@ -29,6 +29,10 @@
       role="list"
     >
       {%- for collection in collections -%}
+        {%- comment -%} I'M So Curvy: niente collezioni tecniche o vuote {%- endcomment -%}
+        {%- if collection.handle == 'frontpage' or collection.handle == 'all' or collection.handle == 'prezzo-intero' or collection.all_products_count == 0 -%}
+          {%- continue -%}
+        {%- endif -%}
         <li
           class="collection-list__item grid__item{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
           {% if settings.animations_reveal_on_scroll %}

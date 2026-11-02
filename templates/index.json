@@ -61,7 +61,6 @@
           "settings": {
             "style": "graphic",
             "collection": "nuovi-arrivi",
-            "image": "",
             "zoom": 0,
             "title": "Nuovi arrivi",
             "link": "",
@@ -79,7 +78,6 @@
           "settings": {
             "style": "graphic",
             "collection": "saldi",
-            "image": "",
             "zoom": 0,
             "title": "Saldi",
             "link": "",
@@ -97,7 +95,6 @@
           "settings": {
             "style": "image",
             "collection": "tailleur",
-            "image": "",
             "zoom": 0,
             "title": "Tailleur",
             "link": "",
@@ -115,7 +112,6 @@
           "settings": {
             "style": "image",
             "collection": "coordinati",
-            "image": "",
             "zoom": 0,
             "title": "Coordinati",
             "link": "",
@@ -133,7 +129,6 @@
           "settings": {
             "style": "image",
             "collection": "maglie",
-            "image": "",
             "zoom": 0,
             "title": "Maglie",
             "link": "",
@@ -151,7 +146,6 @@
           "settings": {
             "style": "image",
             "collection": "camicie-casacche",
-            "image": "",
             "zoom": 0,
             "title": "Camicie",
             "link": "",
@@ -169,7 +163,6 @@
           "settings": {
             "style": "image",
             "collection": "pantaloni",
-            "image": "",
             "zoom": 0,
             "title": "Pantaloni",
             "link": "",
@@ -187,7 +180,6 @@
           "settings": {
             "style": "image",
             "collection": "abiti",
-            "image": "",
             "zoom": 0,
             "title": "Abiti",
             "link": "",
@@ -205,7 +197,6 @@
           "settings": {
             "style": "image",
             "collection": "capispalla",
-            "image": "",
             "zoom": 0,
             "title": "Capispalla",
             "link": "",
@@ -223,7 +214,6 @@
           "settings": {
             "style": "image",
             "collection": "jeans",
-            "image": "",
             "zoom": 0,
             "title": "Jeans",
             "link": "",
@@ -241,7 +231,6 @@
           "settings": {
             "style": "image",
             "collection": "tute",
-            "image": "",
             "zoom": 0,
             "title": "Felpe e tute",
             "link": "",
@@ -357,7 +346,6 @@
             "link": "shopify://collections/tailleur",
             "button_style": "light",
             "note": "",
-            "image": "",
             "image_blend": false,
             "collection": "tailleur",
             "product_index": 1,
@@ -384,7 +372,6 @@
             "link": "shopify://collections/coordinati",
             "button_style": "light",
             "note": "",
-            "image": "",
             "image_blend": false,
             "collection": "coordinati",
             "product_index": 1,
@@ -475,12 +462,12 @@
     "newarrivals": {
       "type": "isc-product-carousel",
       "settings": {
-        "collection": "saldi",
+        "collection": "tutti-i-prodotti-copia",
         "products_to_show": 12,
-        "heading": "Saldi",
+        "heading": "Best Seller",
         "heading_accent": true,
         "subheading": "",
-        "link_label": "Vedi tutti i saldi",
+        "link_label": "Vedi tutti i best seller",
         "link": "",
         "columns_desktop": 5,
         "columns_tablet": 3,

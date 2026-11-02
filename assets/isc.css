@@ -6550,3 +6550,28 @@ li.isc-fgroup-hidden { display: none !important; }
    hanno z-index 3-4); resta sotto carrello, menu e popup */
 .section-header.shopify-section-group-header-group,
 .shopify-section-header-sticky { z-index: 20; }
+
+/* Pagina prodotto: taglie a pulsanti larghi quanto il testo (non più griglia a 7 colonne pensata per i
+   numeri delle scarpe), testo su una riga */
+.product-form__input--pill[data-option='taglia'],
+.product-form__input--pill[data-option='size'],
+.product-form__input--pill[data-option='misura'] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.product-form__input--pill[data-option='taglia'] > legend,
+.product-form__input--pill[data-option='size'] > legend,
+.product-form__input--pill[data-option='misura'] > legend { float: none; width: 100%; }
+.product-form__input--pill[data-option='taglia'] > :is(p, div, a, button),
+.product-form__input--pill[data-option='size'] > :is(p, div, a, button),
+.product-form__input--pill[data-option='misura'] > :is(p, div, a, button) { flex-basis: 100%; }
+variant-selects .product-form__input--pill[data-option='taglia'] input[type='radio'] + label,
+variant-selects .product-form__input--pill[data-option='size'] input[type='radio'] + label,
+variant-selects .product-form__input--pill[data-option='misura'] input[type='radio'] + label {
+  width: auto;
+  min-width: 58px;
+  margin: 0;
+  padding: 0 16px;
+  white-space: nowrap;
+}

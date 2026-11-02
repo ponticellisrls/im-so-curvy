@@ -11,6 +11,7 @@
   Usage:
   {% render 'facets', results: collection, enable_filtering: true, enable_sorting: true, filter_type: 'vertical', paginate: paginate %}
 {% endcomment %}
+{%- assign isc_rc = isc_results_count | default: results.results_count -%}
 
 {{ 'component-show-more.css' | asset_url | stylesheet_tag }}
 {{ 'component-swatch-input.css' | asset_url | stylesheet_tag }}
@@ -434,7 +435,7 @@
             <h2 class="product-count__text text-body">
               <span id="ProductCountDesktop">
                 {%- if results.results_count -%}
-                  {{ 'templates.search.results_with_count' | t: terms: results.terms, count: results.results_count }}
+                  {{ 'templates.search.results_with_count' | t: terms: results.terms, count: isc_rc }}
                 {%- elsif results.products_count == results.all_products_count -%}
                   {{ 'products.facets.product_count_simple' | t: count: results.products_count }}
                 {%- else -%}
@@ -514,7 +515,7 @@
                 <h2 class="mobile-facets__heading small-hide">Filtri</h2>
                 <p class="mobile-facets__count">
                   {%- if results.results_count -%}
-                    {{ 'templates.search.results_with_count' | t: terms: results.terms, count: results.results_count }}
+                    {{ 'templates.search.results_with_count' | t: terms: results.terms, count: isc_rc }}
                   {%- elsif results.products_count == results.all_products_count -%}
                     {{ 'products.facets.product_count_simple' | t: count: results.products_count }}
                   {%- else -%}
@@ -909,7 +910,7 @@
         data-total-count="{{ results.all_products_count | default: results.products_count | default: results.results_count }}"
       >
         {%- if results.results_count -%}
-          {{ 'templates.search.results_with_count' | t: terms: results.terms, count: results.results_count }}
+          {{ 'templates.search.results_with_count' | t: terms: results.terms, count: isc_rc }}
         {%- elsif results.products_count == results.all_products_count -%}
           {{ 'products.facets.product_count_simple' | t: count: results.products_count }}
         {%- else -%}
