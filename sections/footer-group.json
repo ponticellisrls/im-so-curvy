@@ -80,7 +80,6 @@
     },
     "newsletter-popup": {
       "type": "isc-newsletter-popup",
-      "disabled": true,
       "settings": {
         "auto_open": true,
         "trigger": "delay",
@@ -91,7 +90,7 @@
         "show_desktop": true,
         "show_mobile": true,
         "hide_subscribed": true,
-        "start_date": "",
+        "start_date": "2026-11-03 00:00+01:00",
         "end_date": "",
         "theme": "dark",
         "graphic_text": "-10%",
@@ -131,7 +130,7 @@
         "show_mobile": true,
         "hide_subscribed": false,
         "start_date": "",
-        "end_date": ""
+        "end_date": "2026-11-03 00:00+01:00"
       }
     }
   },
