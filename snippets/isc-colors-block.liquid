@@ -71,22 +71,58 @@
     2. stesso modello nella categoria del prodotto (la collezione "vera" più piccola)
   endcomment
   if found == 0 and my_model != blank
+    comment
+      Dove cercare: 1) la collezione con lo stesso nome del tipo di prodotto (es. Pantaloni);
+      2) altrimenti la collezione "vera" più piccola (escluse quelle tecniche e curate come Best Seller);
+      3) se lì non c'è nessun altro colore, si riprova su Tutti i prodotti.
+    endcomment
+    assign type_low = product.type | downcase | strip
     assign pool = null
     assign pool_count = 100000
     for c in product.collections
-      if c.handle == 'all' or c.handle == 'frontpage' or c.handle == 'tutti-i-prodotti' or c.handle == 'nuovi-arrivi' or c.handle == 'prezzo-intero' or c.handle contains 'saldi' or c.handle contains 'outlet' or c.handle == 'best-seller'
+      assign ch = c.handle
+      assign ct = c.title | downcase | strip
+      if ch == 'all' or ch == 'frontpage' or ch == 'tutti-i-prodotti' or ch == 'nuovi-arrivi' or ch == 'prezzo-intero' or ch contains 'saldi' or ch contains 'outlet' or ch contains 'best' or ct contains 'best' or ch contains 'copia'
         continue
+      endif
+      if type_low != blank and ct == type_low
+        assign pool = c
+        break
       endif
       if c.products_count < pool_count
         assign pool = c
         assign pool_count = c.products_count
       endif
     endfor
+    assign all_pool = collections['tutti-i-prodotti']
     if pool == blank
-      assign pool = collections['tutti-i-prodotti']
+      assign pool = all_pool
     endif
-    if pool != blank
-      assign model_size = my_model | size
+    assign model_size = my_model | size
+    comment
+      Ordine di ricerca: la collezione scelta, poi le altre collezioni del prodotto (Nuovi arrivi, Saldi…),
+      infine Tutti i prodotti. Ci si ferma appena si trova almeno un altro colore. Ogni collezione si
+      legge fino a 250 prodotti, per questo Tutti i prodotti (più grande) è l'ultima risorsa.
+    endcomment
+    assign pool_handles = pool.handle
+    for c in product.collections
+      if c.handle == 'frontpage' or c.handle == 'all' or c.handle == pool.handle or c.handle == 'tutti-i-prodotti'
+        continue
+      endif
+      assign pool_handles = pool_handles | append: ',' | append: c.handle
+    endfor
+    if all_pool != blank and pool.handle != all_pool.handle
+      assign pool_handles = pool_handles | append: ',tutti-i-prodotti'
+    endif
+    assign pool_handles = pool_handles | split: ','
+    for ph in pool_handles
+      if found > 0
+        break
+      endif
+      assign pool = collections[ph]
+      if pool == blank
+        continue
+      endif
       paginate pool.products by 250
         for p in pool.products
           assign key = '|' | append: p.id | append: '|'
@@ -125,7 +161,7 @@
           endif
         endfor
       endpaginate
-    endif
+    endfor
   endif
   comment
     Colore preso dall'ultima parola ma nessun altro colore trovato: probabilmente non è un colore

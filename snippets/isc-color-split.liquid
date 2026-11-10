@@ -2,6 +2,8 @@
   I'M So Curvy: separa il titolo di un prodotto in modello e colore.
   Su I'M So Curvy ogni colore è un prodotto a sé e il colore è in fondo al titolo
   ("Tailleur Easy Testa di Moro" -> modello "tailleur easy", colore "Testa di Moro").
+  Colori composti: un colore base davanti ("Verde Oliva", "Blu Navy") e una sfumatura in fondo
+  ("Blu Chiaro", "Verde Scuro") fanno parte del colore.
   Stampa "modello¦Colore¦come" (modello in minuscolo, colore com'è scritto nel titolo):
   - come = "l": colore riconosciuto dalla lista qui sotto;
   - come = "u": colore non in lista, presa l'ultima parola del titolo (solo titoli di almeno 3 parole,
@@ -17,23 +19,52 @@
   assign size = low | size
   assign colors = 'testa di moro,verde bottiglia,verde militare,verde salvia,blu navy,blu notte,blu elettrico,blu cobalto,jeans chiaro,jeans scuro,denim chiaro,grigio chiaro,grigio scuro,rosa cipria,rosa antico,bordeaux,vinaccia,marrone,tortora,ruggine,celeste,avorio,cobalto,camouflage,animalier,leopardato,cammello,arancione,petrolio,cioccolato,champagne,ghiaccio,mattone,ottanio,tabacco,glicine,mimetico,corallo,azzurro,azzurra,arancio,argento,militare,prugna,visone,senape,cipria,bianco,bianca,bianchi,giallo,gialla,grigio,grigia,salvia,fuksia,fucsia,sabbia,crema,denim,jeans,khaki,lilla,viola,rosso,rossa,verde,beige,panna,pesca,fango,kaki,nero,nera,neri,nere,nude,lime,burro,oliva,rosa,blu,oro,moro'
   assign colors = colors | split: ','
+  comment
+    Sfumatura finale ("Blu Chiaro", "Verde Scuro"): fa parte del colore, si cerca il colore prima di lei
+  endcomment
+  assign words_low = low | split: ' '
+  assign base = low
+  assign mods = 'chiaro,chiara,scuro,scura,acceso,accesa,pastello,melange,polvere,intenso,intensa,perla,neon' | split: ','
+  if words_low.size >= 3
+    assign last_low = words_low | last
+    if mods contains last_low
+      assign cut = size | minus: last_low.size | minus: 1
+      assign base = low | slice: 0, cut
+    endif
+  endif
+  assign base_size = base | size
   assign model = low
   assign name = ''
+  assign found_color = false
   for c in colors
     assign tail = ' ' | append: c
     assign n = tail | size
-    if size > n
-      assign start = size | minus: n
-      assign end = low | slice: start, n
+    if base_size > n
+      assign start = base_size | minus: n
+      assign end = base | slice: start, n
       if end == tail
-        assign model = low | slice: 0, start | strip
-        assign cn = n | minus: 1
-        assign cstart = start | plus: 1
-        assign name = clean | slice: cstart, cn
+        assign model = base | slice: 0, start | strip
+        assign found_color = true
         break
       endif
     endif
   endfor
+  if found_color
+    comment
+      Colore base davanti al colore trovato ("Verde Oliva", "Blu Navy"): fa parte del colore
+    endcomment
+    assign model_words = model | split: ' '
+    if model_words.size >= 2
+      assign prev = model_words | last
+      assign bases = 'verde,blu,rosa,grigio,grigia,giallo,gialla,rosso,rossa,marrone,azzurro,azzurra,viola,bianco,bianca,nero,nera,beige,arancio,arancione,celeste,lilla,fucsia,fuksia,bordeaux' | split: ','
+      if bases contains prev
+        assign cut = model | size | minus: prev.size | minus: 1
+        assign model = model | slice: 0, cut | strip
+      endif
+    endif
+    assign cstart = model | size | plus: 1
+    assign name = clean | slice: cstart, 200 | strip
+  endif
   assign how = ''
   if name != blank
     assign how = 'l'
