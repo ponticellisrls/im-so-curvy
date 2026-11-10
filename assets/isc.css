@@ -6340,14 +6340,15 @@ h1 strong, h2 strong, h3 strong,
 /* Header: logo centrato sopra e menu (molte voci) su una sola riga */
 @media screen and (min-width: 990px) {
   .header__inline-menu .header__menu-item {
-    font-size: clamp(10px, 0.78vw, 12.5px);
+    font-size: clamp(10px, 0.78vw, 11.2px);
     font-weight: 600;
     letter-spacing: 0.035em;
-    margin: 0 clamp(4px, 0.48vw, 11px);
+    margin: 0 clamp(4px, 0.48vw, 6.9px);
     white-space: nowrap;
   }
   .header__inline-menu .list-menu--inline { flex-wrap: nowrap; justify-content: center; }
-  .header--top-center .header__inline-menu { justify-self: stretch; }
+  .header--top-center .header__inline-menu { justify-self: stretch; display: flex; justify-content: center; }
+  .header--top-center .header__inline-menu .list-menu--inline { width: max-content; max-width: 100%; margin-inline: auto; }
 }
 
 /* ===================================================================== */
@@ -6717,3 +6718,11 @@ variant-selects .product-form__input--pill[data-option='misura'] input[type='rad
 .isc-hl__gift svg { width: 100%; height: 100%; }
 @keyframes isc-hl-gift { 0%, 70%, 100% { transform: rotate(0); } 76% { transform: rotate(-12deg) translateY(-1px); } 84% { transform: rotate(10deg); } 92% { transform: rotate(-4deg); } }
 @media (prefers-reduced-motion: reduce) { .isc-hl--gift .isc-hl__text, .isc-hl__gift { animation: none; } }
+
+/* Gift card nella pagina prodotto: carta animata al posto delle foto */
+.isc-gc--pdp { display: flex; align-items: center; justify-content: center; min-height: clamp(360px, 42vw, 560px); padding: 24px 12px; overflow: visible; background: linear-gradient(160deg, #fdf8f9 0%, #f8eff1 55%, #f3e1e7 100%); }
+.isc-gc--pdp .isc-gc__visual { width: 100%; }
+.isc-gc--pdp .isc-gc__stage { width: min(82%, 480px); }
+@media screen and (max-width: 749px) {
+  .isc-gc--pdp { min-height: 300px; margin-bottom: 8px; }
+}

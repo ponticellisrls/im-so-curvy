@@ -1,0 +1,20 @@
+{%- comment -%}
+  I'M So Curvy: gift card animata al posto delle foto nella pagina prodotto della gift card.
+  L'importo sulla carta segue il taglio scelto (assets/isc.js, isc-gift-card).
+  Accepts:
+  - product: {Object} la gift card
+{%- endcomment -%}
+{%- liquid
+  assign gc_variant = product.selected_or_first_available_variant
+  assign gc_map = ''
+  for v in product.variants
+    assign gc_price = v.price | money_without_trailing_zeros
+    assign gc_map = gc_map | append: v.option1 | append: '=' | append: gc_price | append: '|'
+  endfor
+  assign gc_value = gc_variant.price | money_without_trailing_zeros
+-%}
+<isc-gift-card class="isc-gc isc-gc--pdp" data-isc-gc-map="{{ gc_map | escape }}">
+  <div class="isc-gc__visual">
+    {% render 'isc-gift-card-visual', url: product.url, value: gc_value, label: product.title %}
+  </div>
+</isc-gift-card>

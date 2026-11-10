@@ -831,6 +831,19 @@ if (!customElements.get('isc-gift-card')) {
             this.stage.style.setProperty('--rx', '0deg');
           });
         }
+        if (this.value && this.dataset.iscGcMap) {
+          // pagina prodotto: l'importo sulla carta segue il taglio scelto
+          const map = Object.fromEntries(this.dataset.iscGcMap.split('|').filter(Boolean).map((r) => r.split('=')));
+          const form = document.querySelector('variant-selects') || document;
+          form.addEventListener('change', (e) => {
+            const v = e.target && e.target.value;
+            if (v && map[v] && map[v] !== this.value.textContent) {
+              this.value.classList.add('is-out');
+              setTimeout(() => { this.value.textContent = map[v]; this.value.classList.remove('is-out'); }, 220);
+            }
+          });
+          return;
+        }
         if (!this.value || !this.amounts.length) return;
         this.index = 0;
         this.paused = false;

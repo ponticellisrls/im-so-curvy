@@ -27,12 +27,17 @@
 {%- liquid
   assign isc_order = option.values | map: 'name'
   assign isc_opt = option.name | downcase
-  if isc_opt contains 'tagli' or isc_opt contains 'size' or isc_opt contains 'misur'
-    assign isc_first = option.values.first.name | strip | times: 1
-    if isc_first > 0
-      assign isc_order = isc_order | sort
+  comment
+    Gift card esclusa: i tagli (10,00 €, 25,00 €…) restano nell'ordine delle varianti
+  endcomment
+  unless product.gift_card?
+    if isc_opt contains 'tagli' or isc_opt contains 'size' or isc_opt contains 'misur'
+      assign isc_first = option.values.first.name | strip | times: 1
+      if isc_first > 0
+        assign isc_order = isc_order | sort
+      endif
     endif
-  endif
+  endunless
 -%}
 {%- for isc_name in isc_order -%}
 {%- for value in option.values -%}
