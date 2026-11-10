@@ -3,7 +3,8 @@
   Ogni colore è un prodotto a sé. Gli altri colori dello stesso modello si trovano così, in ordine:
   1. metacampo "Altri colori" (custom.altri_colori, elenco di prodotti): se è compilato vince lui;
   2. stesso modello nella categoria del prodotto: titolo uguale tolto il colore finale
-     ("Tailleur Easy Bordeaux" e "Tailleur Easy Testa di Moro"), vedi snippets/isc-color-split.liquid.
+     ("Tailleur Easy Bordeaux" e "Tailleur Easy Testa di Moro"), vedi snippets/isc-color-split.liquid;
+     un colore non in lista ("Cappotto Diletta Burro") si abbina ai colori riconosciuti dello stesso modello.
   Il colore della pagina è sempre il primo della riga.
   Su telefono: una sola riga che scorre col dito, con il nome sotto ogni miniatura.
   Su computer: miniature che vanno a capo, etichetta col nome al passaggio del mouse.
@@ -16,11 +17,10 @@
   capture split
     render 'isc-color-split', title: product.title
   endcapture
-  assign my_model = split | split: '¦' | first
-  assign my_name = split | split: '¦' | last
-  if split contains '¦' and my_name == my_model
-    assign my_name = ''
-  endif
+  assign my_parts = split | split: '¦'
+  assign my_model = my_parts[0]
+  assign my_name = my_parts[1]
+  assign my_how = my_parts[2]
   if my_name == blank
     for o in product.options_with_values
       assign on = o.name | downcase
@@ -54,9 +54,9 @@
       capture pn
         render 'isc-color-split', title: p.title
       endcapture
-      assign pname = pn | split: '¦' | last
-      assign pmodel = pn | split: '¦' | first
-      if pname == pmodel or pname == blank
+      assign p_parts = pn | split: '¦'
+      assign pname = p_parts[1]
+      if pname == blank
         assign pname = p.title
       endif
       capture item
@@ -100,18 +100,21 @@
           capture pn
             render 'isc-color-split', title: p.title
           endcapture
-          assign p_model = pn | split: '¦' | first
-          if p_model != my_model
+          assign p_parts = pn | split: '¦'
+          if p_parts[0] != my_model
+            continue
+          endif
+          comment
+            Colore preso dall'ultima parola ("u") da entrambe le parti: non è un abbinamento sicuro
+          endcomment
+          if my_how == 'u' and p_parts[2] == 'u'
             continue
           endif
           assign seen = seen | append: key
           unless p.available or bs.show_soldout
             continue
           endunless
-          assign pname = pn | split: '¦' | last
-          if pname == p_model
-            assign pname = ''
-          endif
+          assign pname = p_parts[1]
           capture item
             render 'isc-colors-item', p: p, name: pname
           endcapture
@@ -123,6 +126,13 @@
         endfor
       endpaginate
     endif
+  endif
+  comment
+    Colore preso dall'ultima parola ma nessun altro colore trovato: probabilmente non è un colore
+    (es. "Tuta Mood Ady"), quindi non lo mostriamo
+  endcomment
+  if my_how == 'u' and found == 0
+    assign my_name = ''
   endif
   assign label = bs.label | default: 'Colore'
 -%}

@@ -2,8 +2,12 @@
   I'M So Curvy: separa il titolo di un prodotto in modello e colore.
   Su I'M So Curvy ogni colore è un prodotto a sé e il colore è in fondo al titolo
   ("Tailleur Easy Testa di Moro" -> modello "tailleur easy", colore "Testa di Moro").
-  Stampa "modello¦Colore" (modello in minuscolo, colore com'è scritto nel titolo).
-  Se non riconosce il colore stampa "titolo¦".
+  Stampa "modello¦Colore¦come" (modello in minuscolo, colore com'è scritto nel titolo):
+  - come = "l": colore riconosciuto dalla lista qui sotto;
+  - come = "u": colore non in lista, presa l'ultima parola del titolo (solo titoli di almeno 3 parole,
+    es. "Cappotto Diletta Burro"). Il blocco «Altri colori» abbina un prodotto "u" solo a prodotti
+    con colore riconosciuto, così due modelli diversi ("… Piegone" / "… Risvolto") non si abbinano;
+  - nessun colore: stampa "titolo¦¦".
   Accepts:
   - title: {String}
 {%- endcomment -%}
@@ -11,7 +15,7 @@
   assign clean = title | strip | remove: ' - PREORDINE' | remove: ' PREORDINE' | remove: ' - Preordine' | remove: ' Preordine' | strip
   assign low = clean | downcase
   assign size = low | size
-  assign colors = 'testa di moro,verde bottiglia,verde militare,verde salvia,blu navy,blu notte,blu elettrico,blu cobalto,jeans chiaro,jeans scuro,denim chiaro,grigio chiaro,grigio scuro,rosa cipria,rosa antico,bordeaux,vinaccia,marrone,tortora,ruggine,celeste,avorio,cobalto,camouflage,animalier,leopardato,cammello,arancione,petrolio,cioccolato,champagne,ghiaccio,mattone,ottanio,tabacco,glicine,corallo,azzurro,azzurra,arancio,argento,militare,prugna,visone,senape,cipria,bianco,bianca,bianchi,giallo,gialla,grigio,grigia,salvia,fuksia,fucsia,sabbia,crema,denim,jeans,khaki,lilla,viola,rosso,rossa,verde,beige,panna,pesca,fango,kaki,nero,nera,neri,nere,nude,lime,rosa,blu,oro,moro'
+  assign colors = 'testa di moro,verde bottiglia,verde militare,verde salvia,blu navy,blu notte,blu elettrico,blu cobalto,jeans chiaro,jeans scuro,denim chiaro,grigio chiaro,grigio scuro,rosa cipria,rosa antico,bordeaux,vinaccia,marrone,tortora,ruggine,celeste,avorio,cobalto,camouflage,animalier,leopardato,cammello,arancione,petrolio,cioccolato,champagne,ghiaccio,mattone,ottanio,tabacco,glicine,mimetico,corallo,azzurro,azzurra,arancio,argento,militare,prugna,visone,senape,cipria,bianco,bianca,bianchi,giallo,gialla,grigio,grigia,salvia,fuksia,fucsia,sabbia,crema,denim,jeans,khaki,lilla,viola,rosso,rossa,verde,beige,panna,pesca,fango,kaki,nero,nera,neri,nere,nude,lime,burro,oliva,rosa,blu,oro,moro'
   assign colors = colors | split: ','
   assign model = low
   assign name = ''
@@ -30,5 +34,17 @@
       endif
     endif
   endfor
-  echo model | append: '¦' | append: name
+  assign how = ''
+  if name != blank
+    assign how = 'l'
+  else
+    assign words = clean | split: ' '
+    if words.size >= 3
+      assign name = words | last
+      assign cut = size | minus: name.size | minus: 1
+      assign model = low | slice: 0, cut | strip
+      assign how = 'u'
+    endif
+  endif
+  echo model | append: '¦' | append: name | append: '¦' | append: how
 -%}
