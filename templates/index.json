@@ -588,6 +588,24 @@
         "marquee_speed": 60,
         "padding_top": 0,
         "padding_bottom": 0
+      },
+      "disabled": true
+    },
+    "giftcard": {
+      "type": "isc-gift-card",
+      "settings": {
+        "product": "gift-card",
+        "style": "blush",
+        "eyebrow": "Gift Card",
+        "heading": "Il regalo <em>perfetto</em> ha sempre la taglia giusta",
+        "text": "<p>Non sai cosa scegliere? Regala una Gift Card I'M So Curvy: lei sceglie i capi che preferisce, tu fai centro.</p>",
+        "amounts_label": "Scegli l'importo",
+        "button_label": "Regala una Gift Card",
+        "perk_1": "Arriva via email",
+        "perk_2": "Valida su tutto il sito",
+        "perk_3": "Tu scegli l'importo",
+        "padding_top": 72,
+        "padding_bottom": 72
       }
     }
   },
@@ -598,6 +616,7 @@
     "promos",
     "newarrivals",
     "benefits",
+    "giftcard",
     "look"
   ]
 }

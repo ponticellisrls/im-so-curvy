@@ -110,7 +110,9 @@
         "isc_hl_2_emoji": "",
         "isc_hl_2_badge": "",
         "isc_hl_2_badge_style": "solid",
-        "isc_hl_2_badge_color": ""
+        "isc_hl_2_badge_color": "",
+        "isc_hl_3_title": "Gift Card",
+        "isc_hl_3_badge_style": "gift"
       }
     }
   },

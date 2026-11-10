@@ -807,3 +807,56 @@ if (!customElements.get('isc-colors')) {
     t = setTimeout(() => run(), 30);
   }).observe(document.documentElement, { childList: true, subtree: true });
 })();
+
+/* Sezione Gift Card: la carta si inclina seguendo il mouse, l'importo cambia da solo e segue i pulsanti */
+if (!customElements.get('isc-gift-card')) {
+  customElements.define(
+    'isc-gift-card',
+    class extends HTMLElement {
+      connectedCallback() {
+        this.stage = this.querySelector('[data-isc-gc-stage]');
+        this.value = this.querySelector('[data-isc-gc-value]');
+        this.amounts = [...this.querySelectorAll('[data-isc-gc-amount]')];
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (this.stage && !reduce && window.matchMedia('(hover: hover)').matches) {
+          this.addEventListener('pointermove', (e) => {
+            const r = this.stage.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width - 0.5;
+            const y = (e.clientY - r.top) / r.height - 0.5;
+            this.stage.style.setProperty('--ry', `${Math.max(-1, Math.min(1, x)) * 14}deg`);
+            this.stage.style.setProperty('--rx', `${Math.max(-1, Math.min(1, y)) * -10}deg`);
+          });
+          this.addEventListener('pointerleave', () => {
+            this.stage.style.setProperty('--ry', '0deg');
+            this.stage.style.setProperty('--rx', '0deg');
+          });
+        }
+        if (!this.value || !this.amounts.length) return;
+        this.index = 0;
+        this.paused = false;
+        this.amounts.forEach((a, i) => {
+          a.addEventListener('mouseenter', () => { this.paused = true; this.show(i); });
+          a.addEventListener('focus', () => { this.paused = true; this.show(i); });
+          a.addEventListener('mouseleave', () => { this.paused = false; });
+        });
+        if (!reduce) {
+          this.timer = setInterval(() => {
+            if (this.paused || document.hidden) return;
+            this.show((this.index + 1) % this.amounts.length);
+          }, 2400);
+        }
+      }
+      disconnectedCallback() { clearInterval(this.timer); }
+      show(i) {
+        if (i === this.index && this.value.textContent === this.amounts[i].dataset.iscGcAmount) return;
+        this.index = i;
+        this.amounts.forEach((a, j) => a.classList.toggle('is-active', j === i));
+        this.value.classList.add('is-out');
+        setTimeout(() => {
+          this.value.textContent = this.amounts[i].dataset.iscGcAmount;
+          this.value.classList.remove('is-out');
+        }, 220);
+      }
+    }
+  );
+}

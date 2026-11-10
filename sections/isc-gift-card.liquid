@@ -1,0 +1,127 @@
+{%- comment -%}
+  I'M So Curvy: sezione Gift Card.
+  A sinistra una gift card bordeaux (con una seconda carta rosa metallizzato dietro) che si inclina seguendo
+  il mouse, con riflesso che scorre e importo che cambia da solo; a destra testi e i tagli della gift card
+  come pulsanti (passandoci sopra la carta mostra quell'importo, cliccando si apre il prodotto con quel taglio).
+{%- endcomment -%}
+{% render 'isc-section-spacing' %}
+{%- liquid
+  assign s = section.settings
+  assign gc = s.product
+  assign first_price = gc.variants.first.price | default: 5000
+  assign gc_url = gc.url | default: routes.all_products_collection_url
+-%}
+
+<isc-gift-card class="isc-gc isc-gc--{{ s.style }} isc-section isc-section--last">
+  <span class="isc-gc__blob isc-gc__blob--1" aria-hidden="true"></span>
+  <span class="isc-gc__blob isc-gc__blob--2" aria-hidden="true"></span>
+
+  <div class="isc-container isc-gc__grid">
+    <div class="isc-gc__visual">
+      <div class="isc-gc__stage" data-isc-gc-stage>
+        <div class="isc-gc__card isc-gc__card--back" aria-hidden="true">
+          <span class="isc-gc__back-word">Curvy</span>
+        </div>
+
+        <a href="{{ gc_url }}" class="isc-gc__card isc-gc__card--front" aria-label="{{ s.button_label | default: 'Gift Card' | escape }}">
+          <span class="isc-gc__foil" aria-hidden="true"></span>
+          <span class="isc-gc__top">
+            <img src="{{ 'isc-logo-white.png' | asset_url }}" alt="I'M So Curvy" width="292" height="200" loading="lazy" class="isc-gc__logo">
+            <svg class="isc-gc__chip" viewBox="0 0 40 30" aria-hidden="true">
+              <rect x=".75" y=".75" width="38.5" height="28.5" rx="5" fill="url(#IscGcChip)" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+              <path d="M20 22s-5-3-5-6.2c0-1.6 1.2-2.8 2.7-2.8 1 0 1.9.6 2.3 1.4.4-.8 1.3-1.4 2.3-1.4 1.5 0 2.7 1.2 2.7 2.8 0 3.2-5 6.2-5 6.2z" fill="#660033"/>
+              <defs><linearGradient id="IscGcChip" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbe4ea"/><stop offset=".5" stop-color="#d98aa3"/><stop offset="1" stop-color="#f6d2dc"/></linearGradient></defs>
+            </svg>
+          </span>
+          <span class="isc-gc__label">Gift <em>Card</em></span>
+          <span class="isc-gc__value">
+            <span class="isc-gc__value-num" data-isc-gc-value>{{ first_price | money_without_trailing_zeros }}</span>
+          </span>
+          <span class="isc-gc__bottom">
+            <span>imsocurvy.it</span>
+            <span class="isc-gc__dots" aria-hidden="true">✦ ✦ ✦</span>
+          </span>
+        </a>
+
+        <span class="isc-gc__box" aria-hidden="true">{% render 'isc-gift' %}</span>
+        <span class="isc-gc__spark isc-gc__spark--1" aria-hidden="true">✦</span>
+        <span class="isc-gc__spark isc-gc__spark--2" aria-hidden="true">✦</span>
+        <span class="isc-gc__spark isc-gc__spark--3" aria-hidden="true">✦</span>
+      </div>
+    </div>
+
+    <div class="isc-gc__content">
+      {%- if s.eyebrow != blank -%}<p class="isc-gc__eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
+      {%- if s.heading != blank -%}<h2 class="isc-gc__heading">{{ s.heading }}</h2>{%- endif -%}
+      {%- if s.text != blank -%}<div class="isc-gc__text">{{ s.text }}</div>{%- endif -%}
+
+      {%- if gc != blank and gc.variants.size > 1 -%}
+        <p class="isc-gc__choose">{{ s.amounts_label | escape }}</p>
+        <ul class="isc-gc__amounts list-unstyled" role="list">
+          {%- for v in gc.variants -%}
+            <li>
+              <a
+                href="{{ gc.url }}?variant={{ v.id }}"
+                class="isc-gc__amount{% unless v.available %} is-soldout{% endunless %}"
+                data-isc-gc-amount="{{ v.price | money_without_trailing_zeros | escape }}"
+              >
+                {{- v.price | money_without_trailing_zeros -}}
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+
+      <div class="isc-gc__actions">
+        {%- if s.button_label != blank -%}
+          <a href="{{ gc_url }}" class="isc-btn isc-gc__btn">
+            {{ s.button_label | escape }}
+            <svg viewBox="0 0 20 10" fill="none" aria-hidden="true"><path d="M.5 5h17M13.2 1.3c.7 1.9 2.3 3.2 4.3 3.7-2 .5-3.6 1.8-4.3 3.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        {%- endif -%}
+      </div>
+
+      {%- if s.perk_1 != blank or s.perk_2 != blank or s.perk_3 != blank -%}
+        <ul class="isc-gc__perks list-unstyled" role="list">
+          {%- if s.perk_1 != blank -%}<li><span class="isc-gc__perk-ico">{% render 'isc-icon', name: 'mail' %}</span>{{ s.perk_1 | escape }}</li>{%- endif -%}
+          {%- if s.perk_2 != blank -%}<li><span class="isc-gc__perk-ico">{% render 'isc-icon', name: 'heart' %}</span>{{ s.perk_2 | escape }}</li>{%- endif -%}
+          {%- if s.perk_3 != blank -%}<li><span class="isc-gc__perk-ico">{% render 'isc-icon', name: 'gift' %}</span>{{ s.perk_3 | escape }}</li>{%- endif -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</isc-gift-card>
+
+{% schema %}
+{
+  "name": "ISC: gift card",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Prodotto gift card" },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Stile",
+      "options": [
+        { "value": "blush", "label": "Cipria" },
+        { "value": "white", "label": "Bianco" },
+        { "value": "dark", "label": "Bordeaux" }
+      ],
+      "default": "blush"
+    },
+    { "type": "text", "id": "eyebrow", "label": "Etichetta", "default": "Gift Card" },
+    { "type": "inline_richtext", "id": "heading", "label": "Titolo", "default": "Il regalo <em>perfetto</em> ha sempre la taglia giusta" },
+    { "type": "richtext", "id": "text", "label": "Testo", "default": "<p>Non sai cosa scegliere? Regala una Gift Card I'M So Curvy: lei sceglie i capi che preferisce, tu fai centro.</p>" },
+    { "type": "text", "id": "amounts_label", "label": "Testo sopra gli importi", "default": "Scegli l'importo" },
+    { "type": "text", "id": "button_label", "label": "Testo pulsante", "default": "Regala una Gift Card" },
+    { "type": "header", "content": "Vantaggi (vuoti per nasconderli)" },
+    { "type": "text", "id": "perk_1", "label": "Vantaggio 1", "default": "Arriva via email" },
+    { "type": "text", "id": "perk_2", "label": "Vantaggio 2", "default": "Valida su tutto il sito" },
+    { "type": "text", "id": "perk_3", "label": "Vantaggio 3", "default": "Tu scegli l'importo" },
+    { "type": "range", "id": "padding_top", "label": "Spazio sopra", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 72 },
+    { "type": "range", "id": "padding_bottom", "label": "Spazio sotto", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 72 }
+  ],
+  "presets": [{ "name": "ISC: gift card" }]
+}
+{% endschema %}
