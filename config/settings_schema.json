@@ -1699,5 +1699,14 @@
         "default": "Vai al pagamento"
       }
     ]
+  },
+  {
+    "name": "I'M So Curvy · Badge promozione",
+    "settings": [
+      { "type": "paragraph", "content": "Badge sui prodotti scontati (prezzo barrato): «✦ BLACK FRIDAY | -20%» nelle schede, accanto al prezzo e sulla foto della pagina prodotto. Spento = solo «-20%»." },
+      { "type": "checkbox", "id": "isc_promo_on", "label": "Mostra il badge della promozione", "default": false },
+      { "type": "text", "id": "isc_promo_label", "label": "Testo del badge", "default": "Black Friday" },
+      { "type": "collection", "id": "isc_promo_collection", "label": "Solo per i prodotti di questa collezione", "info": "Vuota = tutti i prodotti con prezzo barrato." }
+    ]
   }
 ]

@@ -130,6 +130,14 @@
                           assign isc_saved = isc_variant.compare_at_price | minus: isc_variant.price
                           assign isc_pct = isc_saved | times: 100.0 | divided_by: isc_variant.compare_at_price | round
                         -%}
+                        {%- capture isc_promo -%}{% render 'isc-promo-badge', product: product, pct: isc_pct, size: 'pdp', plain_class: 'isc-pb-none' %}{%- endcapture -%}
+                        {%- if isc_promo contains 'isc-pb ' -%}
+                          {%- comment -%} Promozione attiva: badge della promo + quanto si risparmia {%- endcomment -%}
+                          <span class="isc-pdp__promo">
+                            {{ isc_promo }}
+                            <span class="isc-pdp__save-pill">Risparmi <strong>{{ isc_saved | money }}</strong></span>
+                          </span>
+                        {%- else -%}
                         <span class="isc-pdp__savings isc-pdp__savings--{{ block.settings.isc_save_style | default: 'percent' }}">
                           {%- case block.settings.isc_save_style -%}
                             {%- when 'amount' -%}-{{ isc_saved | money }}
@@ -137,6 +145,7 @@
                             {%- else -%}-{{ isc_pct }}%{% if block.settings.isc_save_suffix != blank %} {{ block.settings.isc_save_suffix | escape }}{% endif %}
                           {%- endcase -%}
                         </span>
+                        {%- endif -%}
                       {%- endif -%}
                     </div>
                     {%- liquid

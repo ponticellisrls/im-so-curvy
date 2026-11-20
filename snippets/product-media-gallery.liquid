@@ -55,9 +55,8 @@
   <slider-component id="GalleryViewer-{{ section.id }}" class="slider-mobile-gutter">
     {%- assign isc_v = product.selected_or_first_available_variant -%}
     {%- if isc_v.compare_at_price > isc_v.price -%}
-      <span class="isc-media-badge">
-        -{{ isc_v.compare_at_price | minus: isc_v.price | times: 100.0 | divided_by: isc_v.compare_at_price | round }}%
-      </span>
+      {%- assign isc_mpct = isc_v.compare_at_price | minus: isc_v.price | times: 100.0 | divided_by: isc_v.compare_at_price | round -%}
+      {% render 'isc-promo-badge', product: product, pct: isc_mpct, size: 'media', plain_class: 'isc-media-badge' %}
     {%- endif -%}
     <a class="skip-to-content-link button visually-hidden quick-add-hidden" href="#ProductInfo-{{ section.id }}">
       {{ 'accessibility.skip_to_product_info' | t }}

@@ -68,7 +68,12 @@
   </a>
 
   {%- if s.show_badges and badge != '' -%}
-    <span class="isc-pcard__badge isc-pcard__badge--{{ badge_class }}">{{ badge }}</span>
+    {%- if badge_class == 'sale' -%}
+      {%- capture isc_bclass -%}isc-pcard__badge isc-pcard__badge--sale{%- endcapture -%}
+      {% render 'isc-promo-badge', product: product, pct: pct, size: 'card', plain_class: isc_bclass %}
+    {%- else -%}
+      <span class="isc-pcard__badge isc-pcard__badge--{{ badge_class }}">{{ badge }}</span>
+    {%- endif -%}
   {%- endif -%}
 
   {%- if quick == 'sizes' and product.available -%}

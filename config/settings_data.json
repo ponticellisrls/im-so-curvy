@@ -272,7 +272,9 @@
       }
     },
     "isc_info_menu_1_label": "Assistenza",
-    "isc_info_menu_2_label": "Note legali"
+    "isc_info_menu_2_label": "Note legali",
+    "isc_promo_on": true,
+    "isc_promo_label": "Black Friday"
   },
   "presets": {
     "Dawn": {

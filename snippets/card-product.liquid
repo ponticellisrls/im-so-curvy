@@ -135,12 +135,10 @@
                   {{- 'products.product.sold_out' | t -}}
                 </span>
               {%- elsif card_product.compare_at_price > card_product.price and card_product.available -%}
-                <span
-                  id="NoMediaStandardBadge-{{ section_id }}-{{ card_product.id }}"
-                  class="badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}"
-                >
-                  -{{ card_product.compare_at_price | minus: card_product.price | times: 100.0 | divided_by: card_product.compare_at_price | round }}%
-                </span>
+                {%- assign isc_pct = card_product.compare_at_price | minus: card_product.price | times: 100.0 | divided_by: card_product.compare_at_price | round -%}
+                {%- capture isc_bid -%}NoMediaStandardBadge-{{ section_id }}-{{ card_product.id }}{%- endcapture -%}
+                {%- capture isc_bclass -%}badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}{%- endcapture -%}
+                {% render 'isc-promo-badge', product: card_product, pct: isc_pct, size: 'card', plain_class: isc_bclass, badge_id: isc_bid %}
               {%- elsif card_product.tags contains 'best-seller' or card_product.tags contains 'Best seller' -%}
                 <span class="badge badge--bottom-left color-scheme-3">Best seller</span>
               {%- elsif card_product.tags contains 'nuovo' or card_product.tags contains 'Nuovo' -%}
@@ -564,12 +562,10 @@
                 {{- 'products.product.sold_out' | t -}}
               </span>
             {%- elsif card_product.compare_at_price > card_product.price and card_product.available -%}
-              <span
-                id="Badge-{{ section_id }}-{{ card_product.id }}"
-                class="badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}"
-              >
-                -{{ card_product.compare_at_price | minus: card_product.price | times: 100.0 | divided_by: card_product.compare_at_price | round }}%
-              </span>
+              {%- assign isc_pct = card_product.compare_at_price | minus: card_product.price | times: 100.0 | divided_by: card_product.compare_at_price | round -%}
+              {%- capture isc_bid -%}Badge-{{ section_id }}-{{ card_product.id }}{%- endcapture -%}
+              {%- capture isc_bclass -%}badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}{%- endcapture -%}
+              {% render 'isc-promo-badge', product: card_product, pct: isc_pct, size: 'card', plain_class: isc_bclass, badge_id: isc_bid %}
             {%- elsif card_product.tags contains 'best-seller' or card_product.tags contains 'Best seller' -%}
               <span class="badge badge--bottom-left color-scheme-3">Best seller</span>
             {%- elsif card_product.tags contains 'nuovo' or card_product.tags contains 'Nuovo' -%}

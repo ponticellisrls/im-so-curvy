@@ -6726,3 +6726,95 @@ variant-selects .product-form__input--pill[data-option='misura'] input[type='rad
 @media screen and (max-width: 749px) {
   .isc-gc--pdp { min-height: 300px; margin-bottom: 8px; }
 }
+
+/* ===================================================================== */
+/* Badge promozione (es. Black Friday): «✦ BLACK FRIDAY | -20%»          */
+/* ===================================================================== */
+.isc-pb {
+  display: inline-flex;
+  align-items: stretch;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 6px 16px rgba(43, 7, 23, 0.18);
+  pointer-events: none;
+}
+.isc-pb__label {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 9px;
+  background: linear-gradient(120deg, #2b0717 0%, #1d0612 60%, #3d0c24 100%);
+  color: #fff;
+  font-family: var(--font-heading-family);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.isc-pb__label::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(246, 210, 220, 0.35) 50%, transparent 65%);
+  transform: translateX(-120%);
+  animation: isc-pb-shine 4s ease-in-out infinite;
+}
+@keyframes isc-pb-shine { 0%, 60% { transform: translateX(-120%); } 85%, 100% { transform: translateX(120%); } }
+.isc-pb__spark { color: #e0a0b5; font-size: 9px; letter-spacing: 0; animation: isc-pb-twinkle 2.4s ease-in-out infinite; }
+@keyframes isc-pb-twinkle { 0%, 100% { opacity: 0.45; transform: scale(0.85); } 50% { opacity: 1; transform: scale(1.15); } }
+.isc-pb__pct {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 8px;
+  background: var(--isc-red);
+  color: #fff;
+  font-family: var(--font-heading-family);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* posizione nelle schede (in alto a sinistra sulla foto) */
+.isc-pcard .isc-pb { position: absolute; top: 10px; left: 10px; z-index: 2; }
+.card-wrapper .card__badge .isc-pb { margin: 0; }
+
+/* pagina prodotto: accanto al prezzo, più grande, con "Risparmi" */
+.isc-pdp__promo { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 4px; }
+.isc-pb--pdp .isc-pb__label { padding: 8px 12px; font-size: 12px; }
+.isc-pb--pdp .isc-pb__spark { font-size: 11px; }
+.isc-pb--pdp .isc-pb__pct { padding: 8px 10px; font-size: 13px; }
+.isc-pdp__save-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid rgba(176, 18, 63, 0.35);
+  background: #fdf3f6;
+  color: var(--isc-red);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.isc-pdp__save-pill strong { font-size: 14px; letter-spacing: 0.02em; }
+.isc-pdp-price__row.is-sale:has(.isc-pdp__promo) { flex-wrap: wrap; }
+.isc-pdp-price__row:has(.isc-pdp__promo) .isc-pdp__promo { flex-basis: 100%; }
+
+/* pagina prodotto: badge sulla foto (al posto del badge "-20%" della galleria) */
+.isc-pb--media { position: absolute; top: 14px; left: 14px; z-index: 2; }
+.isc-pb--media .isc-pb__label { padding: 8px 12px; font-size: 12px; }
+.isc-pb--media .isc-pb__pct { padding: 8px 10px; font-size: 13px; }
+@media screen and (max-width: 749px) {
+  .isc-pcard .isc-pb { top: 8px; left: 8px; }
+  .isc-pb__label { padding: 5px 7px; font-size: 9px; letter-spacing: 0.14em; gap: 4px; }
+  .isc-pb__pct { padding: 5px 6px; font-size: 10px; }
+  .isc-pb--pdp .isc-pb__label, .isc-pb--media .isc-pb__label { padding: 7px 10px; font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) { .isc-pb__label::after, .isc-pb__spark { animation: none; } }
+@media screen and (max-width: 749px) {
+  /* la galleria su telefono parte dal bordo dello schermo: il badge si stacca dall'angolo della foto */
+  .isc-pb--media { top: 10px; left: calc(var(--isc-gutter, 16px) + 10px); }
+}

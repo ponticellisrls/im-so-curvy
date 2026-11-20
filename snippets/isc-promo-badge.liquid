@@ -1,7 +1,7 @@
 {%- comment -%}
   I'M So Curvy: badge della promozione (es. "✦ BLACK FRIDAY | -20%") sui prodotti scontati.
   Attivo da Impostazioni tema > «I'M So Curvy · Badge promozione»: testo e, se scelta, solo per i prodotti di una
-  collezione. Se la promozione è spenta (o il prodotto non è nella collezione) stampa il solo "-20%".
+  collezione. Se la promozione è spenta (o il prodotto non è nella collezione) stampa il solo "-20%" con le classi plain_class.
   Accepts:
   - product: {Object}
   - pct: {Number} percentuale di sconto
@@ -30,6 +30,6 @@
     <span class="isc-pb__label"><span class="isc-pb__spark" aria-hidden="true">✦</span>{{ settings.isc_promo_label | escape }}</span>
     <span class="isc-pb__pct">-{{ pct }}%</span>
   </span>
-{%- elsif size != 'media' -%}
+{%- else -%}
   <span class="{{ plain_class }}"{% if badge_id %} id="{{ badge_id }}"{% endif %}>-{{ pct }}%</span>
 {%- endif -%}
