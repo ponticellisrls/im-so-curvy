@@ -873,3 +873,50 @@ if (!customElements.get('isc-gift-card')) {
     }
   );
 }
+
+/* I'M So Curvy: numero che sale da 0 al valore finale (es. "Risparmi 15,00 €" nella pagina prodotto).
+   Il testo finale arriva già formattato da Liquid: si anima solo la parte numerica, mantenendo valuta e separatori.
+   Parte quando entra nello schermo e riparte a ogni cambio variante (Dawn sostituisce il blocco prezzo). */
+if (!customElements.get('isc-count-up')) {
+  customElements.define(
+    'isc-count-up',
+    class IscCountUp extends HTMLElement {
+      connectedCallback() {
+        const text = this.textContent.trim();
+        const m = text.match(/\d[\d.,\s]*\d|\d/);
+        if (!m) return;
+        const raw = m[0].replace(/\s/g, '');
+        const dec = raw.match(/[.,](\d{1,2})$/);
+        const decimals = dec ? dec[1].length : 0;
+        const decSep = dec ? raw[raw.length - decimals - 1] : ',';
+        const thouSep = decSep === ',' ? '.' : ',';
+        const target = parseFloat(raw.replace(/[.,]/g, '')) / Math.pow(10, decimals);
+        if (!target || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const fmt = (v) => {
+          const [i, d] = v.toFixed(decimals).split('.');
+          const int = i.replace(/\B(?=(\d{3})+(?!\d))/g, thouSep);
+          return text.slice(0, m.index) + (d ? int + decSep + d : int) + text.slice(m.index + m[0].length);
+        };
+        this.style.display = 'inline-block';
+        this.style.minWidth = this.getBoundingClientRect().width + 'px';
+        this.textContent = fmt(0);
+        const run = () => {
+          const dur = 1100;
+          const t0 = performance.now();
+          const step = (now) => {
+            const k = Math.min(1, (now - t0) / dur);
+            const e = 1 - Math.pow(1 - k, 3);
+            this.textContent = k < 1 ? fmt(target * e) : text;
+            if (k < 1) this.raf = requestAnimationFrame(step);
+          };
+          this.raf = requestAnimationFrame(step);
+        };
+        this.io = new IntersectionObserver((entries) => {
+          if (entries.some((en) => en.isIntersecting)) { this.io.disconnect(); run(); }
+        });
+        this.io.observe(this);
+      }
+      disconnectedCallback() { cancelAnimationFrame(this.raf); if (this.io) this.io.disconnect(); }
+    }
+  );
+}

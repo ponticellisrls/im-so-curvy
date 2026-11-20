@@ -135,7 +135,7 @@
                           {%- comment -%} Promozione attiva: badge della promo + quanto si risparmia {%- endcomment -%}
                           <span class="isc-pdp__promo">
                             {{ isc_promo }}
-                            <span class="isc-pdp__save-pill">Risparmi <strong>{{ isc_saved | money }}</strong></span>
+                            <span class="isc-pdp__save-pill">Risparmi <strong><isc-count-up>{{ isc_saved | money }}</isc-count-up></strong></span>
                           </span>
                         {%- else -%}
                         <span class="isc-pdp__savings isc-pdp__savings--{{ block.settings.isc_save_style | default: 'percent' }}">

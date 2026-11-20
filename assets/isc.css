@@ -6799,7 +6799,7 @@ variant-selects .product-form__input--pill[data-option='misura'] input[type='rad
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
-.isc-pdp__save-pill strong { font-size: 14px; letter-spacing: 0.02em; }
+.isc-pdp__save-pill strong { font-size: 14px; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
 .isc-pdp-price__row.is-sale:has(.isc-pdp__promo) { flex-wrap: wrap; }
 .isc-pdp-price__row:has(.isc-pdp__promo) .isc-pdp__promo { flex-basis: 100%; }
 
