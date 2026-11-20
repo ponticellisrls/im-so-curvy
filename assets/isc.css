@@ -6818,3 +6818,17 @@ variant-selects .product-form__input--pill[data-option='misura'] input[type='rad
   /* la galleria su telefono parte dal bordo dello schermo: il badge si stacca dall'angolo della foto */
   .isc-pb--media { top: 10px; left: calc(var(--isc-gutter, 16px) + 10px); }
 }
+
+/* Badge promozione nelle schede strette (es. carosello su telefono): si compatta in base alla larghezza
+   della scheda, così non sborda mai su quella accanto */
+.isc-pcard, .card-wrapper { container-type: inline-size; }
+.isc-pcard .isc-pb, .card-wrapper .isc-pb { max-width: calc(100% - 16px); }
+@container (max-width: 220px) {
+  .isc-pb .isc-pb__label { padding: 4px 6px; font-size: 8.5px; letter-spacing: 0.1em; gap: 0; }
+  .isc-pb .isc-pb__spark { display: none; }
+  .isc-pb .isc-pb__pct { padding: 4px 5px; font-size: 9.5px; }
+}
+@container (max-width: 150px) {
+  .isc-pb .isc-pb__label { font-size: 7.5px; letter-spacing: 0.06em; padding: 4px 5px; }
+  .isc-pb .isc-pb__pct { font-size: 8.5px; padding: 4px; }
+}
