@@ -1,0 +1,35 @@
+{%- comment -%}
+  I'M So Curvy: badge della promozione (es. "✦ BLACK FRIDAY | -20%") sui prodotti scontati.
+  Attivo da Impostazioni tema > «I'M So Curvy · Badge promozione»: testo e, se scelta, solo per i prodotti di una
+  collezione. Se la promozione è spenta (o il prodotto non è nella collezione) stampa il solo "-20%".
+  Accepts:
+  - product: {Object}
+  - pct: {Number} percentuale di sconto
+  - size: {String} 'card' (schede) | 'pdp' (accanto al prezzo) | 'media' (sulla foto della pagina prodotto)
+  - plain_class: {String} classi del badge semplice quando la promozione non si applica
+  - badge_id: {String} id del badge (facoltativo, usato da aria-labelledby delle schede)
+{%- endcomment -%}
+{%- liquid
+  assign size = size | default: 'card'
+  assign promo = false
+  if settings.isc_promo_on and settings.isc_promo_label != blank
+    assign promo = true
+    if settings.isc_promo_collection != blank
+      assign promo = false
+      for c in product.collections
+        if c.id == settings.isc_promo_collection.id
+          assign promo = true
+          break
+        endif
+      endfor
+    endif
+  endif
+-%}
+{%- if promo -%}
+  <span class="isc-pb isc-pb--{{ size }}"{% if badge_id %} id="{{ badge_id }}"{% endif %}>
+    <span class="isc-pb__label"><span class="isc-pb__spark" aria-hidden="true">✦</span>{{ settings.isc_promo_label | escape }}</span>
+    <span class="isc-pb__pct">-{{ pct }}%</span>
+  </span>
+{%- elsif size != 'media' -%}
+  <span class="{{ plain_class }}"{% if badge_id %} id="{{ badge_id }}"{% endif %}>-{{ pct }}%</span>
+{%- endif -%}
